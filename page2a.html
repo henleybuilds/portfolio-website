@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stephen Henley — The Work</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #B8D4E8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Arial Black', Arial, sans-serif;
+      overflow-y: auto;
+      position: relative;
+      padding: 48px 24px 80px;
+    }
+
+    /* Yellow instruction-booklet border frame — identical to index.html */
+    .frame {
+      position: fixed;
+      inset: 16px;
+      border: 3px solid rgba(255, 215, 0, 0.75);
+      border-radius: 12px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .page-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      width: 100%;
+      max-width: 1060px;
+      z-index: 1;
+    }
+
+    /* Matches .set-label from index.html */
+    .set-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      margin-bottom: -20px;
+    }
+
+    /* Matches h1 from index.html */
+    h1 {
+      color: #1C2B4A;
+      font-size: clamp(2rem, 5.5vw, 3.6rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-shadow: 2px 2px 0 rgba(28,43,74,0.15);
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    /* 3 project cards in a row */
+    .cards-row {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .card {
+      background: #fff;
+      border: 2.5px solid #1C2B4A;
+      border-radius: 8px;
+      flex: 1;
+      max-width: 320px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 5px 0 #1C2B4A;
+    }
+
+    .card-image {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      border-bottom: 2.5px solid #1C2B4A;
+    }
+
+    .card-body {
+      padding: 14px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .card-title {
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.76rem;
+      font-weight: 900;
+      color: #1C2B4A;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .card-problem {
+      font-family: Arial, sans-serif;
+      font-size: 0.71rem;
+      color: #1C2B4A;
+      font-style: italic;
+      line-height: 1.55;
+    }
+
+    /* Parts list — mimics Lego instruction parts table */
+    .fact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      border-top: 1.5px solid rgba(28,43,74,0.18);
+      padding-top: 9px;
+      margin-top: 2px;
+    }
+
+    .fact-line {
+      font-family: Arial, sans-serif;
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+      padding-left: 11px;
+      position: relative;
+    }
+
+    .fact-line::before {
+      content: '▪';
+      position: absolute;
+      left: 0;
+      font-size: 0.48rem;
+      opacity: 0.55;
+      top: 1px;
+    }
+
+    /* Locked panel — Lego instruction callout box */
+    .locked-panel {
+      background: #fff;
+      border: 2.5px solid #1C2B4A;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 0 #1C2B4A;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .locked-panel-header {
+      background: #FFD700;
+      padding: 5px 14px;
+      font-family: Arial, sans-serif;
+      font-size: 0.54rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      border-bottom: 2px solid #1C2B4A;
+    }
+
+    .locked-panel-body {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .locked-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.04em;
+    }
+
+    .brick-slots {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* Empty 2×1 brick outline — like a blank slot in a parts list */
+    .brick-slot {
+      width: 32px;
+      height: 16px;
+      border: 2px solid #1C2B4A;
+      border-radius: 3px;
+      position: relative;
+      opacity: 0.45;
+    }
+
+    /* First stud outline */
+    .brick-slot::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 4px;
+      width: 10px;
+      height: 6px;
+      border: 2px solid #1C2B4A;
+      border-bottom: none;
+      border-radius: 50% 50% 0 0;
+    }
+
+    /* Second stud outline */
+    .brick-slot::after {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 18px;
+      width: 10px;
+      height: 6px;
+      border: 2px solid #1C2B4A;
+      border-bottom: none;
+      border-radius: 50% 50% 0 0;
+    }
+
+    /* Hidden Lego brick — matches #brick-1 style from index.html exactly */
+    #brick-2 {
+      position: fixed;
+      top: 52px;
+      right: 58px;
+      width: 32px;
+      height: 16px;
+      background: #FFD700;
+      border-radius: 3px;
+      box-shadow: 0 3px 0 #b8960a;
+      cursor: pointer;
+      z-index: 5;
+      opacity: 0.3;
+      transition: opacity 0.2s ease;
+    }
+
+    #brick-2::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 4px;
+      width: 10px;
+      height: 6px;
+      background: #FFD700;
+      border-radius: 50% 50% 0 0;
+      box-shadow: 14px 0 0 #FFD700;
+    }
+
+    #brick-2:hover {
+      opacity: 0.6;
+    }
+
+    #brick-2.glow {
+      opacity: 1;
+      animation: brickGlow 0.7s ease forwards;
+    }
+
+    @keyframes brickGlow {
+      0%   { box-shadow: 0 3px 0 #b8960a, 0 0 0 rgba(255,215,0,0); }
+      40%  { box-shadow: 0 3px 0 #b8960a, 0 0 18px 8px rgba(255,215,0,0.75); }
+      100% { box-shadow: 0 3px 0 #b8960a, 0 0 0 rgba(255,215,0,0); opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="frame"></div>
+
+  <div class="page-container">
+
+    <p class="set-label">Page 02 &middot; Build Log Series</p>
+
+    <h1>The Work</h1>
+
+    <div class="cards-row">
+
+      <!-- Card 1: ScoutTrek Content Pipeline -->
+      <div class="card">
+        <img src="assets/lego/scouttrek-trail.png" alt="ScoutTrek Content Pipeline" class="card-image">
+        <div class="card-body">
+          <p class="card-title">ScoutTrek Content Pipeline</p>
+          <p class="card-problem">Volunteer leaders had no time to post. Built an autonomous pipeline that handles it.</p>
+          <div class="fact-list">
+            <span class="fact-line">Tools: Make.com &middot; AI Vision</span>
+            <span class="fact-line">Posts automated per week: 7</span>
+            <span class="fact-line">Manual steps remaining: 1</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Bricks for Paws -->
+      <div class="card">
+        <img src="assets/lego/bricksforpaws-podium.png" alt="Bricks for Paws" class="card-image">
+        <div class="card-body">
+          <p class="card-title">Bricks for Paws</p>
+          <p class="card-problem">Wanted to see how far AI could run a fundraiser with zero daily effort.</p>
+          <div class="fact-list">
+            <span class="fact-line">Tools: Zapier &middot; Google Sheets</span>
+            <span class="fact-line">Reached: 1,400 people</span>
+            <span class="fact-line">Raised: $170</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Chef's Hat -->
+      <div class="card">
+        <img src="assets/lego/chefshat-fridge.png" alt="Chef's Hat" class="card-image">
+        <div class="card-body">
+          <p class="card-title">Chef's Hat</p>
+          <p class="card-problem">Tired of staring at the fridge. Built a system that turns what you have into a full week of meals.</p>
+          <div class="fact-list">
+            <span class="fact-line">Tools: Zapier &middot; Google Sheets</span>
+            <span class="fact-line">Inputs: macros + available protein</span>
+            <span class="fact-line">Outputs: full week meal plan + crockpot schedule</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Locked callout panel -->
+    <div class="locked-panel">
+      <div class="locked-panel-header">Step Complete?</div>
+      <div class="locked-panel-body">
+        <span class="locked-label">Find 2 bricks on this page to continue</span>
+        <div class="brick-slots">
+          <div class="brick-slot"></div>
+          <div class="brick-slot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Hidden brick #2 — tucked near the top-right border -->
+  <div id="brick-2" title="You found something..."></div>
+
+  <script>
+    document.getElementById('brick-2').addEventListener('click', function () {
+      this.classList.remove('glow');
+      void this.offsetWidth;
+      this.classList.add('glow');
+    });
+  </script>
+
+</body>
+</html>

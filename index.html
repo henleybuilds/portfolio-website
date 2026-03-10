@@ -70,24 +70,24 @@
     }
 
     .minifig {
-      width: 200px;
+      width: 400px;
       height: auto;
       display: block;
       flex-shrink: 0;
     }
 
-    /* Speech bubble */
+    /* Speech bubble — absolutely positioned to the right, doesn't affect centering */
     .bubble {
-      position: relative;
+      position: absolute;
+      left: calc(100% + 20px);
+      top: 50%;
+      transform: translateY(-50%) translateY(5px) scale(0.97);
       background: #fff;
       border: 2.5px solid #1C2B4A;
       border-radius: 12px;
       padding: 10px 13px;
-      max-width: 190px;
-      align-self: center;
-      margin-left: 16px;
+      width: 200px;
       opacity: 0;
-      transform: translateY(5px) scale(0.97);
       animation: bubbleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards;
     }
 
@@ -130,7 +130,7 @@
     @keyframes bubbleIn {
       to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(-50%) scale(1);
       }
     }
 
@@ -144,7 +144,8 @@
       background: #FFD700;
       color: #1C2B4A;
       border: none;
-      padding: 15px 46px;
+      width: 400px;
+      padding: 15px 0;
       font-family: 'Arial Black', Arial, sans-serif;
       font-size: 0.95rem;
       font-weight: 900;

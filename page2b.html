@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stephen Henley — The Work Continued</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #B8D4E8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Arial Black', Arial, sans-serif;
+      overflow-y: auto;
+      position: relative;
+      padding: 48px 24px 80px;
+    }
+
+    /* Yellow instruction-booklet border frame — identical to index.html */
+    .frame {
+      position: fixed;
+      inset: 16px;
+      border: 3px solid rgba(255, 215, 0, 0.75);
+      border-radius: 12px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .page-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      width: 100%;
+      max-width: 1060px;
+      z-index: 1;
+    }
+
+    /* Matches .set-label from index.html */
+    .set-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      margin-bottom: -20px;
+    }
+
+    /* Matches h1 from index.html */
+    h1 {
+      color: #1C2B4A;
+      font-size: clamp(2rem, 5.5vw, 3.6rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-shadow: 2px 2px 0 rgba(28,43,74,0.15);
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    /* ── Archer Section ─────────────────────────────────── */
+    .archer-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      width: 100%;
+      position: relative;
+    }
+
+    .archer-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .archer-img {
+      width: 160px;
+      height: auto;
+      display: block;
+    }
+
+    /* Green circular play button */
+    .start-btn {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: #2DB84B;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 0 #1a8033, 0 10px 24px rgba(28,43,74,0.25);
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .start-btn:hover {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 #1a8033, 0 6px 14px rgba(28,43,74,0.25);
+    }
+
+    .start-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 0 0 #1a8033, 0 3px 8px rgba(28,43,74,0.25);
+    }
+
+    /* Play triangle */
+    .start-btn::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 16px 0 16px 28px;
+      border-color: transparent transparent transparent #fff;
+      margin-left: 6px;
+    }
+
+    /* Computer screen wrap */
+    .computer-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .computer-img {
+      width: 220px;
+      height: auto;
+      display: block;
+    }
+
+    /* Text overlay on the dark screen area */
+    .screen-label {
+      position: absolute;
+      top: 18%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 72%;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      font-size: 0.56rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.5;
+      pointer-events: none;
+    }
+
+    /* Lego target — brick-4 */
+    #brick-4 {
+      position: absolute;
+      bottom: -8px;
+      right: -8px;
+      width: 36px;
+      height: auto;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    /* Flying arrow */
+    #lego-arrow {
+      position: fixed;
+      width: 64px;
+      height: auto;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 100;
+      transform-origin: center center;
+    }
+
+    #lego-arrow.flying {
+      animation: arrowFly 0.6s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+    }
+
+    @keyframes arrowFly {
+      0%   { opacity: 1; }
+      85%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* Screen glow overlay */
+    .screen-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 4px;
+      background: rgba(255, 215, 0, 0);
+      pointer-events: none;
+      transition: background 0.2s ease;
+    }
+
+    .screen-glow.active {
+      animation: screenGlow 0.6s ease forwards;
+    }
+
+    @keyframes screenGlow {
+      0%   { background: rgba(255, 215, 0, 0); }
+      35%  { background: rgba(255, 215, 0, 0.45); }
+      100% { background: rgba(255, 215, 0, 0); }
+    }
+
+    /* ── Projects Row ───────────────────────────────────── */
+    .projects-row {
+      display: flex;
+      gap: 60px;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .project {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      max-width: 340px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .project-image {
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+    }
+
+    .project-title {
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 900;
+      color: #1C2B4A;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: center;
+    }
+
+    .project-problem {
+      font-family: Arial, sans-serif;
+      font-size: 0.72rem;
+      color: #1C2B4A;
+      font-style: italic;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .fact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      border-top: 1.5px solid rgba(28,43,74,0.22);
+      padding-top: 9px;
+      width: 100%;
+    }
+
+    .fact-line {
+      font-family: Arial, sans-serif;
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+      padding-left: 11px;
+      position: relative;
+    }
+
+    .fact-line::before {
+      content: '▪';
+      position: absolute;
+      left: 0;
+      font-size: 0.48rem;
+      opacity: 0.55;
+      top: 1px;
+    }
+
+    /* ── Locked panel — identical to page2a.html ────────── */
+    .locked-panel {
+      background: #fff;
+      border: 2.5px solid #1C2B4A;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 0 #1C2B4A;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .locked-panel-header {
+      background: #FFD700;
+      padding: 5px 14px;
+      font-family: Arial, sans-serif;
+      font-size: 0.54rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      border-bottom: 2px solid #1C2B4A;
+    }
+
+    .locked-panel-body {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .locked-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.04em;
+    }
+
+    .brick-slots {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* Empty 2×1 brick outline */
+    .brick-slot {
+      width: 32px;
+      height: 16px;
+      border: 2px solid #1C2B4A;
+      border-radius: 3px;
+      position: relative;
+      opacity: 0.45;
+    }
+
+    .brick-slot::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 4px;
+      width: 10px;
+      height: 6px;
+      border: 2px solid #1C2B4A;
+      border-bottom: none;
+      border-radius: 50% 50% 0 0;
+    }
+
+    .brick-slot::after {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 18px;
+      width: 10px;
+      height: 6px;
+      border: 2px solid #1C2B4A;
+      border-bottom: none;
+      border-radius: 50% 50% 0 0;
+    }
+
+    /* ── Hidden bricks ─────────────────────────────────── */
+    #brick-3 {
+      position: fixed;
+      bottom: 52px;
+      right: 58px;
+      width: 32px;
+      height: 16px;
+      background: #FFD700;
+      border-radius: 3px;
+      box-shadow: 0 3px 0 #b8960a;
+      cursor: pointer;
+      z-index: 5;
+      opacity: 0.3;
+      transition: opacity 0.2s ease;
+    }
+
+    #brick-3::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 4px;
+      width: 10px;
+      height: 6px;
+      background: #FFD700;
+      border-radius: 50% 50% 0 0;
+      box-shadow: 14px 0 0 #FFD700;
+    }
+
+    #brick-3:hover {
+      opacity: 0.6;
+    }
+
+    #brick-3.glow {
+      opacity: 1;
+      animation: brickGlow 0.7s ease forwards;
+    }
+
+    @keyframes brickGlow {
+      0%   { box-shadow: 0 3px 0 #b8960a, 0 0 0 rgba(255,215,0,0); }
+      40%  { box-shadow: 0 3px 0 #b8960a, 0 0 18px 8px rgba(255,215,0,0.75); }
+      100% { box-shadow: 0 3px 0 #b8960a, 0 0 0 rgba(255,215,0,0); opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="frame"></div>
+
+  <!-- Flying arrow element -->
+  <img id="lego-arrow" src="assets/lego/lego-arrow.png" alt="">
+
+  <div class="page-container">
+
+    <p class="set-label">Page 03 &middot; Build Log Series</p>
+
+    <h1>The Work Continued</h1>
+
+    <!-- ── Archer Section ── -->
+    <div class="archer-section">
+
+      <!-- Left: archer drawn -->
+      <div class="archer-wrap">
+        <img id="archer-img" src="assets/lego/archer-drawn.png" alt="Lego archer drawing bow" class="archer-img">
+      </div>
+
+      <!-- Center: green start button -->
+      <button class="start-btn" id="start-btn" title="Fire!" aria-label="Start animation"></button>
+
+      <!-- Right: computer screen -->
+      <div class="computer-wrap" id="computer-wrap">
+        <img src="assets/lego/computer-screen.png" alt="Computer screen" class="computer-img">
+        <div class="screen-glow" id="screen-glow"></div>
+        <div class="screen-label">LEGO<br>CHECKLIST<br>WORKFLOW</div>
+        <!-- brick-4: lego target, subtle, no JS logic yet -->
+        <img id="brick-4" src="assets/lego/lego-target.png" alt="">
+      </div>
+
+    </div>
+
+    <!-- ── Two Projects ── -->
+    <div class="projects-row">
+
+      <!-- Project 1: AI Content Character System -->
+      <div class="project">
+        <img src="assets/lego/ai-content-scene.png" alt="AI Content Character System" class="project-image">
+        <p class="project-title">AI Content Character System</p>
+        <p class="project-problem">Needed consistent educational content without sitting down to film every day. Built a fully autonomous pipeline.</p>
+        <div class="fact-list">
+          <span class="fact-line">Tools: Make.com</span>
+          <span class="fact-line">Views per month: 26,000</span>
+          <span class="fact-line">Manual steps remaining: 1</span>
+        </div>
+      </div>
+
+      <!-- Project 2: Jiu-Jitsu Training Assistant -->
+      <div class="project">
+        <img src="assets/lego/jiujitsu-mat.png" alt="Jiu-Jitsu Training Assistant" class="project-image">
+        <p class="project-title">Jiu-Jitsu Training Assistant</p>
+        <p class="project-problem">Wanted smarter training sessions, not just more of them. Built an AI that plans each class.</p>
+        <div class="fact-list">
+          <span class="fact-line">Tools: Claude AI</span>
+          <span class="fact-line">Inputs: strengths, weaknesses, goals</span>
+          <span class="fact-line">Output: focused session plan</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Locked Panel ── -->
+    <div class="locked-panel">
+      <div class="locked-panel-header">Step Complete?</div>
+      <div class="locked-panel-body">
+        <span class="locked-label">Find 2 bricks on this page to continue</span>
+        <div class="brick-slots">
+          <div class="brick-slot"></div>
+          <div class="brick-slot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Hidden brick #3 — tucked near the bottom-right border -->
+  <div id="brick-3" title="You found something..."></div>
+
+  <script>
+    // Brick-3 click handler
+    document.getElementById('brick-3').addEventListener('click', function () {
+      this.classList.remove('glow');
+      void this.offsetWidth;
+      this.classList.add('glow');
+    });
+
+    // Start button — archer animation sequence
+    document.getElementById('start-btn').addEventListener('click', function () {
+      const btn = this;
+      btn.disabled = true;
+
+      const archerImg = document.getElementById('archer-img');
+      const arrow = document.getElementById('lego-arrow');
+      const screenGlow = document.getElementById('screen-glow');
+      const computerWrap = document.getElementById('computer-wrap');
+
+      // Get positions for the animation path
+      const archerRect = archerImg.getBoundingClientRect();
+      const computerRect = computerWrap.getBoundingClientRect();
+
+      // Start position: center-right of archer
+      const startX = archerRect.right - 16;
+      const startY = archerRect.top + archerRect.height * 0.35;
+
+      // End position: center of computer screen
+      const endX = computerRect.left + computerRect.width * 0.4;
+      const endY = computerRect.top + computerRect.height * 0.35;
+
+      // Calculate angle for arrow rotation
+      const dx = endX - startX;
+      const dy = endY - startY;
+      const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+      // Position arrow at start
+      arrow.style.left = startX + 'px';
+      arrow.style.top = startY + 'px';
+      arrow.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';
+      arrow.style.opacity = '1';
+
+      // Animate arrow via CSS transition
+      arrow.style.transition = 'none';
+      // Force reflow
+      void arrow.offsetWidth;
+
+      arrow.style.transition = 'left 0.55s cubic-bezier(0.4,0,0.8,1), top 0.55s cubic-bezier(0.4,0,0.8,1), opacity 0.15s ease 0.45s';
+      arrow.style.left = endX + 'px';
+      arrow.style.top = endY + 'px';
+
+      // After arrow arrives: glow screen, swap archer image
+      setTimeout(function () {
+        arrow.style.opacity = '0';
+
+        // Screen glow
+        screenGlow.classList.remove('active');
+        void screenGlow.offsetWidth;
+        screenGlow.classList.add('active');
+
+        // Swap archer to released pose
+        archerImg.src = 'assets/lego/archer-released.png';
+
+        // Re-enable button after animation settles
+        setTimeout(function () {
+          btn.disabled = false;
+        }, 800);
+      }, 580);
+    });
+  </script>
+
+</body>
+</html>

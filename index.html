@@ -60,40 +60,36 @@
       line-height: 1.1;
     }
 
-    /* Character + speech bubble wrapper */
+    /* Character wrap — bubble is absolute so only the minifig sets the width,
+       keeping everything centered on the same axis as h1 and the buttons */
     .character-wrap {
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 8px;
       position: relative;
+      display: inline-block;
     }
 
-    /* Minifig scales down on narrower viewports so bubble always fits inside frame */
     .minifig {
-      width: min(550px, calc(100vw - 250px));
+      width: min(550px, calc(100vw - 80px));
       height: auto;
       display: block;
-      flex-shrink: 0;
     }
 
-    /* Speech bubble — flex sibling so it flows with the minifig and never overflows */
+    /* Speech bubble — absolutely positioned over the upper-right of the minifig */
     .bubble {
-      position: relative;
-      align-self: flex-start;
-      margin-top: 80px;
-      flex-shrink: 0;
-      transform: translateY(5px) scale(0.97);
+      position: absolute;
+      right: 24px;
+      top: 55px;
       background: #fff;
       border: 2.5px solid #1C2B4A;
       border-radius: 12px;
       padding: 10px 13px;
       width: 160px;
       opacity: 0;
+      transform: translateY(5px) scale(0.97);
       animation: bubbleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards;
+      z-index: 2;
     }
 
-    /* Tail pointing left toward the character */
+    /* Tail pointing left toward the character's face */
     .bubble::before {
       content: '';
       position: absolute;
@@ -141,6 +137,14 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* Button group — both buttons share the same center axis */
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
     /* Yellow 3D button */
     .btn {
       background: #FFD700;
@@ -172,7 +176,139 @@
       box-shadow: 0 0px 0 #b8960a, 0 4px 10px rgba(28,43,74,0.22);
     }
 
-    /* Hidden Lego brick — 2×1 with two studs */
+    /* ── Modal ──────────────────────────────────────────── */
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 43, 74, 0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: #B8D4E8;
+      border: 3px solid #FFD700;
+      border-radius: 12px;
+      padding: 28px 28px 24px;
+      max-width: 420px;
+      width: calc(100vw - 64px);
+      position: relative;
+      box-shadow: 0 10px 0 rgba(28,43,74,0.3), 0 18px 48px rgba(28,43,74,0.35);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      color: #1C2B4A;
+      line-height: 1;
+      opacity: 0.5;
+      padding: 4px 6px;
+      transition: opacity 0.15s ease;
+    }
+
+    .modal-close:hover { opacity: 1; }
+
+    .modal-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.54rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      opacity: 0.7;
+    }
+
+    .modal-heading {
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #1C2B4A;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-bottom: 12px;
+      border-bottom: 2.5px solid #1C2B4A;
+      margin-bottom: 14px;
+    }
+
+    .modal-intro {
+      font-family: Arial, sans-serif;
+      font-size: 0.78rem;
+      color: #1C2B4A;
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-btn {
+      display: block;
+      width: 100%;
+      padding: 12px 0;
+      text-align: center;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.76rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+    }
+
+    .modal-btn-primary {
+      background: #FFD700;
+      color: #1C2B4A;
+      box-shadow: 0 5px 0 #b8960a;
+    }
+
+    .modal-btn-primary:hover {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #b8960a;
+    }
+
+    .modal-btn-primary:active {
+      transform: translateY(5px);
+      box-shadow: 0 0px 0 #b8960a;
+    }
+
+    .modal-btn-dark {
+      background: #1C2B4A;
+      color: #fff;
+      box-shadow: 0 5px 0 #0a111e;
+    }
+
+    .modal-btn-dark:hover {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #0a111e;
+    }
+
+    .modal-btn-dark:active {
+      transform: translateY(5px);
+      box-shadow: 0 0px 0 #0a111e;
+    }
+
+    /* ── Hidden Lego brick — 2×1 with two studs ─────────── */
     #brick-1 {
       position: fixed;
       bottom: 52px;
@@ -200,9 +336,7 @@
       box-shadow: 14px 0 0 #FFD700;
     }
 
-    #brick-1:hover {
-      opacity: 0.6;
-    }
+    #brick-1:hover { opacity: 0.6; }
 
     #brick-1.glow {
       opacity: 1;
@@ -239,18 +373,55 @@
       </div>
     </div>
 
-    <a href="page2a.html" class="btn">Open the Manual</a>
+    <div class="btn-group">
+      <a href="page2a.html" class="btn">Open the Manual</a>
+      <button class="btn" id="contact-btn">Get in Touch</button>
+    </div>
 
+  </div>
+
+  <!-- Get in Touch modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <p class="modal-label">Connect &middot; SH-001</p>
+      <h2 class="modal-heading">Get in Touch</h2>
+      <p class="modal-intro">If you enjoyed this or have thoughts on what I'm building&nbsp;&mdash; I'd love to connect.</p>
+      <div class="modal-actions">
+        <a href="https://linkedin.com/in/stephenhenley1" target="_blank" rel="noopener" class="modal-btn modal-btn-primary">LinkedIn</a>
+        <a href="mailto:stephenhenley5@gmail.com" class="modal-btn modal-btn-dark">Email Me</a>
+        <a href="assets/not-a-resume.pdf" download class="modal-btn modal-btn-dark">Download: Not-a-Resume</a>
+      </div>
+    </div>
   </div>
 
   <!-- Hidden brick #1 — tucked near the bottom-left border -->
   <div id="brick-1" title="You found something..."></div>
 
   <script>
+    // Hidden brick
     document.getElementById('brick-1').addEventListener('click', function () {
       this.classList.remove('glow');
-      void this.offsetWidth; // reflow to restart animation
+      void this.offsetWidth;
       this.classList.add('glow');
+    });
+
+    // Modal open / close
+    const overlay = document.getElementById('modal-overlay');
+    const modal   = document.getElementById('modal');
+
+    document.getElementById('contact-btn').addEventListener('click', function () {
+      overlay.classList.add('open');
+    });
+
+    document.getElementById('modal-close').addEventListener('click', function () {
+      overlay.classList.remove('open');
+    });
+
+    overlay.addEventListener('click', function (e) {
+      if (!modal.contains(e.target)) {
+        overlay.classList.remove('open');
+      }
     });
   </script>
 

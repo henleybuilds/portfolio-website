@@ -76,12 +76,12 @@
       flex-shrink: 0;
     }
 
-    /* Speech bubble — absolutely positioned to the right, doesn't affect centering */
+    /* Speech bubble — positioned near the minifig's head area */
     .bubble {
       position: absolute;
-      left: calc(100% + 20px);
-      top: 50%;
-      transform: translateY(-50%) translateY(5px) scale(0.97);
+      left: calc(100% - 5px);
+      top: 20%;
+      transform: translateY(5px) scale(0.97);
       background: #fff;
       border: 2.5px solid #1C2B4A;
       border-radius: 12px;
@@ -130,7 +130,7 @@
     @keyframes bubbleIn {
       to {
         opacity: 1;
-        transform: translateY(-50%) scale(1);
+        transform: scale(1);
       }
     }
 

@@ -65,28 +65,30 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      gap: 0;
+      gap: 8px;
       position: relative;
     }
 
+    /* Minifig scales down on narrower viewports so bubble always fits inside frame */
     .minifig {
-      width: 550px;
+      width: min(550px, calc(100vw - 250px));
       height: auto;
       display: block;
       flex-shrink: 0;
     }
 
-    /* Speech bubble — positioned near the minifig's head area */
+    /* Speech bubble — flex sibling so it flows with the minifig and never overflows */
     .bubble {
-      position: absolute;
-      left: calc(100% - 5px);
-      top: 20%;
+      position: relative;
+      align-self: flex-start;
+      margin-top: 80px;
+      flex-shrink: 0;
       transform: translateY(5px) scale(0.97);
       background: #fff;
       border: 2.5px solid #1C2B4A;
       border-radius: 12px;
       padding: 10px 13px;
-      width: 200px;
+      width: 160px;
       opacity: 0;
       animation: bubbleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards;
     }

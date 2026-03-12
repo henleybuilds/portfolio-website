@@ -133,42 +133,25 @@
       box-shadow: 0 0 0 #b8960a;
     }
 
-    /* Project image — sits directly on blue */
+    /* Project image — sits directly on blue, no container */
     .project-img {
       width: 100%;
-      height: auto;
       display: block;
       border-radius: 6px;
+      object-fit: cover;
+      object-position: center;
+      background: transparent;
       mix-blend-mode: multiply;
     }
 
-    /* Stats block */
-    .fact-list {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      border-top: 1.5px solid rgba(28,43,74,0.25);
-      padding-top: 9px;
+    /* Top two images: tall and impactful */
+    .projects-top .project-img {
+      height: 500px;
     }
 
-    .fact-line {
-      font-family: Arial, sans-serif;
-      font-size: 0.66rem;
-      font-weight: 700;
-      color: #1C2B4A;
-      letter-spacing: 0.02em;
-      line-height: 1.4;
-      padding-left: 11px;
-      position: relative;
-    }
-
-    .fact-line::before {
-      content: '▪';
-      position: absolute;
-      left: 0;
-      font-size: 0.48rem;
-      opacity: 0.55;
-      top: 1px;
+    /* Bottom centered image */
+    .project-bottom .project-img {
+      height: 450px;
     }
 
     /* ── Modals ─────────────────────────────────────────── */
@@ -445,16 +428,8 @@
       <p class="modal-label">Project &middot; Build Log</p>
       <h2 class="modal-heading">ScoutTrek Automated Posting</h2>
       <div class="modal-body">
-        <p>I'm building a system that runs the entire content process on its own.</p>
-        <p>Last week I shared the build for the ScoutTrek content system. It takes structured inputs and writes the full posts automatically. That works.</p>
-        <p>Now I'm trying to solve the harder problem. Instead of me creating the inputs every week, I want it to generate its own weekly plan.</p>
-        <p>So right now it:</p>
-        <p class="modal-dash-line">&mdash; Pulls the brand context</p>
-        <p class="modal-dash-line">&mdash; Pulls the last 7 topics so it doesn't repeat itself</p>
-        <p class="modal-dash-line">&mdash; Generates 7 new structured input rows</p>
-        <p class="modal-dash-line">&mdash; Writes them back into the sheet</p>
-        <p>Then the posting system takes over.</p>
-        <p>The challenge isn't writing posts. It's making sure the inputs don't slowly drift back to the same ideas or become generic over time.</p>
+        <p>Social media only works if you show up consistently. For a Scouts organization, that's one more thing nobody has time for.</p>
+        <p>I built a pipeline that takes the whole process off their plate. Photos come in, the system analyzes them, writes the posts, checks for compliance, and publishes &mdash; without anyone having to think about it.</p>
       </div>
     </div>
   </div>
@@ -466,11 +441,10 @@
       <p class="modal-label">Project &middot; Build Log</p>
       <h2 class="modal-heading">Workshop &amp; Wander</h2>
       <div class="modal-body">
-        <p>This was built to test how AI can handle daily script writing &mdash; a pre-project before building ScoutTrek.</p>
-        <p>It's been a while since I've posted here, so I wanted to share what I've been working on. Over the past few weeks, I've been building an automated content system using Make. To test it properly, I've been using a single AI-driven character that publishes short educational videos across topics like ancient cultures, unusual animals, science, and history.</p>
-        <p>The character itself is just a consistent test case. The real focus has been whether the system can reliably choose topics, look at what's already been posted, avoid repetition, write scripts, generate descriptions and hashtags, and keep everything organized end to end.</p>
-        <p>At this point, the content system itself is fully automated. The only manual step left is final video generation and posting, which I'm still refining. Over the last month, this setup has produced around 26k views and nearly 300 engagements.</p>
-        <p>Next, I want to test the same system in a business context to see how it adapts to different goals and constraints, and continue tightening the automation as I go.</p>
+        <p>I wanted to find out how much of the content creation process I could actually remove.</p>
+        <p>So I built a test &mdash; one AI-driven character publishing short educational videos across ancient cultures, unusual animals, science, and history. The system picks topics, checks what's already been posted to avoid repetition, writes the scripts, and generates descriptions and hashtags automatically.</p>
+        <p>The piece I couldn't fully close was video generation itself. The scripts and prompts were ready to hand off to a video tool &mdash; but connecting it end to end would have added costs I wasn't ready to take on for a test. So that step stayed manual.</p>
+        <p>26,000 views and nearly 300 engagements in a month. The system did what I needed it to do.</p>
 
         <span class="video-section-label">Watch the System in Action</span>
         <div class="video-grid">
@@ -502,11 +476,9 @@
       <p class="modal-label">Project &middot; Build Log</p>
       <h2 class="modal-heading">Chef's Hat</h2>
       <div class="modal-body">
-        <p>Meal planning takes time &mdash; picking recipes, building grocery lists, staying consistent.</p>
-        <p>I built my first Zapier project to fix that. Now I just type in Slack:</p>
-        <p class="modal-dash-line"><em>meal plan &ndash; Mexican Chicken</em></p>
-        <p>&hellip;and instantly get a recipe, serving sizes, and a grocery list with clickable links.</p>
-        <p>This was one of my earlier projects but it's still one I think about. I'm very curious to dive back into it to see what I can do with it now.</p>
+        <p>I love meal prepping but I wanted to do it on a budget without spending an hour planning every week.</p>
+        <p>I built a Zapier workflow where I send one Slack message &mdash; just the cuisine I want &mdash; and it comes back with a full recipe, serving sizes, and a grocery list with clickable links.</p>
+        <p>This was one of my first automation projects and it still sticks with me. I keep thinking about what I could build if I came back to it now.</p>
       </div>
     </div>
   </div>
@@ -528,11 +500,6 @@
           <button class="see-more-btn" data-open="overlay-scouttrek">See More &rsaquo;</button>
         </div>
         <img src="assets/lego/scouttrek-trail.png" alt="ScoutTrek Automated Posting" class="project-img">
-        <div class="fact-list">
-          <span class="fact-line">Tools: Make.com &middot; AI Vision</span>
-          <span class="fact-line">Posts automated per week: 7</span>
-          <span class="fact-line">Manual steps remaining: 1</span>
-        </div>
       </div>
 
       <!-- Project 2: Workshop & Wander -->
@@ -542,11 +509,6 @@
           <button class="see-more-btn" data-open="overlay-workshop">See More &rsaquo;</button>
         </div>
         <img src="assets/lego/ai-content-scene.png" alt="Workshop and Wander" class="project-img">
-        <div class="fact-list">
-          <span class="fact-line">Tools: Make.com</span>
-          <span class="fact-line">Views per month: 26,000</span>
-          <span class="fact-line">Manual steps remaining: 1</span>
-        </div>
       </div>
 
     </div>
@@ -559,11 +521,6 @@
           <button class="see-more-btn" data-open="overlay-chefs">See More &rsaquo;</button>
         </div>
         <img src="assets/lego/chefshat-fridge.png" alt="Chef's Hat" class="project-img">
-        <div class="fact-list">
-          <span class="fact-line">Tools: Zapier &middot; Google Sheets</span>
-          <span class="fact-line">Inputs: macros + available protein</span>
-          <span class="fact-line">Outputs: full week meal plan + crockpot schedule</span>
-        </div>
       </div>
     </div>
 

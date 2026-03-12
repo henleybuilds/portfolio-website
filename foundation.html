@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stephen Henley — The Foundation</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #B8D4E8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Arial Black', Arial, sans-serif;
+      overflow-y: auto;
+      position: relative;
+      padding: 48px 24px 80px;
+    }
+
+    /* Yellow instruction-booklet border frame — identical to index.html */
+    .frame {
+      position: fixed;
+      inset: 16px;
+      border: 3px solid rgba(255, 215, 0, 0.75);
+      border-radius: 12px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .page-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 36px;
+      width: 100%;
+      max-width: 820px;
+      z-index: 1;
+    }
+
+    /* Matches .set-label from index.html */
+    .set-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      margin-bottom: -20px;
+    }
+
+    /* Matches h1 from index.html */
+    h1 {
+      color: #1C2B4A;
+      font-size: clamp(2rem, 5.5vw, 3.6rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-shadow: 2px 2px 0 rgba(28,43,74,0.15);
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    /* Photo */
+    .photo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .foundation-img {
+      width: 100%;
+      max-width: 660px;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+      box-shadow: 0 8px 32px rgba(28,43,74,0.30), 0 2px 8px rgba(28,43,74,0.14);
+    }
+
+    .photo-caption {
+      font-family: Arial, sans-serif;
+      font-size: 0.66rem;
+      font-style: italic;
+      color: #1C2B4A;
+      opacity: 0.68;
+      letter-spacing: 0.05em;
+    }
+
+    /* Facts — individual callout boxes floating on the blue, no card wrapper */
+    .facts-block {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      width: 100%;
+      max-width: 660px;
+    }
+
+    .fact-item {
+      border: 2px solid #1C2B4A;
+      border-radius: 5px;
+      padding: 9px 16px 9px 36px;
+      position: relative;
+      font-family: Arial, sans-serif;
+      font-size: 0.73rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      line-height: 1.5;
+      letter-spacing: 0.01em;
+    }
+
+    .fact-item::before {
+      content: '▪';
+      position: absolute;
+      left: 15px;
+      top: 10px;
+      font-size: 0.5rem;
+      opacity: 0.55;
+    }
+
+    /* Last fact gets a yellow accent — Eagle Scout line */
+    .fact-item.accent {
+      border-color: #FFD700;
+      border-width: 2.5px;
+      background: rgba(255, 215, 0, 0.07);
+    }
+
+    /* Connecting / closing statement */
+    .connecting-line {
+      font-family: Arial, sans-serif;
+      font-size: 0.92rem;
+      font-style: italic;
+      font-weight: 700;
+      color: #1C2B4A;
+      text-align: center;
+      max-width: 580px;
+      line-height: 1.6;
+      border-left: 4px solid #FFD700;
+      padding-left: 20px;
+      letter-spacing: 0.01em;
+      align-self: flex-start;
+      margin-left: calc((100% - 580px) / 2);
+    }
+
+    /* Locked panel — identical to page2a / page2b */
+    .locked-panel {
+      background: #fff;
+      border: 2.5px solid #1C2B4A;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 0 #1C2B4A;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .locked-panel-header {
+      background: #FFD700;
+      padding: 5px 14px;
+      font-family: Arial, sans-serif;
+      font-size: 0.54rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      border-bottom: 2px solid #1C2B4A;
+    }
+
+    .locked-panel-body {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .locked-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.04em;
+    }
+
+    .brick-slots {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* Empty 2×1 brick outline — like a blank slot in a parts list */
+    .brick-slot {
+      width: 32px;
+      height: 16px;
+      border: 2px solid #1C2B4A;
+      border-radius: 3px;
+      position: relative;
+      opacity: 0.45;
+    }
+
+    .brick-slot::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 4px;
+      width: 10px;
+      height: 6px;
+      border: 2px solid #1C2B4A;
+      border-bottom: none;
+      border-radius: 50% 50% 0 0;
+    }
+
+    .brick-slot::after {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 18px;
+      width: 10px;
+      height: 6px;
+      border: 2px solid #1C2B4A;
+      border-bottom: none;
+      border-radius: 50% 50% 0 0;
+    }
+
+    /* Hidden brick #5 — matches style from other pages */
+    #brick-5 {
+      position: fixed;
+      top: 50%;
+      left: 28px;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 16px;
+      background: #FFD700;
+      border-radius: 3px;
+      box-shadow: 0 3px 0 #b8960a;
+      cursor: pointer;
+      z-index: 5;
+      opacity: 0.22;
+      transition: opacity 0.2s ease;
+    }
+
+    #brick-5::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 4px;
+      width: 10px;
+      height: 6px;
+      background: #FFD700;
+      border-radius: 50% 50% 0 0;
+      box-shadow: 14px 0 0 #FFD700;
+    }
+
+    #brick-5:hover {
+      opacity: 0.55;
+    }
+
+    #brick-5.glow {
+      opacity: 1;
+      animation: brickGlow 0.7s ease forwards;
+    }
+
+    @keyframes brickGlow {
+      0%   { box-shadow: 0 3px 0 #b8960a, 0 0 0 rgba(255,215,0,0); }
+      40%  { box-shadow: 0 3px 0 #b8960a, 0 0 18px 8px rgba(255,215,0,0.75); }
+      100% { box-shadow: 0 3px 0 #b8960a, 0 0 0 rgba(255,215,0,0); opacity: 0.22; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="frame"></div>
+
+  <div class="page-container">
+
+    <p class="set-label">Set No. SH-003 &middot; The Foundation</p>
+
+    <h1>The Foundation</h1>
+
+    <!-- Photo -->
+    <div class="photo-wrap">
+      <img
+        src="assets/lego/foundation-school.PNG"
+        alt="Mafakathini school, South Africa"
+        class="foundation-img"
+      >
+      <span class="photo-caption">Mafakathini, South Africa</span>
+    </div>
+
+    <!-- Facts block — floating callout lines, no card wrapper -->
+    <div class="facts-block">
+      <div class="fact-item">A school for children with disabilities.</div>
+      <div class="fact-item">No running water. No kitchen. One lightbulb. Teachers walked 10 miles to ask for help.</div>
+      <div class="fact-item">Two weeks. 25+ volunteers across two countries.</div>
+      <div class="fact-item">Repainted walls, replaced windows, installed bathroom and kitchen, repaired roof, floors, sidewalk, insulation, lighting, swing set, and garden.</div>
+      <div class="fact-item">The school served more than twice as many students when finished.</div>
+      <div class="fact-item accent">Eagle Scout &mdash; 2018. Featured in Scouting Magazine.</div>
+    </div>
+
+    <!-- Connecting statement -->
+    <p class="connecting-line">Before I was automating workflows, I was learning that the best projects start with someone else's problem.</p>
+
+    <!-- "Find 1 brick" panel -->
+    <div class="locked-panel">
+      <div class="locked-panel-header">Step Complete?</div>
+      <div class="locked-panel-body">
+        <span class="locked-label">Find 1 brick to continue</span>
+        <div class="brick-slots">
+          <div class="brick-slot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Next page button — bottom right, same style as page2a / page2b -->
+  <a href="contact.html" style="
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: #FFD700;
+    color: #1C2B4A;
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+    padding: 9px 16px;
+    border-radius: 6px;
+    box-shadow: 0 5px 0 #b8960a;
+    z-index: 20;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  " onmouseover="this.style.transform='translateY(3px)';this.style.boxShadow='0 2px 0 #b8960a'"
+     onmouseout="this.style.transform='';this.style.boxShadow='0 5px 0 #b8960a'">Next &rsaquo;</a>
+
+  <!-- Hidden brick #5 — tucked along the left border, vertically centered -->
+  <div id="brick-5" title="You found something..."></div>
+
+  <script>
+    document.getElementById('brick-5').addEventListener('click', function () {
+      this.classList.remove('glow');
+      void this.offsetWidth;
+      this.classList.add('glow');
+    });
+  </script>
+
+</body>
+</html>

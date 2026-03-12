@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stephen Henley — The Work</title>
+  <title>Stephen Henley — What I've Been Building</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -19,7 +19,6 @@
       padding: 48px 24px 80px;
     }
 
-    /* Yellow instruction-booklet border frame — identical to index.html */
     .frame {
       position: fixed;
       inset: 16px;
@@ -33,13 +32,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 28px;
+      gap: 36px;
       width: 100%;
-      max-width: 1060px;
+      max-width: 960px;
       z-index: 1;
     }
 
-    /* Matches .set-label from index.html */
     .set-label {
       font-family: Arial, sans-serif;
       font-size: 0.62rem;
@@ -50,10 +48,9 @@
       margin-bottom: -20px;
     }
 
-    /* Matches h1 from index.html */
     h1 {
       color: #1C2B4A;
-      font-size: clamp(2rem, 5.5vw, 3.6rem);
+      font-size: clamp(1.6rem, 4.5vw, 3rem);
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -62,45 +59,43 @@
       line-height: 1.1;
     }
 
-    /* 3 project cards in a row */
-    .cards-row {
+    /* ── Project layout ─────────────────────────────────── */
+
+    /* Top row: two projects side by side */
+    .projects-top {
       display: flex;
-      gap: 18px;
+      gap: 40px;
       justify-content: center;
       align-items: flex-start;
       width: 100%;
     }
 
-    .card {
-      background: #B8D4E8;
-      border: 2.5px solid #1C2B4A;
-      border-radius: 8px;
-      flex: 1;
-      max-width: 320px;
-      min-width: 0;
+    /* Bottom row: one project centered */
+    .project-bottom {
       display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 5px 0 #1C2B4A;
-    }
-
-    .card-image {
+      justify-content: center;
       width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-      display: block;
-      border-bottom: 2.5px solid #1C2B4A;
     }
 
-    .card-body {
-      background: #fff;
-      padding: 14px 14px 16px;
+    /* Individual project block — floats on blue, no card */
+    .project-block {
       display: flex;
       flex-direction: column;
-      gap: 9px;
+      gap: 10px;
+      flex: 1;
+      max-width: 420px;
+      min-width: 0;
     }
 
-    .card-title {
+    /* Header row: title left, SEE MORE right */
+    .project-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .project-name {
       font-family: 'Arial Black', Arial, sans-serif;
       font-size: 0.76rem;
       font-weight: 900;
@@ -109,22 +104,51 @@
       letter-spacing: 0.08em;
     }
 
-    .card-problem {
-      font-family: Arial, sans-serif;
-      font-size: 0.71rem;
+    /* Small yellow SEE MORE button */
+    .see-more-btn {
+      background: #FFD700;
       color: #1C2B4A;
-      font-style: italic;
-      line-height: 1.55;
+      border: none;
+      padding: 5px 11px;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.56rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      border-radius: 4px;
+      box-shadow: 0 3px 0 #b8960a;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
-    /* Parts list — mimics Lego instruction parts table */
+    .see-more-btn:hover {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #b8960a;
+    }
+
+    .see-more-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 #b8960a;
+    }
+
+    /* Project image — sits directly on blue */
+    .project-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+      mix-blend-mode: multiply;
+    }
+
+    /* Stats block */
     .fact-list {
       display: flex;
       flex-direction: column;
       gap: 5px;
-      border-top: 1.5px solid rgba(28,43,74,0.18);
+      border-top: 1.5px solid rgba(28,43,74,0.25);
       padding-top: 9px;
-      margin-top: 2px;
     }
 
     .fact-line {
@@ -147,7 +171,150 @@
       top: 1px;
     }
 
-    /* Locked panel — Lego instruction callout box */
+    /* ── Modals ─────────────────────────────────────────── */
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 43, 74, 0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: #B8D4E8;
+      border: 3px solid #FFD700;
+      border-radius: 12px;
+      padding: 28px 28px 24px;
+      max-width: 560px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 10px 0 rgba(28,43,74,0.3), 0 18px 48px rgba(28,43,74,0.35);
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      color: #1C2B4A;
+      opacity: 0.5;
+      padding: 4px 6px;
+      transition: opacity 0.15s ease;
+      line-height: 1;
+    }
+
+    .modal-close:hover { opacity: 1; }
+
+    .modal-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.54rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      opacity: 0.7;
+    }
+
+    .modal-heading {
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      color: #1C2B4A;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-bottom: 12px;
+      border-bottom: 2.5px solid #1C2B4A;
+      margin-bottom: 16px;
+    }
+
+    .modal-body p {
+      font-family: Arial, sans-serif;
+      font-size: 0.76rem;
+      color: #1C2B4A;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .modal-body p:last-child { margin-bottom: 0; }
+
+    /* Dash list lines inside modal */
+    .modal-dash-line {
+      font-family: Arial, sans-serif;
+      font-size: 0.76rem;
+      color: #1C2B4A;
+      line-height: 1.7;
+      padding-left: 16px;
+      margin-bottom: 2px;
+    }
+
+    /* ── Video bank (Workshop & Wander modal) ────────────── */
+
+    .video-section-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.54rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #1C2B4A;
+      border-top: 2px solid rgba(28,43,74,0.35);
+      padding-top: 16px;
+      margin-top: 20px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .video-tile {
+      background: #1a2840;
+      border-radius: 6px;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .video-play {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 10px 0 10px 18px;
+      border-color: transparent transparent transparent rgba(255,255,255,0.45);
+    }
+
+    .video-coming-soon {
+      font-family: Arial, sans-serif;
+      font-size: 0.52rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Locked panel ───────────────────────────────────── */
+
     .locked-panel {
       background: #fff;
       border: 2.5px solid #1C2B4A;
@@ -192,7 +359,6 @@
       flex-shrink: 0;
     }
 
-    /* Empty 2×1 brick outline — like a blank slot in a parts list */
     .brick-slot {
       width: 32px;
       height: 16px;
@@ -202,7 +368,6 @@
       opacity: 0.45;
     }
 
-    /* First stud outline */
     .brick-slot::before {
       content: '';
       position: absolute;
@@ -215,7 +380,6 @@
       border-radius: 50% 50% 0 0;
     }
 
-    /* Second stud outline */
     .brick-slot::after {
       content: '';
       position: absolute;
@@ -228,7 +392,7 @@
       border-radius: 50% 50% 0 0;
     }
 
-    /* Hidden Lego brick — matches #brick-1 style from index.html exactly */
+    /* ── Hidden brick #2 ────────────────────────────────── */
     #brick-2 {
       position: fixed;
       top: 52px;
@@ -256,9 +420,7 @@
       box-shadow: 14px 0 0 #FFD700;
     }
 
-    #brick-2:hover {
-      opacity: 0.6;
-    }
+    #brick-2:hover { opacity: 0.6; }
 
     #brick-2.glow {
       opacity: 1;
@@ -276,59 +438,136 @@
 
   <div class="frame"></div>
 
+  <!-- ── Modal: ScoutTrek ─────────────────────────────── -->
+  <div class="modal-overlay" id="overlay-scouttrek">
+    <div class="modal" id="modal-scouttrek">
+      <button class="modal-close" data-close="overlay-scouttrek" aria-label="Close">&times;</button>
+      <p class="modal-label">Project &middot; Build Log</p>
+      <h2 class="modal-heading">ScoutTrek Automated Posting</h2>
+      <div class="modal-body">
+        <p>I'm building a system that runs the entire content process on its own.</p>
+        <p>Last week I shared the build for the ScoutTrek content system. It takes structured inputs and writes the full posts automatically. That works.</p>
+        <p>Now I'm trying to solve the harder problem. Instead of me creating the inputs every week, I want it to generate its own weekly plan.</p>
+        <p>So right now it:</p>
+        <p class="modal-dash-line">&mdash; Pulls the brand context</p>
+        <p class="modal-dash-line">&mdash; Pulls the last 7 topics so it doesn't repeat itself</p>
+        <p class="modal-dash-line">&mdash; Generates 7 new structured input rows</p>
+        <p class="modal-dash-line">&mdash; Writes them back into the sheet</p>
+        <p>Then the posting system takes over.</p>
+        <p>The challenge isn't writing posts. It's making sure the inputs don't slowly drift back to the same ideas or become generic over time.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Workshop & Wander ─────────────────────── -->
+  <div class="modal-overlay" id="overlay-workshop">
+    <div class="modal" id="modal-workshop">
+      <button class="modal-close" data-close="overlay-workshop" aria-label="Close">&times;</button>
+      <p class="modal-label">Project &middot; Build Log</p>
+      <h2 class="modal-heading">Workshop &amp; Wander</h2>
+      <div class="modal-body">
+        <p>This was built to test how AI can handle daily script writing &mdash; a pre-project before building ScoutTrek.</p>
+        <p>It's been a while since I've posted here, so I wanted to share what I've been working on. Over the past few weeks, I've been building an automated content system using Make. To test it properly, I've been using a single AI-driven character that publishes short educational videos across topics like ancient cultures, unusual animals, science, and history.</p>
+        <p>The character itself is just a consistent test case. The real focus has been whether the system can reliably choose topics, look at what's already been posted, avoid repetition, write scripts, generate descriptions and hashtags, and keep everything organized end to end.</p>
+        <p>At this point, the content system itself is fully automated. The only manual step left is final video generation and posting, which I'm still refining. Over the last month, this setup has produced around 26k views and nearly 300 engagements.</p>
+        <p>Next, I want to test the same system in a business context to see how it adapts to different goals and constraints, and continue tightening the automation as I go.</p>
+
+        <span class="video-section-label">Watch the System in Action</span>
+        <div class="video-grid">
+          <div class="video-tile">
+            <div class="video-play"></div>
+            <span class="video-coming-soon">Video coming soon</span>
+          </div>
+          <div class="video-tile">
+            <div class="video-play"></div>
+            <span class="video-coming-soon">Video coming soon</span>
+          </div>
+          <div class="video-tile">
+            <div class="video-play"></div>
+            <span class="video-coming-soon">Video coming soon</span>
+          </div>
+          <div class="video-tile">
+            <div class="video-play"></div>
+            <span class="video-coming-soon">Video coming soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Chef's Hat ─────────────────────────────── -->
+  <div class="modal-overlay" id="overlay-chefs">
+    <div class="modal" id="modal-chefs">
+      <button class="modal-close" data-close="overlay-chefs" aria-label="Close">&times;</button>
+      <p class="modal-label">Project &middot; Build Log</p>
+      <h2 class="modal-heading">Chef's Hat</h2>
+      <div class="modal-body">
+        <p>Meal planning takes time &mdash; picking recipes, building grocery lists, staying consistent.</p>
+        <p>I built my first Zapier project to fix that. Now I just type in Slack:</p>
+        <p class="modal-dash-line"><em>meal plan &ndash; Mexican Chicken</em></p>
+        <p>&hellip;and instantly get a recipe, serving sizes, and a grocery list with clickable links.</p>
+        <p>This was one of my earlier projects but it's still one I think about. I'm very curious to dive back into it to see what I can do with it now.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Page content ──────────────────────────────────── -->
   <div class="page-container">
 
     <p class="set-label">Page 02 &middot; Build Log Series</p>
 
-    <h1>The Work</h1>
+    <h1>What I've Been Building</h1>
 
-    <div class="cards-row">
+    <!-- Top row: two projects -->
+    <div class="projects-top">
 
-      <!-- Card 1: ScoutTrek Content Pipeline -->
-      <div class="card">
-        <img src="assets/lego/scouttrek-trail.png" alt="ScoutTrek Content Pipeline" class="card-image">
-        <div class="card-body">
-          <p class="card-title">ScoutTrek Content Pipeline</p>
-          <p class="card-problem">Volunteer leaders had no time to post. Built an autonomous pipeline that handles it.</p>
-          <div class="fact-list">
-            <span class="fact-line">Tools: Make.com &middot; AI Vision</span>
-            <span class="fact-line">Posts automated per week: 7</span>
-            <span class="fact-line">Manual steps remaining: 1</span>
-          </div>
+      <!-- Project 1: ScoutTrek -->
+      <div class="project-block">
+        <div class="project-header">
+          <p class="project-name">ScoutTrek Automated Posting</p>
+          <button class="see-more-btn" data-open="overlay-scouttrek">See More &rsaquo;</button>
+        </div>
+        <img src="assets/lego/scouttrek-trail.png" alt="ScoutTrek Automated Posting" class="project-img">
+        <div class="fact-list">
+          <span class="fact-line">Tools: Make.com &middot; AI Vision</span>
+          <span class="fact-line">Posts automated per week: 7</span>
+          <span class="fact-line">Manual steps remaining: 1</span>
         </div>
       </div>
 
-      <!-- Card 2: Bricks for Paws -->
-      <div class="card">
-        <img src="assets/lego/bricksforpaws-podium.png" alt="Bricks for Paws" class="card-image">
-        <div class="card-body">
-          <p class="card-title">Bricks for Paws</p>
-          <p class="card-problem">Wanted to see how far AI could run a fundraiser with zero daily effort.</p>
-          <div class="fact-list">
-            <span class="fact-line">Tools: Zapier &middot; Google Sheets</span>
-            <span class="fact-line">Reached: 1,400 people</span>
-            <span class="fact-line">Raised: $170</span>
-          </div>
+      <!-- Project 2: Workshop & Wander -->
+      <div class="project-block">
+        <div class="project-header">
+          <p class="project-name">Workshop &amp; Wander</p>
+          <button class="see-more-btn" data-open="overlay-workshop">See More &rsaquo;</button>
         </div>
-      </div>
-
-      <!-- Card 3: Chef's Hat -->
-      <div class="card">
-        <img src="assets/lego/chefshat-fridge.png" alt="Chef's Hat" class="card-image">
-        <div class="card-body">
-          <p class="card-title">Chef's Hat</p>
-          <p class="card-problem">Tired of staring at the fridge. Built a system that turns what you have into a full week of meals.</p>
-          <div class="fact-list">
-            <span class="fact-line">Tools: Zapier &middot; Google Sheets</span>
-            <span class="fact-line">Inputs: macros + available protein</span>
-            <span class="fact-line">Outputs: full week meal plan + crockpot schedule</span>
-          </div>
+        <img src="assets/lego/ai-content-scene.png" alt="Workshop and Wander" class="project-img">
+        <div class="fact-list">
+          <span class="fact-line">Tools: Make.com</span>
+          <span class="fact-line">Views per month: 26,000</span>
+          <span class="fact-line">Manual steps remaining: 1</span>
         </div>
       </div>
 
     </div>
 
-    <!-- Locked callout panel -->
+    <!-- Bottom row: one project centered -->
+    <div class="project-bottom">
+      <div class="project-block">
+        <div class="project-header">
+          <p class="project-name">Chef's Hat</p>
+          <button class="see-more-btn" data-open="overlay-chefs">See More &rsaquo;</button>
+        </div>
+        <img src="assets/lego/chefshat-fridge.png" alt="Chef's Hat" class="project-img">
+        <div class="fact-list">
+          <span class="fact-line">Tools: Zapier &middot; Google Sheets</span>
+          <span class="fact-line">Inputs: macros + available protein</span>
+          <span class="fact-line">Outputs: full week meal plan + crockpot schedule</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Locked panel -->
     <div class="locked-panel">
       <div class="locked-panel-header">Step Complete?</div>
       <div class="locked-panel-body">
@@ -342,7 +581,7 @@
 
   </div>
 
-  <!-- Next page button — bottom right corner -->
+  <!-- Next button -->
   <a href="page2b.html" style="
     position: fixed;
     bottom: 28px;
@@ -363,14 +602,35 @@
   " onmouseover="this.style.transform='translateY(3px)';this.style.boxShadow='0 2px 0 #b8960a'"
      onmouseout="this.style.transform='';this.style.boxShadow='0 5px 0 #b8960a'">Next &rsaquo;</a>
 
-  <!-- Hidden brick #2 — tucked near the top-right border -->
+  <!-- Hidden brick #2 -->
   <div id="brick-2" title="You found something..."></div>
 
   <script>
+    // Brick-2
     document.getElementById('brick-2').addEventListener('click', function () {
       this.classList.remove('glow');
       void this.offsetWidth;
       this.classList.add('glow');
+    });
+
+    // Modal open: any button with data-open
+    document.querySelectorAll('[data-open]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.getElementById(btn.dataset.open).classList.add('open');
+      });
+    });
+
+    // Modal close: X buttons and overlay click
+    document.querySelectorAll('[data-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.getElementById(btn.dataset.close).classList.remove('open');
+      });
+    });
+
+    document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) overlay.classList.remove('open');
+      });
     });
   </script>
 

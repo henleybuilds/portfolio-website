@@ -56,7 +56,7 @@
     /* Top row: two projects side by side */
     .projects-top {
       display: flex;
-      gap: 160px;
+      gap: 200px;
       justify-content: center;
       align-items: flex-start;
       width: 100%;
@@ -133,6 +133,16 @@
       object-fit: contain;
       background: transparent;
       mix-blend-mode: multiply;
+    }
+
+    /* ScoutTrek enlarged; gap handles any overlap */
+    .projects-top .project-block:first-child .project-img {
+      height: 640px;
+    }
+
+    /* Chef's Hat: anchor image to top so it sits close to its title */
+    .project-bottom .project-img {
+      object-position: top;
     }
 
     /* ── Modals ─────────────────────────────────────────── */

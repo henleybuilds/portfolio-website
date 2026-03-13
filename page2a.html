@@ -24,7 +24,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
       width: 100%;
       max-width: 960px;
       z-index: 1;
@@ -53,12 +53,11 @@
 
     /* ── Project layout ─────────────────────────────────── */
 
-    /* Top row: two projects side by side */
+    /* Top row: true 50/50 grid */
     .projects-top {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 40px;
-      justify-content: center;
-      align-items: flex-start;
       width: 100%;
     }
 
@@ -67,7 +66,6 @@
       display: flex;
       justify-content: center;
       width: 100%;
-      padding: 0 0 8px;
     }
 
     /* Individual project block — floats on blue, no card */
@@ -75,16 +73,13 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      flex: 1;
-      max-width: 460px;
       min-width: 0;
     }
 
-    /* Chef's Hat block — narrower centered column */
+    /* Chef's Hat block — fixed width, centered content */
     .project-bottom .project-block {
-      flex: none;
-      max-width: 500px;
-      width: 100%;
+      width: 500px;
+      align-items: center;
     }
 
     /* Header row: title left, SEE MORE right */
@@ -93,15 +88,22 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+      width: 100%;
+    }
+
+    /* Chef's Hat header — centered */
+    .project-bottom .project-header {
+      justify-content: center;
+      gap: 14px;
     }
 
     .project-name {
       font-family: 'Arial Black', Arial, sans-serif;
-      font-size: 1.05rem;
+      font-size: 0.88rem;
       font-weight: 900;
       color: #1C2B4A;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.05em;
     }
 
     /* Small yellow SEE MORE button */
@@ -133,20 +135,21 @@
       box-shadow: 0 0 0 #b8960a;
     }
 
-    /* Project image — sits directly on blue, no container */
+    /* Project image — fixed size, centered in column */
     .project-img {
-      width: 100%;
-      min-height: 420px;
+      width: 420px;
+      height: 420px;
       display: block;
       object-fit: contain;
+      margin: 0 auto;
       background: transparent;
       mix-blend-mode: multiply;
     }
 
-    /* Chef's Hat image — narrower and centered */
+    /* Chef's Hat image — larger and centered */
     .project-bottom .project-img {
-      width: 60%;
-      margin: 0 auto;
+      width: 500px;
+      height: 500px;
     }
 
     /* ── Modals ─────────────────────────────────────────── */

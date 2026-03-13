@@ -74,6 +74,15 @@
       display: block;
     }
 
+    /* Wrapper that centers play button over laptop screen */
+    .screen-btn-wrap {
+      position: absolute;
+      top: 38%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+
     /* Green circular play button */
     .start-btn {
       width: 96px;
@@ -87,9 +96,6 @@
       justify-content: center;
       box-shadow: 0 6px 0 #1a8033, 0 10px 24px rgba(28,43,74,0.25);
       transition: transform 0.08s ease, box-shadow 0.08s ease;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 2;
     }
 
     .start-btn:hover {
@@ -149,7 +155,7 @@
       position: absolute;
       bottom: -8px;
       right: -8px;
-      width: 36px;
+      width: 80px;
       height: auto;
       opacity: 0.3;
       pointer-events: none;
@@ -198,27 +204,31 @@
 
     /* ── Projects Row ───────────────────────────────────── */
     .projects-row {
-      display: flex;
-      gap: 60px;
-      justify-content: center;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
       width: 100%;
     }
 
     .project {
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 12px;
-      max-width: 340px;
       min-width: 0;
-      flex: 1;
       background: transparent;
+    }
+
+    /* Header row: title left, SEE MORE right */
+    .project-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
     }
 
     .project-image {
       width: 100%;
-      max-width: 280px;
       height: auto;
       display: block;
       border-radius: 6px;
@@ -234,7 +244,35 @@
       color: #1C2B4A;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      text-align: center;
+    }
+
+    /* SEE MORE button */
+    .see-more-btn {
+      background: #FFD700;
+      color: #1C2B4A;
+      border: none;
+      padding: 5px 11px;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.56rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      border-radius: 4px;
+      box-shadow: 0 3px 0 #b8960a;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .see-more-btn:hover {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #b8960a;
+    }
+
+    .see-more-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 #b8960a;
     }
 
     .project-problem {
@@ -274,6 +312,85 @@
       opacity: 0.55;
       top: 1px;
     }
+
+    /* ── Modals ─────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 43, 74, 0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #B8D4E8;
+      border: 3px solid #FFD700;
+      border-radius: 12px;
+      padding: 28px 28px 24px;
+      max-width: 560px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 10px 0 rgba(28,43,74,0.3), 0 18px 48px rgba(28,43,74,0.35);
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      color: #1C2B4A;
+      opacity: 0.5;
+      padding: 4px 6px;
+      transition: opacity 0.15s ease;
+      line-height: 1;
+    }
+
+    .modal-close:hover { opacity: 1; }
+
+    .modal-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.54rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      opacity: 0.7;
+    }
+
+    .modal-heading {
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      color: #1C2B4A;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-bottom: 12px;
+      border-bottom: 2.5px solid #1C2B4A;
+      margin-bottom: 16px;
+    }
+
+    .modal-body p {
+      font-family: Arial, sans-serif;
+      font-size: 0.76rem;
+      color: #1C2B4A;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .modal-body p:last-child { margin-bottom: 0; }
 
     /* ── Locked panel — identical to page2a.html ────────── */
     .locked-panel {
@@ -406,6 +523,18 @@
   <div style="position:fixed;top:0;left:0;bottom:0;width:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
   <div style="position:fixed;top:0;right:0;bottom:0;width:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
 
+  <!-- ── Modal: Bricks for Paws ───────────────────────── -->
+  <div class="modal-overlay" id="overlay-bricks">
+    <div class="modal">
+      <button class="modal-close" data-close="overlay-bricks" aria-label="Close">&times;</button>
+      <p class="modal-label">Project &middot; Build Log</p>
+      <h2 class="modal-heading">Shelter Bricks for Paws</h2>
+      <div class="modal-body">
+        <p>I volunteer at an animal shelter and wanted to see if I could make the adoption process more visible. I built a workflow that pulls available animals from the shelter database, writes short social posts for each one, and schedules them automatically. The goal was simple: more eyes on the animals, more adoptions.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Flying arrow element -->
   <img id="lego-arrow" src="assets/lego/lego-arrow.png" alt="">
 
@@ -416,6 +545,7 @@
     <h1>The Work Continued</h1>
 
     <!-- ── Archer Section ── -->
+    <p class="project-title" style="align-self:flex-start">Replit Checklist Workflow</p>
     <div class="archer-section">
 
       <!-- Left: archer drawn -->
@@ -423,15 +553,15 @@
         <img id="archer-img" src="assets/lego/archer-drawn.png" alt="Lego archer drawing bow" class="archer-img">
       </div>
 
-      <!-- Center: green start button -->
-      <button class="start-btn" id="start-btn" title="Fire!" aria-label="Start animation"></button>
-
-      <!-- Right: computer screen -->
+      <!-- Right: computer screen with play button overlaid -->
       <div class="computer-wrap" id="computer-wrap">
         <img src="assets/lego/computer-screen.png" alt="Computer screen" class="computer-img">
         <div class="screen-glow" id="screen-glow"></div>
-        <div class="screen-label">LEGO<br>CHECKLIST<br>WORKFLOW</div>
-        <!-- brick-4: lego target, subtle, no JS logic yet -->
+        <div class="screen-label">REPLIT<br>CHECKLIST<br>WORKFLOW</div>
+        <div class="screen-btn-wrap">
+          <button class="start-btn" id="start-btn" title="Fire!" aria-label="Start animation"></button>
+        </div>
+        <!-- brick-4: lego target -->
         <img id="brick-4" src="assets/lego/lego-target.png" alt="">
       </div>
 
@@ -442,14 +572,20 @@
 
       <!-- Jiu-Jitsu Training Assistant -->
       <div class="project">
-        <img src="assets/lego/jiujitsu-mat.png" alt="Jiu-Jitsu Training Assistant" class="project-image">
-        <p class="project-title">Jiu-Jitsu Training Assistant</p>
-        <p class="project-problem">Wanted smarter training sessions, not just more of them. Built an AI that plans each class.</p>
-        <div class="fact-list">
-          <span class="fact-line">Tools: Claude AI</span>
-          <span class="fact-line">Inputs: strengths, weaknesses, goals</span>
-          <span class="fact-line">Output: focused session plan</span>
+        <div class="project-hdr">
+          <p class="project-title">Jiu-Jitsu Training Assistant</p>
         </div>
+        <img src="assets/lego/jiujitsu-mat.png" alt="Jiu-Jitsu Training Assistant" class="project-image">
+        <p class="project-problem">Wanted smarter training sessions, not just more of them. Built an AI that plans each class.</p>
+      </div>
+
+      <!-- Bricks for Paws -->
+      <div class="project">
+        <div class="project-hdr">
+          <p class="project-title">Shelter Bricks for Paws</p>
+          <button class="see-more-btn" data-open="overlay-bricks">See More &rsaquo;</button>
+        </div>
+        <img src="assets/lego/bricksforpaws-podium.png" alt="Shelter Bricks for Paws" class="project-image">
       </div>
 
     </div>
@@ -493,6 +629,23 @@
   <div id="brick-3" title="You found something..."></div>
 
   <script>
+    // Modal open/close
+    document.querySelectorAll('[data-open]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.getElementById(btn.dataset.open).classList.add('open');
+      });
+    });
+    document.querySelectorAll('[data-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.getElementById(btn.dataset.close).classList.remove('open');
+      });
+    });
+    document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) overlay.classList.remove('open');
+      });
+    });
+
     // Brick-3 click handler
     document.getElementById('brick-3').addEventListener('click', function () {
       this.classList.remove('glow');

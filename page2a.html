@@ -64,7 +64,7 @@
     /* Top row: two projects side by side */
     .projects-top {
       display: flex;
-      gap: 40px;
+      gap: 80px;
       justify-content: center;
       align-items: flex-start;
       width: 100%;
@@ -136,22 +136,13 @@
     /* Project image — sits directly on blue, no container */
     .project-img {
       width: 100%;
+      height: auto;
       display: block;
       border-radius: 6px;
-      object-fit: cover;
-      object-position: center;
+      object-fit: contain;
       background: transparent;
       mix-blend-mode: multiply;
-    }
-
-    /* Top two images: tall and impactful */
-    .projects-top .project-img {
-      height: 500px;
-    }
-
-    /* Bottom centered image */
-    .project-bottom .project-img {
-      height: 450px;
+      overflow: visible;
     }
 
     /* ── Modals ─────────────────────────────────────────── */

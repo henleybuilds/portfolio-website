@@ -19,15 +19,6 @@
       position: relative;
     }
 
-    /* Yellow instruction-booklet border frame */
-    .frame {
-      position: fixed;
-      inset: 16px;
-      border: 3px solid rgba(255, 215, 0, 0.75);
-      border-radius: 12px;
-      pointer-events: none;
-      z-index: 10;
-    }
 
     .container {
       display: flex;
@@ -352,7 +343,11 @@
 </head>
 <body>
 
-  <div class="frame"></div>
+  <!-- Viewport border frame — 4 fixed edges -->
+  <div style="position:fixed;top:0;left:0;right:0;height:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
+  <div style="position:fixed;bottom:0;left:0;right:0;height:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
+  <div style="position:fixed;top:0;left:0;bottom:0;width:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
+  <div style="position:fixed;top:0;right:0;bottom:0;width:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
 
   <div class="container">
 

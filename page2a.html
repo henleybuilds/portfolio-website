@@ -56,7 +56,7 @@
     /* Top row: two projects side by side */
     .projects-top {
       display: flex;
-      gap: 120px;
+      gap: 160px;
       justify-content: center;
       align-items: flex-start;
       width: 100%;
@@ -89,7 +89,7 @@
 
     .project-name {
       font-family: 'Arial Black', Arial, sans-serif;
-      font-size: 0.76rem;
+      font-size: 1.05rem;
       font-weight: 900;
       color: #1C2B4A;
       text-transform: uppercase;
@@ -130,24 +130,9 @@
       width: 100%;
       height: auto;
       display: block;
-      object-fit: cover;
+      object-fit: contain;
       background: transparent;
       mix-blend-mode: multiply;
-    }
-
-    /* Both top images same height so columns look balanced */
-    .projects-top .project-img {
-      height: 420px;
-    }
-
-    /* ScoutTrek: contain so full image shows without cropping */
-    .projects-top .project-block:first-child .project-img {
-      object-fit: contain;
-    }
-
-    /* Bottom image matches top image height */
-    .project-bottom .project-img {
-      height: 420px;
     }
 
     /* ── Modals ─────────────────────────────────────────── */

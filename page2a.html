@@ -16,7 +16,7 @@
       font-family: 'Arial Black', Arial, sans-serif;
       overflow-y: auto;
       position: relative;
-      padding: 48px 24px 80px;
+      padding: 32px 24px 80px;
     }
 
 
@@ -24,7 +24,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 36px;
+      gap: 20px;
       width: 100%;
       max-width: 960px;
       z-index: 1;
@@ -56,7 +56,7 @@
     /* Top row: two projects side by side */
     .projects-top {
       display: flex;
-      gap: 200px;
+      gap: 40px;
       justify-content: center;
       align-items: flex-start;
       width: 100%;
@@ -67,6 +67,7 @@
       display: flex;
       justify-content: center;
       width: 100%;
+      padding: 0 0 8px;
     }
 
     /* Individual project block — floats on blue, no card */
@@ -75,8 +76,15 @@
       flex-direction: column;
       gap: 10px;
       flex: 1;
-      max-width: 420px;
+      max-width: 460px;
       min-width: 0;
+    }
+
+    /* Chef's Hat block — narrower centered column */
+    .project-bottom .project-block {
+      flex: none;
+      max-width: 500px;
+      width: 100%;
     }
 
     /* Header row: title left, SEE MORE right */
@@ -128,21 +136,17 @@
     /* Project image — sits directly on blue, no container */
     .project-img {
       width: 100%;
-      height: 500px;
+      min-height: 420px;
       display: block;
       object-fit: contain;
       background: transparent;
       mix-blend-mode: multiply;
     }
 
-    /* ScoutTrek enlarged; gap handles any overlap */
-    .projects-top .project-block:first-child .project-img {
-      height: 640px;
-    }
-
-    /* Chef's Hat: anchor image to top so it sits close to its title */
+    /* Chef's Hat image — narrower and centered */
     .project-bottom .project-img {
-      object-position: top;
+      width: 60%;
+      margin: 0 auto;
     }
 
     /* ── Modals ─────────────────────────────────────────── */

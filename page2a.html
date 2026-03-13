@@ -49,6 +49,7 @@
       text-shadow: 2px 2px 0 rgba(28,43,74,0.15);
       text-align: center;
       line-height: 1.1;
+      margin-bottom: 40px;
     }
 
     /* ── Project layout ─────────────────────────────────── */
@@ -135,13 +136,12 @@
       box-shadow: 0 0 0 #b8960a;
     }
 
-    /* Project image — fixed size, centered in column */
+    /* Project image — fluid within column */
     .project-img {
-      width: 420px;
-      height: 420px;
+      width: 100%;
+      max-width: 100%;
       display: block;
       object-fit: contain;
-      margin: 0 auto;
       background: transparent;
       mix-blend-mode: multiply;
     }

@@ -663,6 +663,52 @@
       40%  { box-shadow: 0 3px 0 #b8960a, 0 0 18px 8px rgba(255,215,0,0.75); }
       100% { box-shadow: 0 3px 0 #b8960a, 0 0 0 rgba(255,215,0,0); opacity: 0.3; }
     }
+
+    /* ── Back button ─────────────────────────────────────── */
+    .back-btn {
+      position: fixed;
+      bottom: 28px;
+      left: 28px;
+      background: #FFD700;
+      color: #1C2B4A;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      padding: 9px 16px;
+      border-radius: 6px;
+      box-shadow: 0 5px 0 #b8960a;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      display: inline-block;
+      z-index: 20;
+    }
+    .back-btn:hover  { transform: translateY(2px); box-shadow: 0 2px 0 #b8960a; }
+    .back-btn:active { transform: translateY(3px); box-shadow: 0 0 0 #b8960a; }
+
+    /* ── Page flip animation ─────────────────────────────── */
+    body.flip-in-forward  { animation: flip-in-forward  0.35s ease-out both; }
+    body.flip-in-back     { animation: flip-in-back     0.35s ease-out both; }
+    body.flip-out-forward { animation: flip-out-forward 0.28s ease-in  both; }
+    body.flip-out-back    { animation: flip-out-back    0.28s ease-in  both; }
+
+    @keyframes flip-in-forward {
+      from { opacity: 0; transform: perspective(1400px) rotateY(18deg)  translateX(40px);  }
+      to   { opacity: 1; transform: perspective(1400px) rotateY(0deg)   translateX(0);     }
+    }
+    @keyframes flip-in-back {
+      from { opacity: 0; transform: perspective(1400px) rotateY(-18deg) translateX(-40px); }
+      to   { opacity: 1; transform: perspective(1400px) rotateY(0deg)   translateX(0);     }
+    }
+    @keyframes flip-out-forward {
+      from { opacity: 1; transform: perspective(1400px) rotateY(0deg)   translateX(0);     }
+      to   { opacity: 0; transform: perspective(1400px) rotateY(-18deg) translateX(-40px); }
+    }
+    @keyframes flip-out-back {
+      from { opacity: 1; transform: perspective(1400px) rotateY(0deg)  translateX(0);   }
+      to   { opacity: 0; transform: perspective(1400px) rotateY(18deg) translateX(40px); }
+    }
   </style>
 </head>
 <body>
@@ -801,10 +847,35 @@
     <a href="foundation.html" class="next-btn" id="next-link">Next &rsaquo;</a>
   </div>
 
+  <!-- Back button -->
+  <a href="page2a.html" class="back-btn">&lsaquo; Back</a>
+
   <!-- Hidden brick #3 — tucked near the bottom-right border -->
   <div id="brick-3" title="You found something..."></div>
 
   <script>
+    // ── Page flip navigation ───────────────────────────────
+    (function () {
+      var dir = sessionStorage.getItem('flip-dir') || 'forward';
+      sessionStorage.removeItem('flip-dir');
+      document.body.classList.add(dir === 'back' ? 'flip-in-back' : 'flip-in-forward');
+    })();
+
+    function flipNavigate(href, direction) {
+      if (document.body.classList.contains('flip-out-forward') ||
+          document.body.classList.contains('flip-out-back')) return;
+      sessionStorage.setItem('flip-dir', direction);
+      document.body.classList.add(direction === 'back' ? 'flip-out-back' : 'flip-out-forward');
+      setTimeout(function () { window.location.href = href; }, 280);
+    }
+
+    document.querySelectorAll('.next-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) { e.preventDefault(); flipNavigate(this.getAttribute('href'), 'forward'); });
+    });
+    document.querySelectorAll('.back-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) { e.preventDefault(); flipNavigate(this.getAttribute('href'), 'back'); });
+    });
+
     // Fullscreen expand buttons
     document.querySelectorAll('.fullscreen-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {

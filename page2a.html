@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stephen Henley — What I've Been Building</title>
+  <!-- Run before render so inventory bar is hidden with no flash -->
+  <script>if(!sessionStorage.getItem('satchel-intro'))document.documentElement.classList.add('run-satchel-intro');</script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -267,111 +269,191 @@
       gap: 10px;
     }
 
-    .video-tile {
-      background: #1a2840;
+    .video-wrap {
+      position: relative;
+    }
+
+    .video-frame {
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      border: none;
       border-radius: 6px;
-      aspect-ratio: 16 / 9;
+      display: block;
+      background: #1a2840;
+      object-fit: cover;
+    }
+
+    .fullscreen-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 24px;
+      height: 24px;
+      background: rgba(28,43,74,0.65);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 2;
+      transition: background 0.15s ease;
+      padding: 0;
+    }
+
+    .fullscreen-btn:hover {
+      background: rgba(28,43,74,0.9);
+    }
+
+    .fullscreen-btn::before {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+      position: absolute;
+      top: 4px;
+      left: 4px;
+    }
+
+    .fullscreen-btn::after {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-bottom: 2px solid #fff;
+      border-right: 2px solid #fff;
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+    }
+
+    /* ── Satchel intro animation ─────────────────────────── */
+
+    html.run-satchel-intro .bottom-bar {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #satchel-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(28,43,74,0.55);
+      z-index: 998;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+
+    #satchel-intro {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 200px;
+      width: auto;
+      z-index: 999;
+      opacity: 0;
+      display: none;
+      pointer-events: none;
+      transition: opacity 0.5s ease, height 0.65s cubic-bezier(0.4,0,0.2,1), top 0.65s cubic-bezier(0.4,0,0.2,1), left 0.65s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ── Bottom bar: inventory + next ───────────────────── */
+
+    .bottom-bar {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 20;
+    }
+
+    .inventory-bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255,255,255,0.35);
+      border: 1.5px solid rgba(28,43,74,0.18);
+      border-radius: 10px;
+      padding: 8px 12px 8px 10px;
+      box-shadow: 0 3px 0 rgba(28,43,74,0.10);
+    }
+
+    .inventory-satchel {
+      height: 38px;
+      width: auto;
+      display: block;
+      flex-shrink: 0;
+      margin-right: 4px;
+    }
+
+    .inventory-brick {
+      width: 32px;
+      height: 16px;
+      border: 2px solid rgba(28,43,74,0.35);
+      border-radius: 3px;
+      position: relative;
+      opacity: 0.5;
+      font-family: Arial, sans-serif;
+      font-size: 0.48rem;
+      font-weight: 700;
+      color: rgba(28,43,74,0.55);
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-    }
-
-    .video-play {
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 10px 0 10px 18px;
-      border-color: transparent transparent transparent rgba(255,255,255,0.45);
-    }
-
-    .video-coming-soon {
-      font-family: Arial, sans-serif;
-      font-size: 0.52rem;
-      font-weight: 700;
-      color: rgba(255,255,255,0.35);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    /* ── Locked panel ───────────────────────────────────── */
-
-    .locked-panel {
-      background: #fff;
-      border: 2.5px solid #1C2B4A;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 5px 0 #1C2B4A;
-      max-width: 420px;
-      width: 100%;
-    }
-
-    .locked-panel-header {
-      background: #FFD700;
-      padding: 5px 14px;
-      font-family: Arial, sans-serif;
-      font-size: 0.54rem;
-      font-weight: 700;
-      color: #1C2B4A;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      border-bottom: 2px solid #1C2B4A;
-    }
-
-    .locked-panel-body {
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .locked-label {
-      font-family: Arial, sans-serif;
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: #1C2B4A;
-      letter-spacing: 0.04em;
-    }
-
-    .brick-slots {
-      display: flex;
-      gap: 10px;
       flex-shrink: 0;
     }
 
-    .brick-slot {
-      width: 32px;
-      height: 16px;
-      border: 2px solid #1C2B4A;
-      border-radius: 3px;
-      position: relative;
-      opacity: 0.45;
-    }
-
-    .brick-slot::before {
+    .inventory-brick::before {
       content: '';
       position: absolute;
       top: -6px;
       left: 4px;
       width: 10px;
       height: 6px;
-      border: 2px solid #1C2B4A;
+      border: 2px solid rgba(28,43,74,0.35);
       border-bottom: none;
       border-radius: 50% 50% 0 0;
     }
 
-    .brick-slot::after {
+    .inventory-brick::after {
       content: '';
       position: absolute;
       top: -6px;
       left: 18px;
       width: 10px;
       height: 6px;
-      border: 2px solid #1C2B4A;
+      border: 2px solid rgba(28,43,74,0.35);
       border-bottom: none;
       border-radius: 50% 50% 0 0;
+    }
+
+    .next-btn {
+      background: #FFD700;
+      color: #1C2B4A;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      padding: 9px 16px;
+      border-radius: 6px;
+      box-shadow: 0 5px 0 #b8960a;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    .next-btn:hover {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #b8960a;
+    }
+
+    .next-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 #b8960a;
     }
 
     /* ── Hidden brick #2 ────────────────────────────────── */
@@ -418,6 +500,10 @@
 </head>
 <body>
 
+  <!-- Satchel intro elements -->
+  <div id="satchel-overlay"></div>
+  <img id="satchel-intro" src="assets/lego/satchel.png" alt="">
+
   <!-- Viewport border frame — 4 fixed edges -->
   <div style="position:fixed;top:0;left:0;right:0;height:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
   <div style="position:fixed;bottom:0;left:0;right:0;height:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
@@ -451,21 +537,21 @@
 
         <span class="video-section-label">Watch the System in Action</span>
         <div class="video-grid">
-          <div class="video-tile">
-            <div class="video-play"></div>
-            <span class="video-coming-soon">Video coming soon</span>
+          <div class="video-wrap">
+            <video class="video-frame" src="assets/videos/Greatwall-1.mp4" controls playsinline></video>
+            <button class="fullscreen-btn" title="Expand"></button>
           </div>
-          <div class="video-tile">
-            <div class="video-play"></div>
-            <span class="video-coming-soon">Video coming soon</span>
+          <div class="video-wrap">
+            <video class="video-frame" src="assets/videos/Alligator-2.mp4" controls playsinline></video>
+            <button class="fullscreen-btn" title="Expand"></button>
           </div>
-          <div class="video-tile">
-            <div class="video-play"></div>
-            <span class="video-coming-soon">Video coming soon</span>
+          <div class="video-wrap">
+            <video class="video-frame" src="assets/videos/seismascope-3.mp4" controls playsinline></video>
+            <button class="fullscreen-btn" title="Expand"></button>
           </div>
-          <div class="video-tile">
-            <div class="video-play"></div>
-            <span class="video-coming-soon">Video coming soon</span>
+          <div class="video-wrap">
+            <video class="video-frame" src="assets/videos/pistolshrimp-4.mp4" controls playsinline></video>
+            <button class="fullscreen-btn" title="Expand"></button>
           </div>
         </div>
       </div>
@@ -527,40 +613,21 @@
       </div>
     </div>
 
-    <!-- Locked panel -->
-    <div class="locked-panel">
-      <div class="locked-panel-header">Step Complete?</div>
-      <div class="locked-panel-body">
-        <span class="locked-label">Find 2 bricks on this page to continue</span>
-        <div class="brick-slots">
-          <div class="brick-slot"></div>
-          <div class="brick-slot"></div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- Next button -->
-  <a href="page2b.html" style="
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    background: #FFD700;
-    color: #1C2B4A;
-    font-family: 'Arial Black', Arial, sans-serif;
-    font-size: 0.72rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    text-decoration: none;
-    padding: 9px 16px;
-    border-radius: 6px;
-    box-shadow: 0 5px 0 #b8960a;
-    z-index: 20;
-    transition: transform 0.08s ease, box-shadow 0.08s ease;
-  " onmouseover="this.style.transform='translateY(3px)';this.style.boxShadow='0 2px 0 #b8960a'"
-     onmouseout="this.style.transform='';this.style.boxShadow='0 5px 0 #b8960a'">Next &rsaquo;</a>
+  <!-- Bottom bar: inventory + next -->
+  <div class="bottom-bar">
+    <div class="inventory-bar">
+      <img src="assets/lego/satchel.png" class="inventory-satchel" alt="Inventory">
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+    </div>
+    <a href="page2b.html" class="next-btn">Next &rsaquo;</a>
+  </div>
 
   <!-- Hidden brick #2 -->
   <div id="brick-2" title="You found something..."></div>
@@ -592,6 +659,63 @@
         if (e.target === overlay) overlay.classList.remove('open');
       });
     });
+
+    // Fullscreen expand buttons
+    document.querySelectorAll('.fullscreen-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var media = this.closest('.video-wrap').querySelector('video');
+        if (media.requestFullscreen) {
+          media.requestFullscreen();
+        } else if (media.webkitRequestFullscreen) {
+          media.webkitRequestFullscreen();
+        }
+      });
+    });
+
+    // ── Satchel intro animation ────────────────────────────────────────
+    if (document.documentElement.classList.contains('run-satchel-intro')) {
+      sessionStorage.setItem('satchel-intro', '1');
+
+      var satchelOverlay = document.getElementById('satchel-overlay');
+      var satchelIntro   = document.getElementById('satchel-intro');
+      var bottomBar      = document.querySelector('.bottom-bar');
+      var satchelInBar   = document.querySelector('.inventory-satchel');
+
+      // Show the intro elements
+      satchelIntro.style.display = 'block';
+
+      // Fade in on next frame
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          satchelOverlay.style.opacity = '1';
+          satchelIntro.style.opacity  = '1';
+        });
+      });
+
+      // After pause, fly satchel to its spot in the bar
+      setTimeout(function () {
+        var rect  = satchelInBar.getBoundingClientRect();
+        var destX = rect.left + rect.width  / 2;
+        var destY = rect.top  + rect.height / 2;
+
+        // Start fading overlay out at same time
+        satchelOverlay.style.opacity = '0';
+
+        // Fly and shrink
+        satchelIntro.style.top    = destY + 'px';
+        satchelIntro.style.left   = destX + 'px';
+        satchelIntro.style.height = '38px';
+
+        // Once landed, hand off to the real bar
+        setTimeout(function () {
+          satchelIntro.style.display = 'none';
+          document.documentElement.classList.remove('run-satchel-intro');
+          bottomBar.style.transition = 'opacity 0.3s ease';
+          bottomBar.style.opacity    = '1';
+          bottomBar.style.pointerEvents = '';
+        }, 700);
+      }, 1100);
+    }
   </script>
 
 </body>

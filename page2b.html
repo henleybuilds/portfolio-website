@@ -70,23 +70,29 @@
 
     .archer-img {
       width: 260px;
-      height: auto;
+      height: 173px;
       display: block;
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .archer-img.released {
+      transform: translateY(5px);
     }
 
     /* Wrapper that centers play button over laptop screen */
     .screen-btn-wrap {
       position: absolute;
-      top: 42%;
+      top: 38%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 2;
+      z-index: 3;
     }
 
     /* Green circular play button */
     .start-btn {
-      width: 72px;
-      height: 72px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: #2DB84B;
       border: none;
@@ -94,18 +100,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 0 #1a8033, 0 10px 24px rgba(28,43,74,0.25);
+      box-shadow: 0 3px 0 #1a8033, 0 6px 14px rgba(28,43,74,0.25);
       transition: transform 0.08s ease, box-shadow 0.08s ease;
     }
 
     .start-btn:hover {
-      transform: translateY(3px);
-      box-shadow: 0 3px 0 #1a8033, 0 6px 14px rgba(28,43,74,0.25);
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #1a8033, 0 3px 8px rgba(28,43,74,0.25);
     }
 
     .start-btn:active {
-      transform: translateY(6px);
-      box-shadow: 0 0 0 #1a8033, 0 3px 8px rgba(28,43,74,0.25);
+      transform: translateY(3px);
+      box-shadow: 0 0 0 #1a8033, 0 2px 5px rgba(28,43,74,0.25);
     }
 
     /* Play triangle */
@@ -115,9 +121,9 @@
       width: 0;
       height: 0;
       border-style: solid;
-      border-width: 12px 0 12px 20px;
+      border-width: 6px 0 6px 10px;
       border-color: transparent transparent transparent #fff;
-      margin-left: 6px;
+      margin-left: 3px;
     }
 
     /* Computer screen wrap */
@@ -132,33 +138,123 @@
       display: block;
     }
 
-    /* Text overlay on the dark screen area */
-    .screen-label {
+    /* Black fill over the laptop's white screen area */
+    .screen-black {
       position: absolute;
-      top: 18%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 72%;
-      text-align: center;
-      font-family: Arial, sans-serif;
-      font-size: 0.56rem;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      line-height: 1.5;
-      pointer-events: none;
+      top: 12%;
+      left: 12%;
+      width: 76%;
+      height: 55%;
+      background: #000;
+      z-index: 1;
+      border-radius: 2px;
     }
 
-    /* Lego target — brick-4 */
-    #brick-4 {
+    /* Right cluster: computer + target side by side */
+    .right-cluster {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-shrink: 0;
+    }
+
+    /* Slides modal — wider to fit 16:9 iframes */
+    .modal-slides {
+      max-width: 700px;
+    }
+
+    .slides-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .slide-label {
+      font-family: Arial, sans-serif;
+      font-size: 0.54rem;
+      font-weight: 700;
+      color: #1C2B4A;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      opacity: 0.65;
+    }
+
+    .slide-wrap {
+      position: relative;
+    }
+
+    .slide-frame {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: none;
+      border-radius: 6px;
+      display: block;
+      background: #1a2840;
+    }
+
+    .fullscreen-btn {
       position: absolute;
-      bottom: -8px;
-      right: -8px;
-      width: 80px;
+      top: 8px;
+      right: 8px;
+      width: 26px;
+      height: 26px;
+      background: rgba(28,43,74,0.65);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 2;
+      transition: background 0.15s ease;
+      padding: 0;
+    }
+
+    .fullscreen-btn:hover {
+      background: rgba(28,43,74,0.9);
+    }
+
+    /* Two corner brackets = expand icon */
+    .fullscreen-btn::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+      position: absolute;
+      top: 5px;
+      left: 5px;
+    }
+
+    .fullscreen-btn::after {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-bottom: 2px solid #fff;
+      border-right: 2px solid #fff;
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+    }
+
+    /* Lego target */
+    #brick-4 {
+      width: 140px;
       height: auto;
-      opacity: 0.3;
-      pointer-events: none;
+      display: block;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    #brick-4.hit {
+      animation: targetHit 0.45s ease forwards;
+    }
+
+    @keyframes targetHit {
+      0%   { transform: scale(1)    rotate(0deg);  filter: brightness(1); }
+      25%  { transform: scale(1.18) rotate(-5deg); filter: brightness(1.7); }
+      60%  { transform: scale(0.96) rotate(3deg);  filter: brightness(1); }
+      100% { transform: scale(1)    rotate(0deg);  filter: brightness(1); }
     }
 
     /* Flying arrow */
@@ -182,14 +278,18 @@
       100% { opacity: 0; }
     }
 
-    /* Screen glow overlay */
+    /* Screen glow overlay — sits above the black fill */
     .screen-glow {
       position: absolute;
-      inset: 0;
-      border-radius: 4px;
+      top: 12%;
+      left: 12%;
+      width: 76%;
+      height: 55%;
+      border-radius: 2px;
       background: rgba(255, 215, 0, 0);
       pointer-events: none;
       transition: background 0.2s ease;
+      z-index: 2;
     }
 
     .screen-glow.active {
@@ -392,83 +492,103 @@
 
     .modal-body p:last-child { margin-bottom: 0; }
 
-    /* ── Locked panel — identical to page2a.html ────────── */
-    .locked-panel {
-      background: #fff;
-      border: 2.5px solid #1C2B4A;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 5px 0 #1C2B4A;
-      max-width: 420px;
-      width: 100%;
-    }
+    /* ── Bottom bar: inventory + next ───────────────────── */
 
-    .locked-panel-header {
-      background: #FFD700;
-      padding: 5px 14px;
-      font-family: Arial, sans-serif;
-      font-size: 0.54rem;
-      font-weight: 700;
-      color: #1C2B4A;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      border-bottom: 2px solid #1C2B4A;
-    }
-
-    .locked-panel-body {
-      padding: 12px 16px;
+    .bottom-bar {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .locked-label {
-      font-family: Arial, sans-serif;
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: #1C2B4A;
-      letter-spacing: 0.04em;
-    }
-
-    .brick-slots {
-      display: flex;
       gap: 10px;
+      z-index: 20;
+    }
+
+    .inventory-bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255,255,255,0.35);
+      border: 1.5px solid rgba(28,43,74,0.18);
+      border-radius: 10px;
+      padding: 8px 12px 8px 10px;
+      box-shadow: 0 3px 0 rgba(28,43,74,0.10);
+    }
+
+    .inventory-satchel {
+      height: 38px;
+      width: auto;
+      display: block;
+      flex-shrink: 0;
+      margin-right: 4px;
+    }
+
+    .inventory-brick {
+      width: 32px;
+      height: 16px;
+      border: 2px solid rgba(28,43,74,0.35);
+      border-radius: 3px;
+      position: relative;
+      opacity: 0.5;
+      font-family: Arial, sans-serif;
+      font-size: 0.48rem;
+      font-weight: 700;
+      color: rgba(28,43,74,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
 
-    /* Empty 2×1 brick outline */
-    .brick-slot {
-      width: 32px;
-      height: 16px;
-      border: 2px solid #1C2B4A;
-      border-radius: 3px;
-      position: relative;
-      opacity: 0.45;
-    }
-
-    .brick-slot::before {
+    .inventory-brick::before {
       content: '';
       position: absolute;
       top: -6px;
       left: 4px;
       width: 10px;
       height: 6px;
-      border: 2px solid #1C2B4A;
+      border: 2px solid rgba(28,43,74,0.35);
       border-bottom: none;
       border-radius: 50% 50% 0 0;
     }
 
-    .brick-slot::after {
+    .inventory-brick::after {
       content: '';
       position: absolute;
       top: -6px;
       left: 18px;
       width: 10px;
       height: 6px;
-      border: 2px solid #1C2B4A;
+      border: 2px solid rgba(28,43,74,0.35);
       border-bottom: none;
       border-radius: 50% 50% 0 0;
+    }
+
+    .next-btn {
+      background: #FFD700;
+      color: #1C2B4A;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      padding: 9px 16px;
+      border-radius: 6px;
+      box-shadow: 0 5px 0 #b8960a;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    .next-btn:hover {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #b8960a;
+    }
+
+    .next-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 #b8960a;
     }
 
     /* ── Hidden bricks ─────────────────────────────────── */
@@ -508,6 +628,36 @@
       animation: brickGlow 0.7s ease forwards;
     }
 
+    /* Brick-5 — pops out of target when arrow hits */
+    #brick-5 {
+      position: fixed;
+      width: 32px;
+      height: 16px;
+      background: #FFD700;
+      border-radius: 3px;
+      box-shadow: 0 3px 0 #b8960a;
+      cursor: pointer;
+      z-index: 6;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #brick-5::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 4px;
+      width: 10px;
+      height: 6px;
+      background: #FFD700;
+      border-radius: 50% 50% 0 0;
+      box-shadow: 14px 0 0 #FFD700;
+    }
+
+    #brick-5.glow {
+      animation: brickGlow 0.7s ease forwards;
+    }
+
     @keyframes brickGlow {
       0%   { box-shadow: 0 3px 0 #b8960a, 0 0 0 rgba(255,215,0,0); }
       40%  { box-shadow: 0 3px 0 #b8960a, 0 0 18px 8px rgba(255,215,0,0.75); }
@@ -522,6 +672,45 @@
   <div style="position:fixed;bottom:0;left:0;right:0;height:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
   <div style="position:fixed;top:0;left:0;bottom:0;width:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
   <div style="position:fixed;top:0;right:0;bottom:0;width:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
+
+  <!-- ── Modal: Replit Checklist Workflow (slides) ───── -->
+  <div class="modal-overlay" id="overlay-replit">
+    <div class="modal modal-slides">
+      <button class="modal-close" data-close="overlay-replit" aria-label="Close">&times;</button>
+      <p class="modal-label">Project &middot; Build Log</p>
+      <h2 class="modal-heading">Replit Checklist Workflow</h2>
+      <div class="modal-body">
+        <div class="slides-stack">
+          <div>
+            <p class="slide-label">Presentation 01</p>
+            <!-- Paste your full Google Slides embed URL below (File → Share → Publish to web → Embed) -->
+            <div class="slide-wrap">
+              <iframe
+                class="slide-frame"
+                src="https://docs.google.com/presentation/d/e/2PACX-1vRqL5Je7NwcFGrMNTIF7RzHWtXHbR54WJT8NGmEzAlBGI46NCyUAO82aaP2VOG9Akr3wogduwciprE2/pubembed?start=false&loop=false&delayms=3000"
+                allowfullscreen
+                title="Replit Checklist Workflow — Presentation 1">
+              </iframe>
+              <button class="fullscreen-btn" title="Expand"></button>
+            </div>
+          </div>
+          <div>
+            <p class="slide-label">Presentation 02</p>
+            <!-- Paste your full Google Slides embed URL below -->
+            <div class="slide-wrap">
+              <iframe
+                class="slide-frame"
+                src="https://docs.google.com/presentation/d/e/2PACX-1vQOfoSvqjPRFtQ6EnMUL3wym_YfpfhgtKEbULtybDe9AudANWJqS0f3SwhQthCZS6hcimDnxTAnakHB/pubembed?start=false&loop=false&delayms=3000"
+                allowfullscreen
+                title="Replit Checklist Workflow — Presentation 2">
+              </iframe>
+              <button class="fullscreen-btn" title="Expand"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ── Modal: Bricks for Paws ───────────────────────── -->
   <div class="modal-overlay" id="overlay-bricks">
@@ -538,6 +727,9 @@
   <!-- Flying arrow element -->
   <img id="lego-arrow" src="assets/lego/lego-arrow.png" alt="">
 
+  <!-- Hidden brick #5 — pops out when arrow hits the target -->
+  <div id="brick-5" title="You found something..."></div>
+
   <div class="page-container">
 
     <p class="set-label">Page 03 &middot; Build Log Series</p>
@@ -553,16 +745,19 @@
         <img id="archer-img" src="assets/lego/archer-drawn.png" alt="Lego archer drawing bow" class="archer-img">
       </div>
 
-      <!-- Right: computer screen with play button overlaid -->
-      <div class="computer-wrap" id="computer-wrap">
-        <img src="assets/lego/computer-screen.png" alt="Computer screen" class="computer-img">
-        <div class="screen-glow" id="screen-glow"></div>
-        <div class="screen-label">REPLIT<br>CHECKLIST<br>WORKFLOW</div>
-        <div class="screen-btn-wrap">
-          <button class="start-btn" id="start-btn" title="Fire!" aria-label="Start animation"></button>
+      <!-- Right: computer + target -->
+      <div class="right-cluster">
+        <div class="computer-wrap" id="computer-wrap">
+          <img src="assets/lego/computer-screen.png" alt="Computer screen" class="computer-img">
+          <div class="screen-black"></div>
+          <div class="screen-glow" id="screen-glow"></div>
+          <div class="screen-btn-wrap">
+            <button class="start-btn" id="start-btn" title="Fire!" aria-label="Start animation"></button>
+          </div>
         </div>
-        <!-- brick-4: lego target -->
-        <img id="brick-4" src="assets/lego/lego-target.png" alt="">
+
+        <!-- Target — click to fire arrow at it -->
+        <img id="brick-4" src="assets/lego/lego-target.png" alt="Target">
       </div>
 
     </div>
@@ -590,45 +785,38 @@
 
     </div>
 
-    <!-- ── Locked Panel ── -->
-    <div class="locked-panel">
-      <div class="locked-panel-header">Step Complete?</div>
-      <div class="locked-panel-body">
-        <span class="locked-label">Find 2 bricks on this page to continue</span>
-        <div class="brick-slots">
-          <div class="brick-slot"></div>
-          <div class="brick-slot"></div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-<!-- Next page button — bottom right corner -->
-  <a href="foundation.html" style="
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    background: #FFD700;
-    color: #1C2B4A;
-    font-family: 'Arial Black', Arial, sans-serif;
-    font-size: 0.72rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    text-decoration: none;
-    padding: 9px 16px;
-    border-radius: 6px;
-    box-shadow: 0 5px 0 #b8960a;
-    z-index: 20;
-    transition: transform 0.08s ease, box-shadow 0.08s ease;
-  " onmouseover="this.style.transform='translateY(3px)';this.style.boxShadow='0 2px 0 #b8960a'"
-     onmouseout="this.style.transform='';this.style.boxShadow='0 5px 0 #b8960a'">Next &rsaquo;</a>
+  <!-- Bottom bar: inventory + next -->
+  <div class="bottom-bar">
+    <div class="inventory-bar">
+      <img src="assets/lego/satchel.png" class="inventory-satchel" alt="Inventory">
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+    </div>
+    <a href="foundation.html" class="next-btn" id="next-link">Next &rsaquo;</a>
+  </div>
 
   <!-- Hidden brick #3 — tucked near the bottom-right border -->
   <div id="brick-3" title="You found something..."></div>
 
   <script>
+    // Fullscreen expand buttons
+    document.querySelectorAll('.fullscreen-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var iframe = this.closest('.slide-wrap').querySelector('iframe');
+        if (iframe.requestFullscreen) {
+          iframe.requestFullscreen();
+        } else if (iframe.webkitRequestFullscreen) {
+          iframe.webkitRequestFullscreen();
+        }
+      });
+    });
+
     // Modal open/close
     document.querySelectorAll('[data-open]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -653,65 +841,239 @@
       this.classList.add('glow');
     });
 
-    // Start button — archer animation sequence
-    document.getElementById('start-btn').addEventListener('click', function () {
-      const btn = this;
-      btn.disabled = true;
+    // Brick-5 click handler
+    document.getElementById('brick-5').addEventListener('click', function () {
+      this.classList.remove('glow');
+      void this.offsetWidth;
+      this.classList.add('glow');
+    });
 
-      const archerImg = document.getElementById('archer-img');
-      const arrow = document.getElementById('lego-arrow');
-      const screenGlow = document.getElementById('screen-glow');
-      const computerWrap = document.getElementById('computer-wrap');
+    // Soft click on all yellow buttons
+    document.querySelectorAll('.see-more-btn').forEach(function (btn) {
+      btn.addEventListener('click', playSoftClick);
+    });
+    document.getElementById('next-link').addEventListener('click', playSoftClick);
 
-      // Get positions for the animation path
-      const archerRect = archerImg.getBoundingClientRect();
-      const computerRect = computerWrap.getBoundingClientRect();
+    // ── Sound effects (Web Audio API — no files needed) ─────────────
+    var _audioCtx = null;
+    function getAudioCtx() {
+      if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (_audioCtx.state === 'suspended') _audioCtx.resume();
+      return _audioCtx;
+    }
 
-      // Start position: center-right of archer
-      const startX = archerRect.right - 16;
-      const startY = archerRect.top + archerRect.height * 0.35;
+    // Whoosh: bandpass-filtered noise sweep, ~0.45s
+    function playWhoosh() {
+      var ctx = getAudioCtx();
+      var dur = 0.45;
+      var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+      var d = buf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
 
-      // End position: center of computer screen
-      const endX = computerRect.left + computerRect.width * 0.4;
-      const endY = computerRect.top + computerRect.height * 0.35;
+      var src = ctx.createBufferSource();
+      src.buffer = buf;
 
-      // Calculate angle for arrow rotation
-      const dx = endX - startX;
-      const dy = endY - startY;
-      const angle = Math.atan2(dy, dx) * (180 / Math.PI) - 45;
+      var filt = ctx.createBiquadFilter();
+      filt.type = 'bandpass';
+      filt.Q.value = 1.8;
+      filt.frequency.setValueAtTime(350, ctx.currentTime);
+      filt.frequency.linearRampToValueAtTime(2400, ctx.currentTime + 0.22);
+      filt.frequency.linearRampToValueAtTime(550,  ctx.currentTime + dur);
 
-      // Position arrow at start
+      var gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0,  ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 0.04);
+      gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.28);
+      gain.gain.linearRampToValueAtTime(0.0,  ctx.currentTime + dur);
+
+      src.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+      src.start(ctx.currentTime);
+      src.stop(ctx.currentTime + dur);
+    }
+
+    // Thwack: low oscillator frequency-drop + short high-pass noise crack
+    function playThwack() {
+      var ctx = getAudioCtx();
+      var t = ctx.currentTime;
+
+      var osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(200, t);
+      osc.frequency.exponentialRampToValueAtTime(40, t + 0.1);
+
+      var oscGain = ctx.createGain();
+      oscGain.gain.setValueAtTime(1.0, t);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+
+      var nBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.07), ctx.sampleRate);
+      var nd = nBuf.getChannelData(0);
+      for (var j = 0; j < nd.length; j++) nd[j] = Math.random() * 2 - 1;
+
+      var nSrc = ctx.createBufferSource();
+      nSrc.buffer = nBuf;
+
+      var nFilt = ctx.createBiquadFilter();
+      nFilt.type = 'highpass';
+      nFilt.frequency.value = 1600;
+
+      var nGain = ctx.createGain();
+      nGain.gain.setValueAtTime(0.7, t);
+      nGain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+
+      osc.connect(oscGain);   oscGain.connect(ctx.destination);
+      nSrc.connect(nFilt);    nFilt.connect(nGain);   nGain.connect(ctx.destination);
+
+      osc.start(t);  osc.stop(t + 0.16);
+      nSrc.start(t); nSrc.stop(t + 0.08);
+    }
+    // Soft click: short sine drop — plastic LEGO button feel
+    function playSoftClick() {
+      var ctx = getAudioCtx();
+      var t = ctx.currentTime;
+
+      var osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1100, t);
+      osc.frequency.exponentialRampToValueAtTime(650, t + 0.025);
+
+      var gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.18, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.045);
+    }
+    // ─────────────────────────────────────────────────────────────────
+
+    // Shared state: prevents both paths from firing simultaneously
+    var animating = false;
+    var brick5Landed = false;
+
+    // Shared: fire arrow from archer to a point on targetEl defined by aimX/aimY ratios
+    function fireArrow(targetEl, aimXRatio, aimYRatio, onArrive) {
+      if (animating) return;
+      animating = true;
+
+      var archerImg = document.getElementById('archer-img');
+      var arrow = document.getElementById('lego-arrow');
+
+      var archerRect = archerImg.getBoundingClientRect();
+      var targetRect = targetEl.getBoundingClientRect();
+
+      // Start: center-right of archer where the bow is
+      var startX = archerRect.right - 16;
+      var startY = archerRect.top + archerRect.height * 0.35;
+
+      // End: aim point on the target using provided ratios
+      var endX = targetRect.left + targetRect.width  * aimXRatio;
+      var endY = targetRect.top  + targetRect.height * aimYRatio;
+
+      // Arrow angle along flight path
+      var dx = endX - startX;
+      var dy = endY - startY;
+      var angle = Math.atan2(dy, dx) * (180 / Math.PI) + 45;
+
+      // Place arrow at start
+      arrow.style.transition = 'none';
       arrow.style.left = startX + 'px';
-      arrow.style.top = startY + 'px';
+      arrow.style.top  = startY + 'px';
       arrow.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';
       arrow.style.opacity = '1';
-
-      // Animate arrow via CSS transition
-      arrow.style.transition = 'none';
-      // Force reflow
       void arrow.offsetWidth;
 
-      arrow.style.transition = 'left 0.55s cubic-bezier(0.4,0,0.8,1), top 0.55s cubic-bezier(0.4,0,0.8,1), opacity 0.15s ease 0.45s';
+      // Whoosh starts as arrow leaves the bow
+      playWhoosh();
+
+      // Fly to target
+      arrow.style.transition = 'left 0.55s cubic-bezier(0.4,0,0.8,1), top 0.55s cubic-bezier(0.4,0,0.8,1)';
       arrow.style.left = endX + 'px';
-      arrow.style.top = endY + 'px';
+      arrow.style.top  = endY + 'px';
 
-      // After arrow arrives: glow screen, swap archer image
+      // Arrow arrives
       setTimeout(function () {
-        arrow.style.opacity = '0';
-
-        // Screen glow
-        screenGlow.classList.remove('active');
-        void screenGlow.offsetWidth;
-        screenGlow.classList.add('active');
-
         // Swap archer to released pose
         archerImg.src = 'assets/lego/archer-released.png';
+        archerImg.classList.add('released');
 
-        // Re-enable button after animation settles
+        // Impact sound on arrival
+        playThwack();
+
+        onArrive(endX, endY);
+
+        // Arrow sticks then fades
         setTimeout(function () {
-          btn.disabled = false;
-        }, 800);
+          arrow.style.transition = 'opacity 0.2s ease';
+          arrow.style.opacity = '0';
+
+          // Reload archer
+          setTimeout(function () {
+            archerImg.src = 'assets/lego/archer-drawn.png';
+            archerImg.classList.remove('released');
+            animating = false;
+          }, 300);
+        }, 600);
       }, 580);
+    }
+
+    // Path 1 — green button fires arrow at the computer, then opens the slides modal
+    document.getElementById('start-btn').addEventListener('click', function () {
+      var btn = this;
+
+      // 0.5, 0.5 = dead center of the button's bounding rect
+      fireArrow(btn, 0.5, 0.5, function () {
+        document.getElementById('overlay-replit').classList.add('open');
+      });
+    });
+
+    // Path 2 — clicking the target fires arrow at the target, then pops out brick-5
+    document.getElementById('brick-4').addEventListener('click', function () {
+      var targetEl = this;
+      var brick5 = document.getElementById('brick-5');
+
+      // 0.47 x, 0.30 y = bullseye center (legs occupy bottom ~45% of the canvas)
+      fireArrow(targetEl, 0.47, 0.30, function (hitX, hitY) {
+        // Target hit bounce
+        targetEl.classList.remove('hit');
+        void targetEl.offsetWidth;
+        targetEl.classList.add('hit');
+
+        // Pop out brick-5 only once; re-firing the arrow just shows the hit effect
+        if (!brick5Landed) {
+          brick5Landed = true;
+
+          // Grab target rect now for the landing calculation
+          var targetRect = document.getElementById('brick-4').getBoundingClientRect();
+          var landX = targetRect.right + 14;
+          var landY = targetRect.top + targetRect.height * 0.75 - 8;
+
+          // Place brick at hit point (centered on the 32×16 brick)
+          brick5.style.transition = 'none';
+          brick5.style.left = (hitX - 16) + 'px';
+          brick5.style.top  = (hitY - 8) + 'px';
+          brick5.style.opacity = '1';
+          brick5.style.pointerEvents = 'none';
+          void brick5.offsetWidth;
+
+          // Phase 1: pop straight up
+          brick5.style.transition = 'left 0.18s ease-out, top 0.22s cubic-bezier(0.2,0,0.4,1)';
+          brick5.style.left = (hitX - 16) + 'px';
+          brick5.style.top  = (hitY - 8 - 68) + 'px';
+
+          // Phase 2: arc down and right to land beside the target
+          setTimeout(function () {
+            brick5.style.transition = 'left 0.32s cubic-bezier(0.4,0,1,1), top 0.36s cubic-bezier(0.8,0,1,1)';
+            brick5.style.left = landX + 'px';
+            brick5.style.top  = landY + 'px';
+
+            // Enable click after brick lands
+            setTimeout(function () {
+              brick5.style.pointerEvents = 'auto';
+            }, 360);
+          }, 220);
+        }
+      });
     });
   </script>
 

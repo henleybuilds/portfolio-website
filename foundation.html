@@ -136,83 +136,103 @@
       margin-left: calc((100% - 580px) / 2);
     }
 
-    /* Locked panel — identical to page2a / page2b */
-    .locked-panel {
-      background: #fff;
-      border: 2.5px solid #1C2B4A;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 5px 0 #1C2B4A;
-      max-width: 420px;
-      width: 100%;
-    }
+    /* ── Bottom bar: inventory + next ───────────────────── */
 
-    .locked-panel-header {
-      background: #FFD700;
-      padding: 5px 14px;
-      font-family: Arial, sans-serif;
-      font-size: 0.54rem;
-      font-weight: 700;
-      color: #1C2B4A;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      border-bottom: 2px solid #1C2B4A;
-    }
-
-    .locked-panel-body {
-      padding: 12px 16px;
+    .bottom-bar {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .locked-label {
-      font-family: Arial, sans-serif;
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: #1C2B4A;
-      letter-spacing: 0.04em;
-    }
-
-    .brick-slots {
-      display: flex;
       gap: 10px;
+      z-index: 20;
+    }
+
+    .inventory-bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255,255,255,0.35);
+      border: 1.5px solid rgba(28,43,74,0.18);
+      border-radius: 10px;
+      padding: 8px 12px 8px 10px;
+      box-shadow: 0 3px 0 rgba(28,43,74,0.10);
+    }
+
+    .inventory-satchel {
+      height: 38px;
+      width: auto;
+      display: block;
+      flex-shrink: 0;
+      margin-right: 4px;
+    }
+
+    .inventory-brick {
+      width: 32px;
+      height: 16px;
+      border: 2px solid rgba(28,43,74,0.35);
+      border-radius: 3px;
+      position: relative;
+      opacity: 0.5;
+      font-family: Arial, sans-serif;
+      font-size: 0.48rem;
+      font-weight: 700;
+      color: rgba(28,43,74,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
 
-    /* Empty 2×1 brick outline — like a blank slot in a parts list */
-    .brick-slot {
-      width: 32px;
-      height: 16px;
-      border: 2px solid #1C2B4A;
-      border-radius: 3px;
-      position: relative;
-      opacity: 0.45;
-    }
-
-    .brick-slot::before {
+    .inventory-brick::before {
       content: '';
       position: absolute;
       top: -6px;
       left: 4px;
       width: 10px;
       height: 6px;
-      border: 2px solid #1C2B4A;
+      border: 2px solid rgba(28,43,74,0.35);
       border-bottom: none;
       border-radius: 50% 50% 0 0;
     }
 
-    .brick-slot::after {
+    .inventory-brick::after {
       content: '';
       position: absolute;
       top: -6px;
       left: 18px;
       width: 10px;
       height: 6px;
-      border: 2px solid #1C2B4A;
+      border: 2px solid rgba(28,43,74,0.35);
       border-bottom: none;
       border-radius: 50% 50% 0 0;
+    }
+
+    .next-btn {
+      background: #FFD700;
+      color: #1C2B4A;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      padding: 9px 16px;
+      border-radius: 6px;
+      box-shadow: 0 5px 0 #b8960a;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    .next-btn:hover {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #b8960a;
+    }
+
+    .next-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 #b8960a;
     }
 
     /* Hidden brick #5 — matches style from other pages */
@@ -297,39 +317,21 @@
     <!-- Connecting statement -->
     <p class="connecting-line">Before I was automating workflows, I was learning that the best projects start with someone else's problem.</p>
 
-    <!-- "Find 1 brick" panel -->
-    <div class="locked-panel">
-      <div class="locked-panel-header">Step Complete?</div>
-      <div class="locked-panel-body">
-        <span class="locked-label">Find 1 brick to continue</span>
-        <div class="brick-slots">
-          <div class="brick-slot"></div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- Next page button — bottom right, same style as page2a / page2b -->
-  <a href="contact.html" style="
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    background: #FFD700;
-    color: #1C2B4A;
-    font-family: 'Arial Black', Arial, sans-serif;
-    font-size: 0.72rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    text-decoration: none;
-    padding: 9px 16px;
-    border-radius: 6px;
-    box-shadow: 0 5px 0 #b8960a;
-    z-index: 20;
-    transition: transform 0.08s ease, box-shadow 0.08s ease;
-  " onmouseover="this.style.transform='translateY(3px)';this.style.boxShadow='0 2px 0 #b8960a'"
-     onmouseout="this.style.transform='';this.style.boxShadow='0 5px 0 #b8960a'">Next &rsaquo;</a>
+  <!-- Bottom bar: inventory + next -->
+  <div class="bottom-bar">
+    <div class="inventory-bar">
+      <img src="assets/lego/satchel.png" class="inventory-satchel" alt="Inventory">
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+      <div class="inventory-brick">?</div>
+    </div>
+    <a href="contact.html" class="next-btn">Next &rsaquo;</a>
+  </div>
 
   <!-- Hidden brick #5 — tucked along the left border, vertically centered -->
   <div id="brick-5" title="You found something..."></div>

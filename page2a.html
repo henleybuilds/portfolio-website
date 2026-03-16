@@ -388,46 +388,7 @@
       margin-right: 4px;
     }
 
-    .inventory-brick {
-      width: 32px;
-      height: 16px;
-      border: 2px solid rgba(28,43,74,0.35);
-      border-radius: 3px;
-      position: relative;
-      opacity: 0.5;
-      font-family: Arial, sans-serif;
-      font-size: 0.48rem;
-      font-weight: 700;
-      color: rgba(28,43,74,0.55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .inventory-brick::before {
-      content: '';
-      position: absolute;
-      top: -6px;
-      left: 4px;
-      width: 10px;
-      height: 6px;
-      border: 2px solid rgba(28,43,74,0.35);
-      border-bottom: none;
-      border-radius: 50% 50% 0 0;
-    }
-
-    .inventory-brick::after {
-      content: '';
-      position: absolute;
-      top: -6px;
-      left: 18px;
-      width: 10px;
-      height: 6px;
-      border: 2px solid rgba(28,43,74,0.35);
-      border-bottom: none;
-      border-radius: 50% 50% 0 0;
-    }
+    /* .inventory-brick replaced by .inv-slot */
 
     .next-btn {
       background: #FFD700;
@@ -460,41 +421,50 @@
     #brick-2 {
       position: fixed;
       top: 52px;
-      right: 58px;
-      width: 32px;
-      height: 16px;
-      background: #FFD700;
-      border-radius: 3px;
-      box-shadow: 0 3px 0 #b8960a;
+      right: 52px;
+      width: 40px;
+      height: 40px;
       cursor: pointer;
-      z-index: 5;
-      opacity: 0.3;
-      transition: opacity 0.2s ease;
+      z-index: 100;
+      background: transparent;
     }
 
-    #brick-2::before {
-      content: '';
-      position: absolute;
-      top: -6px;
-      left: 4px;
-      width: 10px;
-      height: 6px;
-      background: #FFD700;
-      border-radius: 50% 50% 0 0;
-      box-shadow: 14px 0 0 #FFD700;
+    #brick-2 img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
     }
 
-    #brick-2:hover { opacity: 0.6; }
+    #brick-2.glow img {
+      animation: brickGlowImg 0.7s ease forwards;
+    }
 
-    #brick-2.glow {
+    @keyframes brickGlowImg {
+      0%   { filter: drop-shadow(0 0 0px rgba(255,215,0,0)); }
+      40%  { filter: drop-shadow(0 0 10px rgba(255,215,0,0.9)); }
+      100% { filter: drop-shadow(0 0 0px rgba(255,215,0,0)); }
+    }
+
+    /* ── Inv slots ───────────────────────────────────────── */
+    .inv-slot {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .inv-slot img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      opacity: 0.18;
+      filter: grayscale(1);
+      transition: opacity 0.4s ease, filter 0.4s ease;
+    }
+    .inv-slot.found img {
       opacity: 1;
-      animation: brickGlow 0.7s ease forwards;
-    }
-
-    @keyframes brickGlow {
-      0%   { box-shadow: 0 3px 0 #b8960a, 0 0 0 rgba(255,215,0,0); }
-      40%  { box-shadow: 0 3px 0 #b8960a, 0 0 18px 8px rgba(255,215,0,0.75); }
-      100% { box-shadow: 0 3px 0 #b8960a, 0 0 0 rgba(255,215,0,0); opacity: 0.3; }
+      filter: none;
     }
 
     /* ── Back button ─────────────────────────────────────── */
@@ -664,12 +634,11 @@
   <div class="bottom-bar">
     <div class="inventory-bar">
       <img src="assets/lego/satchel.png" class="inventory-satchel" alt="Inventory">
-      <div class="inventory-brick">?</div>
-      <div class="inventory-brick">?</div>
-      <div class="inventory-brick">?</div>
-      <div class="inventory-brick">?</div>
-      <div class="inventory-brick">?</div>
-      <div class="inventory-brick">?</div>
+      <div class="inv-slot" data-brick="brick-1"><img src="assets/scavenger/sidefins.png" alt="Side fins"></div>
+      <div class="inv-slot" data-brick="brick-2"><img src="assets/scavenger/nose-cone.png" alt="Nose cone"></div>
+      <div class="inv-slot" data-brick="brick-3"><img src="assets/scavenger/Rocket-body.png" alt="Rocket body"></div>
+      <div class="inv-slot" data-brick="brick-4"><img src="assets/scavenger/flame.png" alt="Flame"></div>
+      <div class="inv-slot" data-brick="brick-5"><img src="assets/scavenger/flatbase.png" alt="Base"></div>
     </div>
     <a href="page2b.html" class="next-btn">Next &rsaquo;</a>
   </div>
@@ -677,8 +646,15 @@
   <!-- Back button -->
   <a href="index.html" class="back-btn">&lsaquo; Back</a>
 
-  <!-- Hidden brick #2 -->
-  <div id="brick-2" title="You found something..."></div>
+  <!-- Hidden brick #2 — nose cone peeking from upper-right area -->
+  <div id="brick-2" title="You found something..."><img src="assets/scavenger/nose-cone.png" alt="Nose cone"></div>
+
+  <!-- Completion overlay -->
+  <div id="hunt-complete-overlay" style="display:none;position:fixed;inset:0;background:rgba(28,43,74,0.85);z-index:9000;align-items:center;justify-content:center;flex-direction:column;">
+    <div id="hunt-rocket-stage" style="position:relative;width:160px;height:300px;display:flex;align-items:center;justify-content:center;"></div>
+    <p id="hunt-message" style="display:none;font-family:'Arial Black',Arial,sans-serif;font-size:1.4rem;font-weight:900;color:#f5c518;letter-spacing:0.1em;text-transform:uppercase;margin-top:24px;text-align:center;"></p>
+    <button id="hunt-close" style="display:none;margin-top:16px;background:#f5c518;color:#1C2B4A;border:none;padding:8px 20px;font-family:'Arial Black',Arial,sans-serif;font-size:0.7rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;border-radius:4px;box-shadow:0 3px 0 #b8960a;cursor:pointer;">Play Again</button>
+  </div>
 
   <script>
     // ── Page flip navigation ───────────────────────────────
@@ -703,11 +679,112 @@
       btn.addEventListener('click', function (e) { e.preventDefault(); flipNavigate(this.getAttribute('href'), 'back'); });
     });
 
+    // ── Scavenger hunt state ───────────────────────────────
+    function getBricksFound() {
+      try { return JSON.parse(localStorage.getItem('bricks-found') || '[]'); } catch(e) { return []; }
+    }
+    function markBrickFound(id) {
+      var found = getBricksFound();
+      if (found.indexOf(id) === -1) found.push(id);
+      localStorage.setItem('bricks-found', JSON.stringify(found));
+      updateSidebarSlots();
+      if (found.length === 5) triggerCompletionAnimation();
+    }
+    function updateSidebarSlots() {
+      var found = getBricksFound();
+      document.querySelectorAll('.inv-slot').forEach(function(slot) {
+        if (found.indexOf(slot.dataset.brick) !== -1) {
+          slot.classList.add('found');
+        }
+      });
+    }
+    updateSidebarSlots();
+
+    // Hide already-found bricks on load
+    (function() {
+      var found = getBricksFound();
+      ['brick-1','brick-2','brick-3','brick-4','brick-5'].forEach(function(id) {
+        if (found.indexOf(id) !== -1) {
+          var el = document.getElementById(id);
+          if (el) el.style.display = 'none';
+        }
+      });
+    })();
+
+    // ── Completion animation ───────────────────────────────
+    function triggerCompletionAnimation() {
+      var overlay = document.getElementById('hunt-complete-overlay');
+      if (!overlay) return;
+      overlay.style.display = 'flex';
+      var stage = document.getElementById('hunt-rocket-stage');
+
+      overlay.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.5s ease';
+      setTimeout(function() { overlay.style.opacity = '1'; }, 50);
+
+      setTimeout(function() {
+        stage.innerHTML = '<img id="hunt-rocket-img" src="assets/scavenger/Rocket-assembled-no-base.png" style="width:140px;height:auto;transition:transform 1.2s ease-in,opacity 0.4s ease;transform:translateY(0);opacity:1;">';
+
+        setTimeout(function() {
+          var rocketImg = document.getElementById('hunt-rocket-img');
+          if (rocketImg) {
+            rocketImg.style.transform = 'translateY(-220px)';
+            rocketImg.style.opacity = '0';
+          }
+          setTimeout(function() {
+            stage.innerHTML += '<img src="assets/scavenger/flatbase.png" style="width:100px;height:auto;position:absolute;bottom:0;left:50%;transform:translateX(-50%);opacity:0;transition:opacity 0.6s ease;" id="hunt-base">';
+            setTimeout(function() {
+              var base = document.getElementById('hunt-base');
+              if (base) base.style.opacity = '1';
+              setTimeout(function() {
+                var msg = document.getElementById('hunt-message');
+                var closeBtn = document.getElementById('hunt-close');
+                if (msg) { msg.textContent = 'You found them all.'; msg.style.display = 'block'; }
+                if (closeBtn) closeBtn.style.display = 'inline-block';
+              }, 800);
+            }, 100);
+          }, 600);
+        }, 1000);
+      }, 600);
+
+      document.getElementById('hunt-close').addEventListener('click', function() {
+        overlay.style.opacity = '0';
+        setTimeout(function() {
+          overlay.style.display = 'none';
+          localStorage.removeItem('bricks-found');
+          document.querySelectorAll('.inv-slot').forEach(function(s) { s.classList.remove('found'); });
+          ['brick-1','brick-2','brick-3','brick-4','brick-5'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) { el.style.opacity = ''; el.style.display = ''; }
+          });
+        }, 500);
+      });
+    }
+
+    // ── Satchel hint text ──────────────────────────────────
+    var satchelEl = document.querySelector('.inventory-satchel');
+    if (satchelEl) {
+      satchelEl.style.cursor = 'pointer';
+      satchelEl.addEventListener('click', function() {
+        if (localStorage.getItem('satchel-opened')) return;
+        localStorage.setItem('satchel-opened', '1');
+        var hint = document.createElement('div');
+        hint.textContent = 'The hunt begins.';
+        hint.style.cssText = 'position:fixed;bottom:80px;right:120px;font-family:Arial,sans-serif;font-size:0.72rem;font-style:italic;color:#1C2B4A;background:rgba(184,212,232,0.95);padding:6px 12px;border-radius:4px;border:1px solid rgba(28,43,74,0.2);opacity:0;transition:opacity 0.3s ease;z-index:9999;pointer-events:none;';
+        document.body.appendChild(hint);
+        setTimeout(function() { hint.style.opacity = '1'; }, 50);
+        setTimeout(function() { hint.style.opacity = '0'; setTimeout(function() { hint.remove(); }, 400); }, 2200);
+      });
+    }
+
     // Brick-2
     document.getElementById('brick-2').addEventListener('click', function () {
-      this.classList.remove('glow');
-      void this.offsetWidth;
-      this.classList.add('glow');
+      var self = this;
+      self.classList.remove('glow');
+      void self.offsetWidth;
+      self.classList.add('glow');
+      markBrickFound('brick-2');
+      setTimeout(function() { self.style.display = 'none'; }, 800);
     });
 
     // Modal open: any button with data-open

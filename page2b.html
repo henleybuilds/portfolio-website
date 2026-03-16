@@ -726,6 +726,9 @@
       <p class="modal-label">Project &middot; Build Log</p>
       <h2 class="modal-heading">Replit Checklist Workflow</h2>
       <div class="modal-body">
+        <p>Two presentations. Two different approaches to the same problem &mdash; how do you teach someone to build a Zap without just writing them a wall of text.</p>
+        <p>The first one I built a workflow that took any 5-step Zap and automatically generated a slide deck to walk through it. The theme was Lego &mdash; each step styled like a building instruction, bricks and all.</p>
+        <p>The second one I wanted to go fully visual. No text instructions at all. I used a Lego minifigure at a computer with a bow and arrow pointing to exactly where to click to build the Zap &mdash; each slide a visual cue instead of a written step.</p>
         <div class="slides-stack">
           <div>
             <p class="slide-label">Presentation 01</p>
@@ -758,6 +761,20 @@
     </div>
   </div>
 
+  <!-- ── Modal: Jiu-Jitsu Training Assistant ──────────── -->
+  <div class="modal-overlay" id="overlay-jiujitsu">
+    <div class="modal">
+      <button class="modal-close" data-close="overlay-jiujitsu" aria-label="Close">&times;</button>
+      <p class="modal-label">Project &middot; Build Log</p>
+      <h2 class="modal-heading">Jiu-Jitsu Training Assistant</h2>
+      <div class="modal-body">
+        <p>After class I'd have a general sense of what I struggled with but nothing specific enough to actually act on. A week later it was gone.</p>
+        <p>I built a Slack bot that let me leave a quick voice note after training. It would log what I felt good about, what I got caught on, and what I wanted to work on. Then before the next session it would send me a message &mdash; here's what you said was giving you trouble last time, focus on this today.</p>
+        <p>Simple loop. Voice note in, targeted reminder out.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- ── Modal: Bricks for Paws ───────────────────────── -->
   <div class="modal-overlay" id="overlay-bricks">
     <div class="modal">
@@ -765,7 +782,9 @@
       <p class="modal-label">Project &middot; Build Log</p>
       <h2 class="modal-heading">Shelter Bricks for Paws</h2>
       <div class="modal-body">
-        <p>I volunteer at an animal shelter and wanted to see if I could make the adoption process more visible. I built a workflow that pulls available animals from the shelter database, writes short social posts for each one, and schedules them automatically. The goal was simple: more eyes on the animals, more adoptions.</p>
+        <p>I wanted to build something that raised awareness for animals sitting in a local shelter waiting to be adopted.</p>
+        <p>I built a workflow that pulled all the adoptable dogs from the shelter database, logged their facts and personality traits, then posted one dog every day &mdash; photo, traits, a short description &mdash; and called on people to donate or adopt.</p>
+        <p>The goal was simple. More visibility, more donations, more dogs finding homes. The automation handled everything after the initial setup.</p>
       </div>
     </div>
   </div>
@@ -783,7 +802,10 @@
     <h1>The Work Continued</h1>
 
     <!-- ── Archer Section ── -->
-    <p class="project-title" style="align-self:flex-start">Replit Checklist Workflow</p>
+    <div style="align-self:flex-start;display:flex;align-items:center;gap:12px;">
+      <p class="project-title">Replit Checklist Workflow</p>
+      <button class="see-more-btn" data-open="overlay-replit">See More &rsaquo;</button>
+    </div>
     <div class="archer-section">
 
       <!-- Left: archer drawn -->
@@ -815,6 +837,7 @@
       <div class="project">
         <div class="project-hdr">
           <p class="project-title">Jiu-Jitsu Training Assistant</p>
+          <button class="see-more-btn" data-open="overlay-jiujitsu">See More &rsaquo;</button>
         </div>
         <img src="assets/lego/jiujitsu-mat.png" alt="Jiu-Jitsu Training Assistant" class="project-image">
         <p class="project-problem">Wanted smarter training sessions, not just more of them. Built an AI that plans each class.</p>

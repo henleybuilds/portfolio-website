@@ -238,7 +238,7 @@
     }
 
     /* Lego target */
-    #brick-4 {
+    #lego-target {
       width: 140px;
       height: auto;
       display: block;
@@ -246,7 +246,7 @@
       z-index: 2;
     }
 
-    #brick-4.hit {
+    #lego-target.hit {
       animation: targetHit 0.45s ease forwards;
     }
 
@@ -553,33 +553,11 @@
     }
 
     /* ── Hidden bricks ─────────────────────────────────── */
+    /* Brick-3 — pops out of target when arrow hits */
     #brick-3 {
       position: fixed;
-      bottom: 180px;
-      left: 50%;
-      margin-left: -80px;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      z-index: 100;
-      background: transparent;
-    }
-
-    #brick-3 img {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-    }
-
-    #brick-3.glow img {
-      animation: brickGlowImg 0.7s ease forwards;
-    }
-
-    /* Brick-5 — pops out of target when arrow hits */
-    #brick-5 {
-      position: fixed;
-      width: 40px;
-      height: 40px;
+      width: 60px;
+      height: 60px;
       cursor: pointer;
       z-index: 6;
       opacity: 0;
@@ -587,13 +565,37 @@
       background: transparent;
     }
 
-    #brick-5 img {
-      width: 40px;
-      height: 40px;
+    #brick-3 img {
+      width: 60px;
+      height: 60px;
       object-fit: contain;
     }
 
-    #brick-5.glow img {
+    #brick-3.glow img {
+      animation: brickGlowImg 0.7s ease forwards;
+    }
+
+    /* Brick-4 — hidden near jiu-jitsu section */
+    #brick-4 {
+      position: fixed;
+      bottom: 160px;
+      left: 60%;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      z-index: 100;
+      background: transparent;
+    }
+
+    #brick-4 img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    #brick-4.glow img {
       animation: brickGlowImg 0.7s ease forwards;
     }
 
@@ -759,8 +761,11 @@
   <!-- Flying arrow element -->
   <img id="lego-arrow" src="assets/lego/lego-arrow.png" alt="">
 
-  <!-- Hidden brick #5 — pops out when arrow hits the target -->
-  <div id="brick-5" title="You found something..."><img src="assets/scavenger/flame.png" alt="Flame"></div>
+  <!-- Hidden brick #3 — pops out when arrow hits the target -->
+  <div id="brick-3" title="You found something..."><img src="assets/scavenger/Rocket-body.png" alt="Rocket body"></div>
+
+  <!-- Hidden brick #4 — near jiu-jitsu section -->
+  <div id="brick-4" title="You found something..."><img src="assets/scavenger/flame.png" alt="Flame"></div>
 
   <!-- Completion overlay -->
   <div id="hunt-complete-overlay" style="display:none;position:fixed;inset:0;background:rgba(28,43,74,0.85);z-index:9000;align-items:center;justify-content:center;flex-direction:column;">
@@ -799,7 +804,7 @@
         </div>
 
         <!-- Target — click to fire arrow at it -->
-        <img id="brick-4" src="assets/lego/lego-target.png" alt="Target">
+        <img id="lego-target" src="assets/lego/lego-target.png" alt="Target">
       </div>
 
     </div>
@@ -845,9 +850,6 @@
 
   <!-- Back button -->
   <a href="page2a.html" class="back-btn">&lsaquo; Back</a>
-
-  <!-- Hidden brick #3 — near jiu-jitsu section -->
-  <div id="brick-3" title="You found something..."><img src="assets/scavenger/Rocket-body.png" alt="Rocket body"></div>
 
   <script>
     // ── Page flip navigation ───────────────────────────────
@@ -922,19 +924,20 @@
     }
     updateSidebarSlots();
 
-    // Hide already-found bricks on load (except brick-4 which is always the target image)
+    // Hide already-found bricks on load
     (function() {
       var found = getBricksFound();
-      ['brick-1','brick-2','brick-3','brick-5'].forEach(function(id) {
+      // brick-4 is now a normal hidden piece (not the target)
+      ['brick-4'].forEach(function(id) {
         if (found.indexOf(id) !== -1) {
           var el = document.getElementById(id);
           if (el) el.style.display = 'none';
         }
       });
-      // If brick-5 was already found, keep it hidden
-      if (found.indexOf('brick-5') !== -1) {
-        var b5 = document.getElementById('brick-5');
-        if (b5) { b5.style.display = 'none'; b5.style.opacity = '0'; }
+      // brick-3 is the pop-out — hide completely if already found
+      if (found.indexOf('brick-3') !== -1) {
+        var b3 = document.getElementById('brick-3');
+        if (b3) { b3.style.display = 'none'; b3.style.opacity = '0'; }
       }
     })();
 
@@ -980,13 +983,12 @@
           overlay.style.display = 'none';
           localStorage.removeItem('bricks-found');
           document.querySelectorAll('.inv-slot').forEach(function(s) { s.classList.remove('found'); });
-          ['brick-1','brick-2','brick-3','brick-4','brick-5'].forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el) { el.style.opacity = ''; el.style.display = ''; }
-          });
-          // Reset brick-5 specifically
-          var b5 = document.getElementById('brick-5');
-          if (b5) { b5.style.opacity = '0'; b5.style.pointerEvents = 'none'; }
+          // Reset brick-4 (normal hidden piece)
+          var b4 = document.getElementById('brick-4');
+          if (b4) { b4.style.opacity = ''; b4.style.display = ''; }
+          // Reset brick-3 (pop-out)
+          var b3 = document.getElementById('brick-3');
+          if (b3) { b3.style.opacity = '0'; b3.style.pointerEvents = 'none'; b3.style.display = ''; }
           brick5Landed = false;
         }, 500);
       });
@@ -1008,7 +1010,7 @@
       });
     }
 
-    // Brick-3 click handler
+    // Brick-3 click handler (pop-out from target)
     document.getElementById('brick-3').addEventListener('click', function () {
       var self = this;
       self.classList.remove('glow');
@@ -1018,13 +1020,13 @@
       setTimeout(function() { self.style.display = 'none'; }, 800);
     });
 
-    // Brick-5 click handler
-    document.getElementById('brick-5').addEventListener('click', function () {
+    // Brick-4 click handler (hidden near jiu-jitsu)
+    document.getElementById('brick-4').addEventListener('click', function () {
       var self = this;
       self.classList.remove('glow');
       void self.offsetWidth;
       self.classList.add('glow');
-      markBrickFound('brick-5');
+      markBrickFound('brick-4');
       setTimeout(function() { self.style.display = 'none'; }, 800);
     });
 
@@ -1207,10 +1209,10 @@
       });
     });
 
-    // Path 2 — clicking the target fires arrow at the target, then pops out brick-5
-    document.getElementById('brick-4').addEventListener('click', function () {
+    // Path 2 — clicking the target fires arrow at the target, then pops out brick-3
+    document.getElementById('lego-target').addEventListener('click', function () {
       var targetEl = this;
-      var brick5 = document.getElementById('brick-5');
+      var brick3 = document.getElementById('brick-3');
 
       // 0.47 x, 0.30 y = bullseye center (legs occupy bottom ~45% of the canvas)
       fireArrow(targetEl, 0.47, 0.30, function (hitX, hitY) {
@@ -1219,42 +1221,37 @@
         void targetEl.offsetWidth;
         targetEl.classList.add('hit');
 
-        // Mark brick-4 (target) as found on first hit
-        if (!brick5Landed) {
-          markBrickFound('brick-4');
-        }
-
-        // Pop out brick-5 only once; re-firing the arrow just shows the hit effect
+        // Pop out brick-3 only once; re-firing the arrow just shows the hit effect
         if (!brick5Landed) {
           brick5Landed = true;
 
           // Grab target rect now for the landing calculation
-          var targetRect = document.getElementById('brick-4').getBoundingClientRect();
+          var targetRect = document.getElementById('lego-target').getBoundingClientRect();
           var landX = targetRect.right + 14;
           var landY = targetRect.top + targetRect.height * 0.75 - 8;
 
-          // Place brick at hit point (centered on the 32×16 brick)
-          brick5.style.transition = 'none';
-          brick5.style.left = (hitX - 16) + 'px';
-          brick5.style.top  = (hitY - 8) + 'px';
-          brick5.style.opacity = '1';
-          brick5.style.pointerEvents = 'none';
-          void brick5.offsetWidth;
+          // Place brick at hit point (centered on the 60×60 brick)
+          brick3.style.transition = 'none';
+          brick3.style.left = (hitX - 30) + 'px';
+          brick3.style.top  = (hitY - 30) + 'px';
+          brick3.style.opacity = '1';
+          brick3.style.pointerEvents = 'none';
+          void brick3.offsetWidth;
 
           // Phase 1: pop straight up
-          brick5.style.transition = 'left 0.18s ease-out, top 0.22s cubic-bezier(0.2,0,0.4,1)';
-          brick5.style.left = (hitX - 16) + 'px';
-          brick5.style.top  = (hitY - 8 - 68) + 'px';
+          brick3.style.transition = 'left 0.18s ease-out, top 0.22s cubic-bezier(0.2,0,0.4,1)';
+          brick3.style.left = (hitX - 30) + 'px';
+          brick3.style.top  = (hitY - 30 - 68) + 'px';
 
           // Phase 2: arc down and right to land beside the target
           setTimeout(function () {
-            brick5.style.transition = 'left 0.32s cubic-bezier(0.4,0,1,1), top 0.36s cubic-bezier(0.8,0,1,1)';
-            brick5.style.left = landX + 'px';
-            brick5.style.top  = landY + 'px';
+            brick3.style.transition = 'left 0.32s cubic-bezier(0.4,0,1,1), top 0.36s cubic-bezier(0.8,0,1,1)';
+            brick3.style.left = landX + 'px';
+            brick3.style.top  = landY + 'px';
 
             // Enable click after brick lands
             setTimeout(function () {
-              brick5.style.pointerEvents = 'auto';
+              brick3.style.pointerEvents = 'auto';
             }, 360);
           }, 220);
         }

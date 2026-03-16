@@ -417,21 +417,46 @@
       box-shadow: 0 0 0 #b8960a;
     }
 
+    /* ── Hidden brick #1 (inside Chef's Hat modal) ──────── */
+    #brick-1 {
+      position: absolute;
+      bottom: 18px;
+      right: 18px;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      z-index: 10;
+      background: transparent;
+    }
+
+    #brick-1 img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      opacity: 0.55;
+      transition: opacity 0.2s ease;
+    }
+
+    #brick-1.glow img {
+      animation: brickGlowImg 0.7s ease forwards;
+      opacity: 1;
+    }
+
     /* ── Hidden brick #2 ────────────────────────────────── */
     #brick-2 {
-      position: fixed;
-      top: 52px;
-      right: 52px;
-      width: 40px;
-      height: 40px;
+      position: absolute;
+      right: -22px;
+      bottom: 100px;
+      width: 60px;
+      height: 60px;
       cursor: pointer;
       z-index: 100;
       background: transparent;
     }
 
     #brick-2 img {
-      width: 40px;
-      height: 40px;
+      width: 60px;
+      height: 60px;
       object-fit: contain;
     }
 
@@ -584,6 +609,8 @@
         <p>I built a Zapier workflow where I send one Slack message &mdash; just the cuisine I want &mdash; and it comes back with a full recipe, serving sizes, and a grocery list with clickable links.</p>
         <p>This was one of my first automation projects. It still makes me think about what a more fully built version of this could look like.</p>
       </div>
+      <!-- Hidden brick #1 — tucked inside this modal -->
+      <div id="brick-1" title="You found something..."><img src="assets/scavenger/sidefins.png" alt="Side fins"></div>
     </div>
   </div>
 
@@ -607,12 +634,14 @@
       </div>
 
       <!-- Project 2: Workshop & Wander -->
-      <div class="project-block">
+      <div class="project-block" id="workshop-block" style="position:relative;overflow:visible;">
         <div class="project-header">
           <p class="project-name">Workshop &amp; Wander</p>
           <button class="see-more-btn" data-open="overlay-workshop">See More &rsaquo;</button>
         </div>
         <img src="assets/lego/ai-content-scene.png" alt="Workshop and Wander" class="project-img">
+        <!-- Hidden brick #2 — peeking from right edge of image -->
+        <div id="brick-2" title="You found something..."><img src="assets/scavenger/nose-cone.png" alt="Nose cone"></div>
       </div>
 
     </div>
@@ -645,9 +674,6 @@
 
   <!-- Back button -->
   <a href="index.html" class="back-btn">&lsaquo; Back</a>
-
-  <!-- Hidden brick #2 — nose cone peeking from upper-right area -->
-  <div id="brick-2" title="You found something..."><img src="assets/scavenger/nose-cone.png" alt="Nose cone"></div>
 
   <!-- Completion overlay -->
   <div id="hunt-complete-overlay" style="display:none;position:fixed;inset:0;background:rgba(28,43,74,0.85);z-index:9000;align-items:center;justify-content:center;flex-direction:column;">
@@ -776,6 +802,16 @@
         setTimeout(function() { hint.style.opacity = '0'; setTimeout(function() { hint.remove(); }, 400); }, 2200);
       });
     }
+
+    // Brick-1 (inside Chef's Hat modal)
+    document.getElementById('brick-1').addEventListener('click', function () {
+      var self = this;
+      self.classList.remove('glow');
+      void self.offsetWidth;
+      self.classList.add('glow');
+      markBrickFound('brick-1');
+      setTimeout(function() { self.style.display = 'none'; }, 800);
+    });
 
     // Brick-2
     document.getElementById('brick-2').addEventListener('click', function () {

@@ -406,23 +406,24 @@
       box-shadow: 0 0 0 #b8960a;
     }
 
-    /* Hidden brick #5 — partially hidden near photo */
+    /* Hidden brick #5 — tucked near photo caption area */
     #brick-5 {
       position: fixed;
-      top: 50%;
-      left: 44px;
-      transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
+      bottom: 100px;
+      left: 20px;
+      width: 60px;
+      height: 60px;
       cursor: pointer;
       z-index: 100;
       background: transparent;
     }
 
     #brick-5 img {
-      width: 40px;
-      height: 40px;
+      width: 60px;
+      height: 60px;
       object-fit: contain;
+      opacity: 0.6;
+      transition: opacity 0.2s ease;
     }
 
     #brick-5.glow img {

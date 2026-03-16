@@ -299,34 +299,6 @@
       box-shadow: 0 0px 0 #0a111e;
     }
 
-    /* ── Hidden brick #1 ─────────────────────────────────── */
-    #brick-1 {
-      position: fixed;
-      bottom: 8px;
-      left: 8px;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      z-index: 100;
-      background: transparent;
-    }
-
-    #brick-1 img {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-    }
-
-    #brick-1.glow img {
-      animation: brickGlowImg 0.7s ease forwards;
-    }
-
-    @keyframes brickGlowImg {
-      0%   { filter: drop-shadow(0 0 0px rgba(255,215,0,0)); }
-      40%  { filter: drop-shadow(0 0 10px rgba(255,215,0,0.9)); }
-      100% { filter: drop-shadow(0 0 0px rgba(255,215,0,0)); }
-    }
-
     /* ── Bottom bar (inventory) ──────────────────────────── */
     .bottom-bar {
       position: fixed;
@@ -463,9 +435,6 @@
     </div>
   </div>
 
-  <!-- Hidden brick #1 — tucked near the bottom-left border -->
-  <div id="brick-1" title="You found something..."><img src="assets/scavenger/sidefins.png" alt="Side fins"></div>
-
   <!-- Completion overlay -->
   <div id="hunt-complete-overlay" style="display:none;position:fixed;inset:0;background:rgba(28,43,74,0.85);z-index:9000;align-items:center;justify-content:center;flex-direction:column;">
     <div id="hunt-rocket-stage" style="position:relative;width:160px;height:300px;display:flex;align-items:center;justify-content:center;"></div>
@@ -528,16 +497,6 @@
         }
       });
     })();
-
-    // Hidden brick #1
-    document.getElementById('brick-1').addEventListener('click', function () {
-      var self = this;
-      self.classList.remove('glow');
-      void self.offsetWidth;
-      self.classList.add('glow');
-      markBrickFound('brick-1');
-      setTimeout(function() { self.style.display = 'none'; }, 800);
-    });
 
     // ── Completion animation ───────────────────────────────
     function triggerCompletionAnimation() {

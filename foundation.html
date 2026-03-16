@@ -55,19 +55,26 @@
     /* ── Side-by-side layout ─────────────────────────────── */
 
     .content-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: row;
       gap: 48px;
       width: 100%;
-      align-items: start;
+      align-items: center;
     }
 
-    /* Left column — image + caption */
+    /* Left column — image + caption (~45%) */
     .photo-col {
+      flex: 0 0 45%;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 10px;
+      background: none;
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      border-radius: 0;
     }
 
     .foundation-img {
@@ -87,60 +94,59 @@
       letter-spacing: 0.05em;
     }
 
-    /* Right column — opening line, facts, button */
-    .facts-col {
+    /* Right column — all text (~55%) */
+    .right-col {
+      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 14px;
     }
 
-    /* Opening italic line */
-    .opening-line {
+    /* Opening paragraph — plain body text */
+    .opening-para {
       font-family: Arial, sans-serif;
-      font-size: 0.88rem;
-      font-style: italic;
-      font-weight: 700;
+      font-size: 0.78rem;
+      font-weight: 400;
       color: #1C2B4A;
       line-height: 1.6;
-      border-left: 4px solid #FFD700;
-      padding-left: 16px;
-      letter-spacing: 0.01em;
     }
 
-    /* Facts — individual callout boxes floating on the blue, no card wrapper */
-    .facts-block {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .fact-item {
-      border: 2px solid #1C2B4A;
-      border-radius: 5px;
-      padding: 9px 16px 9px 36px;
-      position: relative;
+    /* "What the project did:" label */
+    .what-label {
       font-family: Arial, sans-serif;
-      font-size: 0.73rem;
+      font-size: 0.78rem;
       font-weight: 700;
       color: #1C2B4A;
       line-height: 1.5;
-      letter-spacing: 0.01em;
     }
 
-    .fact-item::before {
-      content: '▪';
-      position: absolute;
-      left: 15px;
-      top: 10px;
-      font-size: 0.5rem;
-      opacity: 0.55;
+    /* Clean bullet list — no borders, no boxes */
+    .bullet-list {
+      list-style: disc;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
     }
 
-    /* Last fact gets a yellow accent — Eagle Scout line */
-    .fact-item.accent {
-      border-color: #FFD700;
-      border-width: 2.5px;
-      background: rgba(255, 215, 0, 0.07);
+    .bullet-list li {
+      font-family: Arial, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #1C2B4A;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .bullet-list li:last-child { margin-bottom: 0; }
+
+    /* Closing plain text line */
+    .closing-line {
+      font-family: Arial, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #1C2B4A;
+      line-height: 1.5;
     }
 
     /* SEE MORE button — matches page2a.html exactly */
@@ -498,7 +504,7 @@
 
     <h1>THE FOUNDATION</h1>
 
-    <!-- Side-by-side: image left, facts right -->
+    <!-- Side-by-side: image left, content right -->
     <div class="content-row">
 
       <!-- Left: photo -->
@@ -511,17 +517,27 @@
         <span class="photo-caption">Mafakathini, South Africa</span>
       </div>
 
-      <!-- Right: opening line + facts + button -->
-      <div class="facts-col">
-        <p class="opening-line">Before any of the automation work, there was a school in South Africa that needed help.</p>
+      <!-- Right: text content -->
+      <div class="right-col">
+        <p class="opening-para">For my Eagle Scout project, I led the renovation of a school for disabled children in Mafakathini, South Africa. Together with the community, we raised over $10,000 to make lasting improvements for the students.</p>
 
-        <div class="facts-block">
-          <div class="fact-item">A school for children with disabilities in a village of 5,000.</div>
-          <div class="fact-item">No running water. No kitchen. One exposed lightbulb.</div>
-          <div class="fact-item">A spaghetti dinner fundraiser in Tennessee. Backpacks and school supplies collected. Desks donated by a local scouting organization. It got off the ground because people showed up.</div>
-          <div class="fact-item">Eight days. Walls painted, windows replaced, electrical work done, bathroom and kitchen installed, roof and floors repaired, pathways laid, insulation put in, murals painted, and a swing set built.</div>
-          <div class="fact-item accent">Eagle Scout &mdash; 2018. Featured in Scouting Magazine.</div>
-        </div>
+        <p class="opening-para">The teacher explained that for these children, this wasn't just a school. It was one of the only places where they could feel loved and cared for, because their opportunities in the outside world were so limited. That's what made this matter &mdash; it wasn't just about desks or murals. It was about creating a space that showed them they belonged.</p>
+
+        <p class="what-label">What the project included:</p>
+
+        <ul class="bullet-list">
+          <li>Desks and chairs so kids no longer had to sit on the floor</li>
+          <li>Electricity installed and insulation added for cold months</li>
+          <li>A fully stocked kitchen with utensils and cooking equipment</li>
+          <li>Renovated bathrooms and a sidewalk for wheelchair access</li>
+          <li>Painted all classrooms and created bright murals</li>
+          <li>Personalized backpacks and school supplies for every child</li>
+          <li>Sleeping pads so kids could rest during the day</li>
+          <li>Playground swings, games, and toys</li>
+          <li>A community garden to provide fresh food</li>
+        </ul>
+
+        <p class="closing-line">Eagle Scout &mdash; 2018. Featured in Scouting Magazine.</p>
 
         <button class="see-more-btn" data-open="overlay-foundation">See More &rsaquo;</button>
       </div>
@@ -537,9 +553,8 @@
       <p class="modal-label">Project &middot; Build Log</p>
       <h2 class="modal-heading">The Full Story</h2>
       <div class="modal-body">
-        <p>It started the way a lot of good things do &mdash; with a fundraiser. A $5 spaghetti dinner at a church hall in Tennessee. That paid for some of it. A local scouting organization donated desks and chairs. A school teacher packed backpacks full of supplies. A conversation with a public official at a banquet helped spread the word. The project raised money in pieces, sometimes putting out calls for the last few hundred dollars while the team was already on the ground working.</p>
-        <p>The build ran eight days. Day one was cleaning &mdash; washing walls, pulling broken windows, fixing the water line, bringing in mulch. Each day added a layer. Electrical work. Stone pathways laid. Ceiling tiles and insulation put in. Alphabet murals painted by hand. A swing set assembled. Kitchen cupboards installed. Curtains hung.</p>
-        <p>On the last day, the keys were handed back at a ribbon cutting.</p>
+        <p>Funding came first. I spoke at a local church and organized a community spaghetti dinner to get the project off the ground. A local scouting organization donated 20 desks and chairs. A teacher packed 20 backpacks full of supplies. Conversations with community members and local officials helped spread the word. The project raised money in pieces &mdash; sometimes putting out calls for the last few hundred dollars while the team was already on the ground working.</p>
+        <p>The build ran eight days. Day one was cleaning &mdash; washing walls, pulling broken windows, fixing the water line, hauling in mulch. Each day added a layer. Electrical work. Stone pathways. Ceiling tiles and insulation. Alphabet murals painted by hand. A swing set assembled. Kitchen cupboards installed.</p>
         <div class="modal-link-row">
           <a href="https://blog.scoutingmagazine.org/2018/08/28/this-scout-wanted-to-help-his-home-away-from-home-in-south-africa/" target="_blank" rel="noopener" class="modal-link-btn">Read the Article</a>
           <a href="https://www.facebook.com/StephenHenleyProjects" target="_blank" rel="noopener" class="modal-link-btn">See the Facebook Page</a>

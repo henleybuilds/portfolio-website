@@ -768,6 +768,7 @@
       var overlay = document.getElementById('hunt-complete-overlay');
       if (!overlay) return;
       window.scrollTo(0, 0);
+      document.documentElement.style.overflow = 'hidden';
       overlay.style.display = 'flex';
       overlay.style.opacity = '0';
       overlay.style.background = 'rgba(28,43,74,0.92)';
@@ -946,6 +947,7 @@
           overlay.style.transition = 'opacity 0.5s ease';
           overlay.style.opacity = '0';
 
+          document.documentElement.style.overflow = '';
           var msg = document.getElementById('hunt-message');
           var closeBtn2 = document.getElementById('hunt-close');
           if (msg) { msg.textContent = 'You found them all.'; msg.style.display = 'block'; }

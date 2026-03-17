@@ -744,12 +744,12 @@
 
     // ── Scavenger hunt state ───────────────────────────────
     function getBricksFound() {
-      try { return JSON.parse(localStorage.getItem('bricks-found') || '[]'); } catch(e) { return []; }
+      try { return JSON.parse(sessionStorage.getItem('bricks-found') || '[]'); } catch(e) { return []; }
     }
     function markBrickFound(id) {
       var found = getBricksFound();
       if (found.indexOf(id) === -1) found.push(id);
-      localStorage.setItem('bricks-found', JSON.stringify(found));
+      sessionStorage.setItem('bricks-found', JSON.stringify(found));
       updateSidebarSlots();
       if (found.length === 5) triggerCompletionAnimation();
     }
@@ -872,7 +872,7 @@
             closeBtn.style.display = 'none';
             var stage2 = document.getElementById('hunt-rocket-stage');
             if (stage2) { stage2.innerHTML = ''; stage2.style.cssText = 'position:relative;width:160px;height:300px;display:flex;align-items:center;justify-content:center;'; }
-            localStorage.removeItem('bricks-found');
+            sessionStorage.removeItem('bricks-found');
             document.querySelectorAll('.inv-slot').forEach(function(s) {
               s.classList.remove('found');
             });

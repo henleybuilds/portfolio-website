@@ -299,57 +299,6 @@
       box-shadow: 0 0px 0 #0a111e;
     }
 
-    /* ── Bottom bar (inventory) ──────────────────────────── */
-    .bottom-bar {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      z-index: 20;
-    }
-
-    .inventory-bar {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      background: rgba(255,255,255,0.35);
-      border: 1.5px solid rgba(28,43,74,0.18);
-      border-radius: 10px;
-      padding: 8px 12px 8px 10px;
-      box-shadow: 0 3px 0 rgba(28,43,74,0.10);
-    }
-
-    .inventory-satchel {
-      height: 38px;
-      width: auto;
-      display: block;
-      flex-shrink: 0;
-      margin-right: 4px;
-    }
-
-    .inv-slot {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .inv-slot img {
-      width: 28px;
-      height: 28px;
-      object-fit: contain;
-      opacity: 0.18;
-      filter: grayscale(1);
-      transition: opacity 0.4s ease, filter 0.4s ease;
-    }
-    .inv-slot.found img {
-      opacity: 1;
-      filter: none;
-    }
-
     /* ── Page flip animation ─────────────────────────────── */
     body.flip-in-forward  { animation: flip-in-forward  0.35s ease-out both; }
     body.flip-in-back     { animation: flip-in-back     0.35s ease-out both; }
@@ -423,18 +372,6 @@
     </div>
   </div>
 
-  <!-- Bottom bar: inventory -->
-  <div class="bottom-bar">
-    <div class="inventory-bar">
-      <img src="assets/lego/satchel.png" class="inventory-satchel" alt="Inventory">
-      <div class="inv-slot" data-brick="brick-1"><img src="assets/scavenger/sidefins.png" alt="Side fins"></div>
-      <div class="inv-slot" data-brick="brick-2"><img src="assets/scavenger/nose-cone.png" alt="Nose cone"></div>
-      <div class="inv-slot" data-brick="brick-3"><img src="assets/scavenger/Rocket-body.png" alt="Rocket body"></div>
-      <div class="inv-slot" data-brick="brick-4"><img src="assets/scavenger/flame.png" alt="Flame"></div>
-      <div class="inv-slot" data-brick="brick-5"><img src="assets/scavenger/flatbase.png" alt="Base"></div>
-    </div>
-  </div>
-
   <!-- Completion overlay -->
   <div id="hunt-complete-overlay" style="display:none;position:fixed;inset:0;background:rgba(28,43,74,0.85);z-index:9000;align-items:center;justify-content:center;flex-direction:column;">
     <div id="hunt-rocket-stage" style="position:relative;width:160px;height:300px;display:flex;align-items:center;justify-content:center;"></div>
@@ -463,105 +400,6 @@
       manualLink.addEventListener('click', function (e) {
         e.preventDefault();
         flipNavigate(this.getAttribute('href'), 'forward');
-      });
-    }
-
-    // ── Scavenger hunt state ───────────────────────────────
-    function getBricksFound() {
-      try { return JSON.parse(localStorage.getItem('bricks-found') || '[]'); } catch(e) { return []; }
-    }
-    function markBrickFound(id) {
-      var found = getBricksFound();
-      if (found.indexOf(id) === -1) found.push(id);
-      localStorage.setItem('bricks-found', JSON.stringify(found));
-      updateSidebarSlots();
-      if (found.length === 5) triggerCompletionAnimation();
-    }
-    function updateSidebarSlots() {
-      var found = getBricksFound();
-      document.querySelectorAll('.inv-slot').forEach(function(slot) {
-        if (found.indexOf(slot.dataset.brick) !== -1) {
-          slot.classList.add('found');
-        }
-      });
-    }
-    updateSidebarSlots();
-
-    // Hide already-found bricks on load
-    (function() {
-      var found = getBricksFound();
-      ['brick-1','brick-2','brick-3','brick-4','brick-5'].forEach(function(id) {
-        if (found.indexOf(id) !== -1) {
-          var el = document.getElementById(id);
-          if (el) el.style.display = 'none';
-        }
-      });
-    })();
-
-    // ── Completion animation ───────────────────────────────
-    function triggerCompletionAnimation() {
-      var overlay = document.getElementById('hunt-complete-overlay');
-      if (!overlay) return;
-      overlay.style.display = 'flex';
-      var stage = document.getElementById('hunt-rocket-stage');
-
-      overlay.style.opacity = '0';
-      overlay.style.transition = 'opacity 0.5s ease';
-      setTimeout(function() { overlay.style.opacity = '1'; }, 50);
-
-      setTimeout(function() {
-        stage.innerHTML = '<img id="hunt-rocket-img" src="assets/scavenger/Rocket-assembled-no-base.png" style="width:140px;height:auto;transition:transform 1.2s ease-in,opacity 0.4s ease;transform:translateY(0);opacity:1;">';
-
-        setTimeout(function() {
-          var rocketImg = document.getElementById('hunt-rocket-img');
-          if (rocketImg) {
-            rocketImg.style.transform = 'translateY(-220px)';
-            rocketImg.style.opacity = '0';
-          }
-          setTimeout(function() {
-            stage.innerHTML += '<img src="assets/scavenger/flatbase.png" style="width:100px;height:auto;position:absolute;bottom:0;left:50%;transform:translateX(-50%);opacity:0;transition:opacity 0.6s ease;" id="hunt-base">';
-            setTimeout(function() {
-              var base = document.getElementById('hunt-base');
-              if (base) base.style.opacity = '1';
-              setTimeout(function() {
-                var msg = document.getElementById('hunt-message');
-                var closeBtn = document.getElementById('hunt-close');
-                if (msg) { msg.textContent = 'You found them all.'; msg.style.display = 'block'; }
-                if (closeBtn) closeBtn.style.display = 'inline-block';
-              }, 800);
-            }, 100);
-          }, 600);
-        }, 1000);
-      }, 600);
-
-      document.getElementById('hunt-close').addEventListener('click', function() {
-        overlay.style.opacity = '0';
-        setTimeout(function() {
-          overlay.style.display = 'none';
-          localStorage.removeItem('bricks-found');
-          updateSidebarSlots();
-          document.querySelectorAll('.inv-slot').forEach(function(s) { s.classList.remove('found'); });
-          ['brick-1','brick-2','brick-3','brick-4','brick-5'].forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el) { el.style.opacity = ''; el.style.display = ''; }
-          });
-        }, 500);
-      });
-    }
-
-    // ── Satchel hint text ──────────────────────────────────
-    var satchelEl = document.querySelector('.inventory-satchel');
-    if (satchelEl) {
-      satchelEl.style.cursor = 'pointer';
-      satchelEl.addEventListener('click', function() {
-        if (localStorage.getItem('satchel-opened')) return;
-        localStorage.setItem('satchel-opened', '1');
-        var hint = document.createElement('div');
-        hint.textContent = 'The hunt begins.';
-        hint.style.cssText = 'position:fixed;bottom:80px;right:120px;font-family:Arial,sans-serif;font-size:0.72rem;font-style:italic;color:#1C2B4A;background:rgba(184,212,232,0.95);padding:6px 12px;border-radius:4px;border:1px solid rgba(28,43,74,0.2);opacity:0;transition:opacity 0.3s ease;z-index:9999;pointer-events:none;';
-        document.body.appendChild(hint);
-        setTimeout(function() { hint.style.opacity = '1'; }, 50);
-        setTimeout(function() { hint.style.opacity = '0'; setTimeout(function() { hint.remove(); }, 400); }, 2200);
       });
     }
 

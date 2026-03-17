@@ -575,6 +575,62 @@
     }
 
     @media (max-width: 640px) {
+      .bottom-bar {
+        bottom: 12px;
+        right: 12px;
+        gap: 6px;
+      }
+
+      .inventory-bar {
+        padding: 5px 8px 5px 7px;
+        gap: 4px;
+      }
+
+      .inventory-satchel {
+        height: 28px;
+      }
+
+      .inv-slot {
+        width: 26px;
+        height: 26px;
+      }
+
+      .brick-unknown {
+        width: 20px;
+        height: 12px;
+        margin-top: 4px;
+      }
+
+      .brick-unknown::before {
+        width: 5px;
+        height: 4px;
+        top: -4px;
+        left: 3px;
+        box-shadow: 7px 0 0 rgba(28,43,74,0.18);
+      }
+
+      .brick-unknown span {
+        font-size: 0.48rem;
+      }
+
+      .brick-found-img {
+        height: 22px;
+      }
+
+      .back-btn {
+        bottom: 12px;
+        left: 12px;
+        font-size: 0.62rem;
+        padding: 7px 12px;
+      }
+
+      .next-btn {
+        font-size: 0.62rem;
+        padding: 7px 12px;
+      }
+    }
+
+    @media (max-width: 640px) {
       body {
         padding: 24px 16px 120px;
       }
@@ -823,6 +879,7 @@
     function triggerCompletionAnimation() {
       var overlay = document.getElementById('hunt-complete-overlay');
       if (!overlay) return;
+      document.body.style.overflow = 'hidden';
       overlay.style.display = 'flex';
       overlay.style.opacity = '0';
       overlay.style.background = 'rgba(28,43,74,0.92)';
@@ -999,6 +1056,7 @@
 
           var msg = document.getElementById('hunt-message');
           var closeBtn2 = document.getElementById('hunt-close');
+          document.body.style.overflow = '';
           if (msg) { msg.textContent = 'You found them all.'; msg.style.display = 'block'; }
           if (closeBtn2) closeBtn2.style.display = 'inline-block';
 

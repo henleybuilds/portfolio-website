@@ -886,6 +886,7 @@
     }
 
     function showSpaceScene(overlay) {
+      if (window.innerWidth <= 640) return;
       var stage = document.getElementById('hunt-rocket-stage');
       if (stage) stage.innerHTML = '';
 

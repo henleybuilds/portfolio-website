@@ -345,7 +345,7 @@
 
     #satchel-intro {
       position: fixed;
-      top: 50%;
+      top: 30%;
       left: 50%;
       transform: translate(-50%, -50%);
       height: 200px;
@@ -999,9 +999,17 @@
               }, 300);
             }
 
-            // Phase 5: space scene
+            // Phase 5: space scene (desktop only)
             setTimeout(function() {
-              showSpaceScene(overlay);
+              if (window.innerWidth <= 640) {
+                document.documentElement.style.overflow = '';
+                var msg = document.getElementById('hunt-message');
+                var closeBtn2 = document.getElementById('hunt-close');
+                if (msg) { msg.textContent = 'You found them all.'; msg.style.display = 'block'; }
+                if (closeBtn2) closeBtn2.style.display = 'inline-block';
+              } else {
+                showSpaceScene(overlay);
+              }
             }, 1700);
           }, 900);
         }, 50);
@@ -1041,16 +1049,16 @@
       var stage = document.getElementById('hunt-rocket-stage');
       if (stage) stage.innerHTML = '';
 
-      // Transition background to black
       overlay.style.transition = 'background 0.8s ease';
       overlay.style.background = '#000';
+      overlay.style.overflow = 'hidden';
 
-      // Canvas star field
+      // Canvas star field — inside overlay so it's always visible
       var canvas = document.createElement('canvas');
-      canvas.style.cssText = 'position:fixed;inset:0;z-index:9150;pointer-events:none;';
+      canvas.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;';
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
-      document.body.appendChild(canvas);
+      overlay.appendChild(canvas);
 
       var ctx2 = canvas.getContext('2d');
       var stars = [];
@@ -1078,22 +1086,27 @@
       }
       drawStars();
 
-      // Rocket: mobile = appears centered immediately; desktop = rises from bottom
+      // Rocket — inside overlay, always visible
       var spaceRocket = document.createElement('img');
       spaceRocket.src = 'assets/scavenger/Rocket-assembled-no-base.png';
-      var rocketDest = Math.round(window.innerHeight / 2 - 60) + 'px';
+      spaceRocket.style.cssText = 'position:absolute;left:50%;width:90px;height:auto;pointer-events:none;';
+
       if (window.innerWidth <= 640) {
-        spaceRocket.style.cssText = 'position:fixed;left:50%;bottom:' + rocketDest + ';transform:translateX(-50%);width:90px;height:auto;z-index:9155;pointer-events:none;';
-        document.body.appendChild(spaceRocket);
+        // Mobile: instantly centered
+        spaceRocket.style.top = '50%';
+        spaceRocket.style.transform = 'translate(-50%, -50%)';
+        overlay.appendChild(spaceRocket);
       } else {
-        spaceRocket.style.cssText = 'position:fixed;left:50%;bottom:-160px;transform:translateX(-50%);width:90px;height:auto;z-index:9155;pointer-events:none;';
-        document.body.appendChild(spaceRocket);
-        spaceRocket.getBoundingClientRect(); // force paint at start position
-        spaceRocket.style.transition = 'bottom 1.4s cubic-bezier(0.25,0.46,0.45,0.94)';
-        spaceRocket.style.bottom = rocketDest;
+        // Desktop: rises from below into center
+        spaceRocket.style.top = 'calc(100% + 160px)';
+        spaceRocket.style.transform = 'translateX(-50%)';
+        overlay.appendChild(spaceRocket);
+        spaceRocket.getBoundingClientRect();
+        spaceRocket.style.transition = 'top 1.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+        spaceRocket.style.top = 'calc(50% - 60px)';
       }
 
-      // After 6.5 seconds: fade back to page, then show play-again
+      // After 6.5 seconds: fade out, show play-again
       setTimeout(function() {
         cancelAnimationFrame(animId);
         overlay.style.transition = 'opacity 0.8s ease';
@@ -1102,6 +1115,7 @@
         setTimeout(function() {
           if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
           if (spaceRocket.parentNode) spaceRocket.parentNode.removeChild(spaceRocket);
+          overlay.style.overflow = '';
           overlay.style.opacity = '';
           overlay.style.background = 'rgba(28,43,74,0.92)';
           overlay.style.transition = 'opacity 0.5s ease';
@@ -1250,7 +1264,7 @@
         // ── Desktop: flying satchel animation ──────────────────
         var satchelMsg = document.createElement('div');
         satchelMsg.textContent = 'Find all 5 hidden bricks.';
-        satchelMsg.style.cssText = 'position:fixed;top:calc(50% + 115px);left:50%;transform:translateX(-50%);font-family:"Arial Black",Arial,sans-serif;font-size:1rem;font-weight:900;color:#fff;letter-spacing:0.06em;text-transform:uppercase;text-align:center;opacity:0;transition:opacity 0.4s ease;z-index:999;pointer-events:none;white-space:nowrap;';
+        satchelMsg.style.cssText = 'position:fixed;top:calc(30% + 115px);left:50%;transform:translateX(-50%);font-family:"Arial Black",Arial,sans-serif;font-size:1rem;font-weight:900;color:#fff;letter-spacing:0.06em;text-transform:uppercase;text-align:center;opacity:0;transition:opacity 0.4s ease;z-index:999;pointer-events:none;white-space:nowrap;';
         document.body.appendChild(satchelMsg);
 
         satchelIntro.style.display = 'block';

@@ -1218,9 +1218,17 @@
               }, 300);
             }
 
-            // Phase 5: space scene
+            // Phase 5: space scene (desktop only)
             setTimeout(function() {
-              showSpaceScene(overlay);
+              if (window.innerWidth <= 640) {
+                document.documentElement.style.overflow = '';
+                var msg = document.getElementById('hunt-message');
+                var closeBtn2 = document.getElementById('hunt-close');
+                if (msg) { msg.textContent = 'You found them all.'; msg.style.display = 'block'; }
+                if (closeBtn2) closeBtn2.style.display = 'inline-block';
+              } else {
+                showSpaceScene(overlay);
+              }
             }, 1700);
           }, 900);
         }, 50);
@@ -1263,13 +1271,14 @@
       // Transition background to black
       overlay.style.transition = 'background 0.8s ease';
       overlay.style.background = '#000';
+      overlay.style.overflow = 'hidden';
 
-      // Canvas star field
+      // Canvas star field — inside overlay as position:absolute
       var canvas = document.createElement('canvas');
-      canvas.style.cssText = 'position:fixed;inset:0;z-index:9150;pointer-events:none;';
+      canvas.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;';
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
-      document.body.appendChild(canvas);
+      overlay.appendChild(canvas);
 
       var ctx2 = canvas.getContext('2d');
       var stars = [];
@@ -1297,19 +1306,23 @@
       }
       drawStars();
 
-      // Rocket: mobile = appears centered immediately; desktop = rises from bottom
+      // Rocket inside overlay as position:absolute
       var spaceRocket = document.createElement('img');
       spaceRocket.src = 'assets/scavenger/Rocket-assembled-no-base.png';
-      var rocketDest = Math.round(window.innerHeight / 2 - 60) + 'px';
+      spaceRocket.style.cssText = 'position:absolute;left:50%;width:90px;height:auto;pointer-events:none;';
       if (window.innerWidth <= 640) {
-        spaceRocket.style.cssText = 'position:fixed;left:50%;bottom:' + rocketDest + ';transform:translateX(-50%);width:90px;height:auto;z-index:9155;pointer-events:none;';
-        document.body.appendChild(spaceRocket);
+        // Mobile: instantly centered
+        spaceRocket.style.top = '50%';
+        spaceRocket.style.transform = 'translate(-50%, -50%)';
+        overlay.appendChild(spaceRocket);
       } else {
-        spaceRocket.style.cssText = 'position:fixed;left:50%;bottom:-160px;transform:translateX(-50%);width:90px;height:auto;z-index:9155;pointer-events:none;';
-        document.body.appendChild(spaceRocket);
+        // Desktop: rises from below
+        spaceRocket.style.top = 'calc(100% + 160px)';
+        spaceRocket.style.transform = 'translateX(-50%)';
+        overlay.appendChild(spaceRocket);
         spaceRocket.getBoundingClientRect(); // force paint at start position
-        spaceRocket.style.transition = 'bottom 1.4s cubic-bezier(0.25,0.46,0.45,0.94)';
-        spaceRocket.style.bottom = rocketDest;
+        spaceRocket.style.transition = 'top 1.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+        spaceRocket.style.top = 'calc(50% - 60px)';
       }
 
       // After 6.5 seconds: fade back to page, then show play-again
@@ -1321,6 +1334,7 @@
         setTimeout(function() {
           if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
           if (spaceRocket.parentNode) spaceRocket.parentNode.removeChild(spaceRocket);
+          overlay.style.overflow = '';
           overlay.style.opacity = '';
           overlay.style.background = 'rgba(28,43,74,0.92)';
           overlay.style.transition = 'opacity 0.5s ease';

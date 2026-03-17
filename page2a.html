@@ -675,6 +675,22 @@
         height: 120px;
       }
 
+      /* Brick-1 inside Chef's Hat modal — float near content on mobile */
+      #modal-chefs #brick-1 {
+        position: relative;
+        bottom: auto;
+        right: auto;
+        width: 80px;
+        height: 80px;
+        float: right;
+        margin: 0 0 8px 12px;
+      }
+
+      #modal-chefs #brick-1 img {
+        width: 80px;
+        height: 80px;
+      }
+
       /* Full-screen modals on mobile */
       .modal-overlay {
         padding: 0;
@@ -1065,14 +1081,12 @@
       // Rocket enters from bottom and flies up to center
       var spaceRocket = document.createElement('img');
       spaceRocket.src = 'assets/scavenger/Rocket-assembled-no-base.png';
-      spaceRocket.style.cssText = 'position:fixed;left:50%;bottom:-160px;transform:translateX(-50%);width:90px;height:auto;z-index:9155;pointer-events:none;transition:bottom 1.4s cubic-bezier(0.25,0.46,0.45,0.94);';
+      spaceRocket.style.cssText = 'position:fixed;left:50%;bottom:-160px;transform:translateX(-50%);width:90px;height:auto;z-index:9155;pointer-events:none;';
       document.body.appendChild(spaceRocket);
       var rocketDest = Math.round(window.innerHeight / 2 - 60) + 'px';
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          spaceRocket.style.bottom = rocketDest;
-        });
-      });
+      spaceRocket.getBoundingClientRect(); // force paint at start position
+      spaceRocket.style.transition = 'bottom 1.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+      spaceRocket.style.bottom = rocketDest;
 
       // After 6.5 seconds: fade back to page, then show play-again
       setTimeout(function() {
@@ -1187,57 +1201,81 @@
       var bottomBar      = document.querySelector('.bottom-bar');
       var satchelInBar   = document.querySelector('.inventory-satchel');
 
-      // Create message text below satchel
-      var satchelMsg = document.createElement('div');
-      satchelMsg.textContent = 'Find all 5 hidden bricks.';
-      var msgTopOffset = window.innerWidth <= 640 ? 76 : 115;
-      satchelMsg.style.cssText = 'position:fixed;top:calc(50% + ' + msgTopOffset + 'px);left:50%;transform:translateX(-50%);font-family:"Arial Black",Arial,sans-serif;font-size:' + (window.innerWidth <= 640 ? '0.78' : '1') + 'rem;font-weight:900;color:#fff;letter-spacing:0.06em;text-transform:uppercase;text-align:center;opacity:0;transition:opacity 0.4s ease;z-index:999;pointer-events:none;white-space:nowrap;';
-      document.body.appendChild(satchelMsg);
+      function revealBar() {
+        document.documentElement.classList.remove('run-satchel-intro');
+        bottomBar.style.transformOrigin = 'right center';
+        bottomBar.style.transform = 'scaleX(0.15)';
+        bottomBar.style.opacity = '1';
+        bottomBar.style.pointerEvents = '';
+        void bottomBar.offsetWidth;
+        bottomBar.style.transition = 'transform 0.4s cubic-bezier(0.34,1.4,0.64,1), opacity 0.1s ease';
+        bottomBar.style.transform = 'scaleX(1)';
+        setTimeout(function() { bottomBar.style.transition = ''; bottomBar.style.transform = ''; bottomBar.style.transformOrigin = ''; }, 500);
+      }
 
-      // Show the intro elements
-      satchelIntro.style.display = 'block';
+      if (window.innerWidth <= 640) {
+        // ── Mobile: simple popup overlay ───────────────────────
+        var popup = document.createElement('div');
+        popup.style.cssText = 'position:fixed;inset:0;background:rgba(28,43,74,0.92);z-index:9500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;';
 
-      // Fade in on next frame
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          satchelOverlay.style.opacity = '1';
-          satchelIntro.style.opacity  = '1';
-          setTimeout(function() { satchelMsg.style.opacity = '1'; }, 200);
+        var popImg = document.createElement('img');
+        popImg.src = 'assets/lego/satchel.png';
+        popImg.style.cssText = 'height:110px;width:auto;';
+
+        var popText = document.createElement('p');
+        popText.textContent = 'Find all 5 hidden bricks.';
+        popText.style.cssText = 'font-family:"Arial Black",Arial,sans-serif;font-size:0.88rem;font-weight:900;color:#fff;letter-spacing:0.06em;text-transform:uppercase;text-align:center;padding:0 24px;';
+
+        var popBtn = document.createElement('button');
+        popBtn.textContent = 'Let the hunt begin';
+        popBtn.style.cssText = 'background:#FFD700;color:#1C2B4A;border:none;padding:10px 22px;font-family:"Arial Black",Arial,sans-serif;font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;border-radius:6px;box-shadow:0 4px 0 #b8960a;cursor:pointer;margin-top:4px;';
+
+        popup.appendChild(popImg);
+        popup.appendChild(popText);
+        popup.appendChild(popBtn);
+        document.body.appendChild(popup);
+
+        popBtn.addEventListener('click', function() {
+          popup.style.transition = 'opacity 0.3s ease';
+          popup.style.opacity = '0';
+          setTimeout(function() { popup.remove(); revealBar(); }, 300);
         });
-      });
 
-      // After pause, fly satchel to its spot in the bar
-      setTimeout(function () {
-        var rect  = satchelInBar.getBoundingClientRect();
-        var destX = rect.left + rect.width  / 2;
-        var destY = rect.top  + rect.height / 2;
+      } else {
+        // ── Desktop: flying satchel animation ──────────────────
+        var satchelMsg = document.createElement('div');
+        satchelMsg.textContent = 'Find all 5 hidden bricks.';
+        satchelMsg.style.cssText = 'position:fixed;top:calc(50% + 115px);left:50%;transform:translateX(-50%);font-family:"Arial Black",Arial,sans-serif;font-size:1rem;font-weight:900;color:#fff;letter-spacing:0.06em;text-transform:uppercase;text-align:center;opacity:0;transition:opacity 0.4s ease;z-index:999;pointer-events:none;white-space:nowrap;';
+        document.body.appendChild(satchelMsg);
 
-        // Fade out message
-        satchelMsg.style.opacity = '0';
-        setTimeout(function() { satchelMsg.remove(); }, 400);
+        satchelIntro.style.display = 'block';
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            satchelOverlay.style.opacity = '1';
+            satchelIntro.style.opacity  = '1';
+            setTimeout(function() { satchelMsg.style.opacity = '1'; }, 200);
+          });
+        });
 
-        // Start fading overlay out at same time
-        satchelOverlay.style.opacity = '0';
-
-        // Fly and shrink satchel to bar position
-        satchelIntro.style.top    = destY + 'px';
-        satchelIntro.style.left   = destX + 'px';
-        satchelIntro.style.height = '38px';
-
-        // Once landed, reveal bar with expand animation
         setTimeout(function () {
-          satchelIntro.style.display = 'none';
-          document.documentElement.classList.remove('run-satchel-intro');
-          bottomBar.style.transformOrigin = 'right center';
-          bottomBar.style.transform = 'scaleX(0.15)';
-          bottomBar.style.opacity = '1';
-          bottomBar.style.pointerEvents = '';
-          void bottomBar.offsetWidth;
-          bottomBar.style.transition = 'transform 0.4s cubic-bezier(0.34,1.4,0.64,1), opacity 0.1s ease';
-          bottomBar.style.transform = 'scaleX(1)';
-          setTimeout(function() { bottomBar.style.transition = ''; bottomBar.style.transform = ''; bottomBar.style.transformOrigin = ''; }, 500);
-        }, 700);
-      }, 1600);
+          var rect  = satchelInBar.getBoundingClientRect();
+          var destX = rect.left + rect.width  / 2;
+          var destY = rect.top  + rect.height / 2;
+
+          satchelMsg.style.opacity = '0';
+          setTimeout(function() { satchelMsg.remove(); }, 400);
+          satchelOverlay.style.opacity = '0';
+
+          satchelIntro.style.top    = destY + 'px';
+          satchelIntro.style.left   = destX + 'px';
+          satchelIntro.style.height = '38px';
+
+          setTimeout(function () {
+            satchelIntro.style.display = 'none';
+            revealBar();
+          }, 700);
+        }, 1600);
+      }
     }
   </script>
 

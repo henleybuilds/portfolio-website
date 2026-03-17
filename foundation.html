@@ -921,14 +921,12 @@
       // Rocket enters from bottom and flies up to center
       var spaceRocket = document.createElement('img');
       spaceRocket.src = 'assets/scavenger/Rocket-assembled-no-base.png';
-      spaceRocket.style.cssText = 'position:fixed;left:50%;bottom:-160px;transform:translateX(-50%);width:90px;height:auto;z-index:9155;pointer-events:none;transition:bottom 1.4s cubic-bezier(0.25,0.46,0.45,0.94);';
+      spaceRocket.style.cssText = 'position:fixed;left:50%;bottom:-160px;transform:translateX(-50%);width:90px;height:auto;z-index:9155;pointer-events:none;';
       document.body.appendChild(spaceRocket);
       var rocketDest = Math.round(window.innerHeight / 2 - 60) + 'px';
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          spaceRocket.style.bottom = rocketDest;
-        });
-      });
+      spaceRocket.getBoundingClientRect(); // force paint at start position
+      spaceRocket.style.transition = 'bottom 1.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+      spaceRocket.style.bottom = rocketDest;
 
       // After 6.5 seconds: fade back to page, then show play-again
       setTimeout(function() {

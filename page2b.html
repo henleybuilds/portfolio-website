@@ -302,6 +302,18 @@
       100% { background: rgba(255, 215, 0, 0); }
     }
 
+    /* Jiujitsu image cap */
+    #jiujitsu-img {
+      max-height: 200px;
+      object-fit: contain;
+    }
+
+    @media (max-width: 640px) {
+      #jiujitsu-img {
+        max-height: 140px;
+      }
+    }
+
     /* ── Projects Row ───────────────────────────────────── */
     .projects-row {
       display: grid;
@@ -852,7 +864,7 @@
             <div class="slide-wrap">
               <iframe
                 class="slide-frame"
-                src="https://docs.google.com/presentation/d/e/2PACX-1vRqL5Je7NwcFGrMNTIF7RzHWtXHbR54WJT8NGmEzAlBGI46NCyUAO82aaP2VOG9Akr3wogduwciprE2/pubembed?start=false&loop=false&delayms=3000"
+                data-src="https://docs.google.com/presentation/d/e/2PACX-1vRqL5Je7NwcFGrMNTIF7RzHWtXHbR54WJT8NGmEzAlBGI46NCyUAO82aaP2VOG9Akr3wogduwciprE2/pubembed?start=false&loop=false&delayms=3000"
                 allowfullscreen
                 title="Replit Checklist Workflow — Presentation 1">
               </iframe>
@@ -865,7 +877,7 @@
             <div class="slide-wrap">
               <iframe
                 class="slide-frame"
-                src="https://docs.google.com/presentation/d/e/2PACX-1vQOfoSvqjPRFtQ6EnMUL3wym_YfpfhgtKEbULtybDe9AudANWJqS0f3SwhQthCZS6hcimDnxTAnakHB/pubembed?start=false&loop=false&delayms=3000"
+                data-src="https://docs.google.com/presentation/d/e/2PACX-1vQOfoSvqjPRFtQ6EnMUL3wym_YfpfhgtKEbULtybDe9AudANWJqS0f3SwhQthCZS6hcimDnxTAnakHB/pubembed?start=false&loop=false&delayms=3000"
                 allowfullscreen
                 title="Replit Checklist Workflow — Presentation 2">
               </iframe>
@@ -965,7 +977,7 @@
           <p class="project-title">Jiu-Jitsu Training Assistant</p>
           <button class="see-more-btn" data-open="overlay-jiujitsu">See More &rsaquo;</button>
         </div>
-        <img src="assets/lego/jiujitsu-mat.png" alt="Jiu-Jitsu Training Assistant" class="project-image">
+        <img src="assets/lego/jiujitsu-mat.png" alt="Jiu-Jitsu Training Assistant" class="project-image" id="jiujitsu-img">
         <p class="project-problem">Wanted smarter training sessions, not just more of them. Built an AI that plans each class.</p>
       </div>
 
@@ -1033,22 +1045,44 @@
       });
     });
 
+    // iOS-safe scroll lock
+    var _modalScrollY = 0;
+    function _lockModal() {
+      _modalScrollY = window.scrollY || window.pageYOffset;
+      document.body.style.position = 'fixed';
+      document.body.style.top = '-' + _modalScrollY + 'px';
+      document.body.style.width = '100%';
+    }
+    function _unlockModal() {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, _modalScrollY);
+    }
+
     // Modal open/close
     document.querySelectorAll('[data-open]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        document.getElementById(btn.dataset.open).classList.add('open');
-        document.body.style.overflow = 'hidden';
+        var modal = document.getElementById(btn.dataset.open);
+        // Lazy-load any iframes in this modal
+        modal.querySelectorAll('iframe[data-src]').forEach(function (iframe) {
+          if (!iframe.src || iframe.src === window.location.href) {
+            iframe.src = iframe.dataset.src;
+          }
+        });
+        modal.classList.add('open');
+        _lockModal();
       });
     });
     document.querySelectorAll('[data-close]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         document.getElementById(btn.dataset.close).classList.remove('open');
-        document.body.style.overflow = '';
+        _unlockModal();
       });
     });
     document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
       overlay.addEventListener('click', function (e) {
-        if (e.target === overlay) { overlay.classList.remove('open'); document.body.style.overflow = ''; }
+        if (e.target === overlay) { overlay.classList.remove('open'); _unlockModal(); }
       });
     });
 
@@ -1491,7 +1525,12 @@
 
       // 0.5, 0.5 = dead center of the button's bounding rect
       fireArrow(btn, 0.5, 0.5, function () {
-        document.getElementById('overlay-replit').classList.add('open');
+        var modal = document.getElementById('overlay-replit');
+        modal.querySelectorAll('iframe[data-src]').forEach(function (iframe) {
+          if (!iframe.src || iframe.src === window.location.href) iframe.src = iframe.dataset.src;
+        });
+        modal.classList.add('open');
+        _lockModal();
       });
     });
 
@@ -1511,25 +1550,43 @@
         if (!brick5Landed) {
           brick5Landed = true;
 
+          var isMobile = window.innerWidth <= 640;
+          var brickSize = isMobile ? 90 : 170;
+          var halfBrick = brickSize / 2;
+
+          // Resize the brick element to match viewport
+          brick3.style.width  = brickSize + 'px';
+          brick3.style.height = brickSize + 'px';
+          var b3img = brick3.querySelector('img');
+          if (b3img) { b3img.style.width = brickSize + 'px'; b3img.style.height = brickSize + 'px'; }
+
           // Grab target rect now for the landing calculation
           var targetRect = document.getElementById('lego-target').getBoundingClientRect();
-          var landX = targetRect.right + 14;
-          var landY = targetRect.top + targetRect.height * 0.75 - 8;
+          var landX, landY;
+          if (isMobile) {
+            // Land above the target, clamped to screen
+            landX = Math.max(8, Math.min(window.innerWidth - brickSize - 8, targetRect.left + targetRect.width / 2 - halfBrick));
+            landY = Math.max(8, targetRect.top - brickSize - 6);
+          } else {
+            landX = targetRect.right + 14;
+            landY = targetRect.top + targetRect.height * 0.75 - 8;
+          }
 
-          // Place brick at hit point (centered on the 60×60 brick)
+          // Place brick at hit point (centered on brick)
           brick3.style.transition = 'none';
-          brick3.style.left = (hitX - 30) + 'px';
-          brick3.style.top  = (hitY - 30) + 'px';
+          brick3.style.left = (hitX - halfBrick) + 'px';
+          brick3.style.top  = (hitY - halfBrick) + 'px';
           brick3.style.opacity = '1';
           brick3.style.pointerEvents = 'none';
           void brick3.offsetWidth;
 
           // Phase 1: pop straight up
+          var popHeight = isMobile ? 40 : 68;
           brick3.style.transition = 'left 0.18s ease-out, top 0.22s cubic-bezier(0.2,0,0.4,1)';
-          brick3.style.left = (hitX - 30) + 'px';
-          brick3.style.top  = (hitY - 30 - 68) + 'px';
+          brick3.style.left = (hitX - halfBrick) + 'px';
+          brick3.style.top  = (hitY - halfBrick - popHeight) + 'px';
 
-          // Phase 2: arc down and right to land beside the target
+          // Phase 2: arc to landing spot
           setTimeout(function () {
             brick3.style.transition = 'left 0.32s cubic-bezier(0.4,0,1,1), top 0.36s cubic-bezier(0.8,0,1,1)';
             brick3.style.left = landX + 'px';

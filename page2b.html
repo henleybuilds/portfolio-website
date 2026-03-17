@@ -613,8 +613,8 @@
 
     /* ── Inv slots ───────────────────────────────────────── */
     .inv-slot {
-      width: 36px;
-      height: 32px;
+      width: 50px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -623,32 +623,32 @@
     }
 
     .brick-unknown {
-      width: 28px;
-      height: 17px;
+      width: 48px;
+      height: 29px;
       background: rgba(28,43,74,0.22);
-      border-radius: 2px;
+      border-radius: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      margin-top: 5px;
+      margin-top: 9px;
     }
 
     .brick-unknown::before {
       content: '';
       position: absolute;
-      width: 7px;
-      height: 5px;
+      width: 12px;
+      height: 9px;
       background: rgba(28,43,74,0.18);
-      border-radius: 2px 2px 0 0;
-      top: -5px;
-      left: 4px;
-      box-shadow: 10px 0 0 rgba(28,43,74,0.18);
+      border-radius: 3px 3px 0 0;
+      top: -9px;
+      left: 7px;
+      box-shadow: 17px 0 0 rgba(28,43,74,0.18);
     }
 
     .brick-unknown span {
       font-family: 'Arial Black', Arial, sans-serif;
-      font-size: 0.58rem;
+      font-size: 0.72rem;
       font-weight: 900;
       color: rgba(28,43,74,0.45);
       line-height: 1;
@@ -656,8 +656,8 @@
     }
 
     .brick-found-img {
-      width: 28px;
-      height: 28px;
+      height: 38px;
+      width: auto;
       object-fit: contain;
       display: none;
     }

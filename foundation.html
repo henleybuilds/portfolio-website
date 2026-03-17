@@ -377,7 +377,6 @@
       margin-right: 4px;
     }
 
-    /* .inventory-brick replaced by .inv-slot */
 
     .next-btn {
       background: #FFD700;
@@ -494,6 +493,43 @@
     .inv-slot.found .brick-found-img {
       display: block;
     }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 32px 16px 120px;
+      }
+
+      h1 {
+        font-size: clamp(1.4rem, 7vw, 2rem);
+      }
+
+      .content-row {
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .photo-col {
+        flex: none;
+        width: 100%;
+      }
+
+      .right-col {
+        flex: none;
+        width: 100%;
+      }
+
+      #brick-5 {
+        bottom: 120px;
+        left: 16px;
+        width: 120px;
+        height: 120px;
+      }
+
+      #brick-5 img {
+        width: 120px;
+        height: 120px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -582,7 +618,6 @@
       <div class="inv-slot" data-brick="brick-4"><div class="brick-unknown"><span>?</span></div><img class="brick-found-img" src="assets/scavenger/flame.png" alt="Flame"></div>
       <div class="inv-slot" data-brick="brick-5"><div class="brick-unknown"><span>?</span></div><img class="brick-found-img" src="assets/scavenger/flatbase.png" alt="Base"></div>
     </div>
-    <a href="contact.html" class="next-btn">Next &rsaquo;</a>
   </div>
 
   <!-- Hidden brick #5 — flatbase, near photo column left edge -->

@@ -388,7 +388,6 @@
       margin-right: 4px;
     }
 
-    /* .inventory-brick replaced by .inv-slot */
 
     .next-btn {
       background: #FFD700;
@@ -573,6 +572,52 @@
     @keyframes flip-out-back {
       from { opacity: 1; transform: perspective(1400px) rotateY(0deg)  translateX(0);   }
       to   { opacity: 0; transform: perspective(1400px) rotateY(18deg) translateX(40px); }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 24px 16px 120px;
+      }
+
+      h1 {
+        font-size: clamp(1.4rem, 7vw, 2rem);
+        margin-bottom: 20px;
+      }
+
+      .projects-top {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .project-img {
+        width: 100%;
+        height: auto;
+      }
+
+      .project-bottom .project-block {
+        width: 100%;
+      }
+
+      .project-bottom .project-img {
+        width: 100%;
+        height: auto;
+      }
+
+      .video-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #brick-2 {
+        right: -10px;
+        bottom: 60px;
+        width: 120px;
+        height: 120px;
+      }
+
+      #brick-2 img {
+        width: 120px;
+        height: 120px;
+      }
     }
   </style>
 </head>

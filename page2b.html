@@ -840,18 +840,21 @@
       /* Full-screen modals on mobile */
       .modal-overlay {
         padding: 0;
-        align-items: stretch;
+        align-items: flex-start;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
       }
 
       .modal {
         width: 100%;
         max-width: 100%;
-        min-height: 100dvh;
-        max-height: 100dvh;
+        min-height: 100%;
+        max-height: none;
         border-radius: 0;
         border-left: none;
         border-right: none;
-        overflow-y: auto;
+        overflow-y: visible;
       }
 
       .modal-close {
@@ -1069,15 +1072,11 @@
       });
     });
 
-    // Scroll lock
+    // Scroll lock — scroll to top so fixed overlay aligns with visual viewport
     function _lockModal() {
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
     }
-    function _unlockModal() {
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-    }
+    function _unlockModal() {}
 
     // Modal open/close
     document.querySelectorAll('[data-open]').forEach(function (btn) {
@@ -1147,6 +1146,7 @@
     function triggerCompletionAnimation() {
       var overlay = document.getElementById('hunt-complete-overlay');
       if (!overlay) return;
+      window.scrollTo(0, 0);
       document.body.style.overflow = 'hidden';
       overlay.style.display = 'flex';
       overlay.style.opacity = '0';

@@ -1222,10 +1222,13 @@
             setTimeout(function() {
               if (window.innerWidth <= 640) {
                 document.documentElement.style.overflow = '';
-                var msg = document.getElementById('hunt-message');
-                var closeBtn2 = document.getElementById('hunt-close');
-                if (msg) { msg.textContent = 'You found them all.'; msg.style.display = 'block'; }
-                if (closeBtn2) closeBtn2.style.display = 'inline-block';
+                overlay.style.transition = 'opacity 0.6s ease';
+                overlay.style.opacity = '0';
+                setTimeout(function() {
+                  overlay.style.display = 'none';
+                  overlay.style.opacity = '';
+                  overlay.style.transition = '';
+                }, 650);
               } else {
                 showSpaceScene(overlay);
               }

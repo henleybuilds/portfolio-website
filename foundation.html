@@ -955,6 +955,7 @@
     document.querySelectorAll('[data-open]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         document.getElementById(btn.dataset.open).classList.add('open');
+        document.body.style.overflow = 'hidden';
       });
     });
 
@@ -962,12 +963,13 @@
     document.querySelectorAll('[data-close]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         document.getElementById(btn.dataset.close).classList.remove('open');
+        document.body.style.overflow = '';
       });
     });
 
     document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
       overlay.addEventListener('click', function (e) {
-        if (e.target === overlay) overlay.classList.remove('open');
+        if (e.target === overlay) { overlay.classList.remove('open'); document.body.style.overflow = ''; }
       });
     });
   </script>

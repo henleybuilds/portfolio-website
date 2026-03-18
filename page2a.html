@@ -660,7 +660,7 @@
       }
 
       .video-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
       }
 
       #brick-2 {
@@ -764,19 +764,19 @@
         <span class="video-section-label">Watch the System in Action</span>
         <div class="video-grid">
           <div class="video-wrap">
-            <video class="video-frame" src="assets/videos/Greatwall-1.mp4" controls playsinline></video>
+            <video class="video-frame" src="assets/videos/Greatwall-1.mp4" controls playsinline preload="metadata"></video>
             <button class="fullscreen-btn" title="Expand"></button>
           </div>
           <div class="video-wrap">
-            <video class="video-frame" src="assets/videos/Alligator-2.mp4" controls playsinline></video>
+            <video class="video-frame" src="assets/videos/Alligator-2.mp4" controls playsinline preload="metadata"></video>
             <button class="fullscreen-btn" title="Expand"></button>
           </div>
           <div class="video-wrap">
-            <video class="video-frame" src="assets/videos/seismascope-3.mp4" controls playsinline></video>
+            <video class="video-frame" src="assets/videos/seismascope-3.mp4" controls playsinline preload="metadata"></video>
             <button class="fullscreen-btn" title="Expand"></button>
           </div>
           <div class="video-wrap">
-            <video class="video-frame" src="assets/videos/pistolshrimp-4.mp4" controls playsinline></video>
+            <video class="video-frame" src="assets/videos/pistolshrimp-4.mp4" controls playsinline preload="metadata"></video>
             <button class="fullscreen-btn" title="Expand"></button>
           </div>
         </div>
@@ -1009,6 +1009,20 @@
                   overlay.style.display = 'none';
                   overlay.style.opacity = '';
                   overlay.style.transition = '';
+                  // Auto-reset so the user can play again immediately
+                  var msg = document.getElementById('hunt-message');
+                  if (msg) { msg.style.display = 'none'; msg.textContent = ''; }
+                  var closeBtn2 = document.getElementById('hunt-close');
+                  if (closeBtn2) closeBtn2.style.display = 'none';
+                  var stage2 = document.getElementById('hunt-rocket-stage');
+                  if (stage2) { stage2.innerHTML = ''; stage2.style.cssText = 'position:relative;width:160px;height:300px;display:flex;align-items:center;justify-content:center;'; }
+                  sessionStorage.removeItem('bricks-found');
+                  document.querySelectorAll('.inv-slot').forEach(function(s) { s.classList.remove('found'); });
+                  ['brick-1','brick-2','brick-3','brick-4','brick-5'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) { el.style.opacity = ''; el.style.display = ''; }
+                  });
+                  if (typeof brick5Landed !== 'undefined') brick5Landed = false;
                 }, 650);
               } else {
                 showSpaceScene(overlay);
@@ -1239,7 +1253,7 @@
       if (window.innerWidth <= 640) {
         // ── Mobile: simple popup overlay ───────────────────────
         var popup = document.createElement('div');
-        popup.style.cssText = 'position:fixed;inset:0;background:rgba(28,43,74,0.92);z-index:9500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;';
+        popup.style.cssText = 'position:fixed;inset:0;background:rgba(28,43,74,0.92);z-index:9500;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:60px;gap:18px;';
 
         var popImg = document.createElement('img');
         popImg.src = 'assets/lego/satchel.png';

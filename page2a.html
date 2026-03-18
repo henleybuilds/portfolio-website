@@ -1003,27 +1003,10 @@
             setTimeout(function() {
               if (window.innerWidth <= 640) {
                 document.documentElement.style.overflow = '';
-                overlay.style.transition = 'opacity 0.6s ease';
-                overlay.style.opacity = '0';
-                setTimeout(function() {
-                  overlay.style.display = 'none';
-                  overlay.style.opacity = '';
-                  overlay.style.transition = '';
-                  // Auto-reset so the user can play again immediately
-                  var msg = document.getElementById('hunt-message');
-                  if (msg) { msg.style.display = 'none'; msg.textContent = ''; }
-                  var closeBtn2 = document.getElementById('hunt-close');
-                  if (closeBtn2) closeBtn2.style.display = 'none';
-                  var stage2 = document.getElementById('hunt-rocket-stage');
-                  if (stage2) { stage2.innerHTML = ''; stage2.style.cssText = 'position:relative;width:160px;height:300px;display:flex;align-items:center;justify-content:center;'; }
-                  sessionStorage.removeItem('bricks-found');
-                  document.querySelectorAll('.inv-slot').forEach(function(s) { s.classList.remove('found'); });
-                  ['brick-1','brick-2','brick-3','brick-4','brick-5'].forEach(function(id) {
-                    var el = document.getElementById(id);
-                    if (el) { el.style.opacity = ''; el.style.display = ''; }
-                  });
-                  if (typeof brick5Landed !== 'undefined') brick5Landed = false;
-                }, 650);
+                var msg = document.getElementById('hunt-message');
+                var closeBtn2 = document.getElementById('hunt-close');
+                if (msg) { msg.textContent = 'You found them all.'; msg.style.display = 'block'; }
+                if (closeBtn2) closeBtn2.style.display = 'inline-block';
               } else {
                 showSpaceScene(overlay);
               }

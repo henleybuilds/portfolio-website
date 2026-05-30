@@ -40,6 +40,14 @@
       max-width: 440px;
     }
 
+    /* Centered page header above the two-column layout */
+    .page-header {
+      text-align: center;
+      width: 100%;
+      padding: 0 24px;
+      margin-bottom: 4px;
+    }
+
     /* Set number line above heading */
     .set-label {
       font-family: Arial, sans-serif;
@@ -48,7 +56,7 @@
       color: #1C2B4A;
       letter-spacing: 0.35em;
       text-transform: uppercase;
-      margin-bottom: -20px;
+      margin-bottom: 6px;
     }
 
     h1 {
@@ -69,16 +77,16 @@
     }
 
     .minifig {
-      width: min(460px, 44vw);
+      width: min(560px, 50vw);
       height: auto;
       display: block;
     }
 
-    /* Speech bubble — absolutely positioned over the upper-right of the minifig */
+    /* Speech bubble — positioned to emerge from the minifig's mouth */
     .bubble {
       position: absolute;
-      right: 10px;
-      top: 42px;
+      right: -70px;
+      top: 38px;
       background: #fff;
       border: 2.5px solid #1C2B4A;
       border-radius: 12px;
@@ -140,11 +148,11 @@
 
     /* Section label */
     .section-label {
-      font-family: Arial, sans-serif;
-      font-size: 0.62rem;
-      font-weight: 700;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 900;
       color: #1C2B4A;
-      letter-spacing: 0.35em;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       margin-bottom: -12px;
     }
@@ -386,11 +394,11 @@
       }
 
       .minifig {
-        width: min(380px, calc(100vw - 80px));
+        width: min(420px, calc(100vw - 80px));
       }
 
       .bubble {
-        right: -4px;
+        right: -8px;
         top: 6px;
         width: 110px;
         padding: 5px 8px;
@@ -402,7 +410,6 @@
 
       h1 {
         font-size: clamp(1.6rem, 8vw, 2.4rem);
-        text-align: center;
       }
 
       .section-label {
@@ -419,12 +426,14 @@
   <div style="position:fixed;top:0;left:0;bottom:0;width:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
   <div style="position:fixed;top:0;right:0;bottom:0;width:4px;background:#f5c518;z-index:9999;pointer-events:none;"></div>
 
+  <div class="page-header">
+    <p class="set-label">Set No. SH-001 &middot; Build Log Series</p>
+    <h1>Stephen Henley</h1>
+  </div>
+
   <div class="container">
 
     <div class="left-col">
-      <p class="set-label">Set No. SH-001 &middot; Build Log Series</p>
-
-      <h1>Stephen Henley</h1>
 
       <p class="section-label">What I&rsquo;m Building Now</p>
 
@@ -448,7 +457,7 @@
       <div class="bubble">
         <span class="line line-1">Hey I&rsquo;m Stephen.</span>
         <span class="line line-2">I build AI content pipelines.</span>
-        <span class="line line-3">Check out what I&rsquo;m working on &mdash; or find the 5 hidden bricks to see what got me here.</span>
+        <span class="line line-3">Check out what I&rsquo;m working on &mdash; or take the scavenger hunt to see what got me here.</span>
       </div>
     </div>
 

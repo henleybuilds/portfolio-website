@@ -370,50 +370,70 @@
       .container {
         flex-direction: column;
         align-items: center;
+        gap: 20px;
       }
 
+      /* Collapse left-col so its children participate directly in container's flex order */
       .left-col {
-        max-width: 100%;
-        width: 100%;
-        align-items: center;
+        display: contents;
+      }
+
+      /* Mobile order: section label → channel buttons → minifig → action buttons */
+      .section-label {
+        order: 1;
         text-align: center;
       }
 
       .project-btn-row {
+        order: 2;
         flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
+      .character-wrap {
+        order: 3;
+      }
+
+      .btn-group {
+        order: 4;
+        align-items: center;
+        width: 100%;
+      }
+
+      /* All buttons full-width and same size on mobile */
+      .btn {
         width: 100%;
         max-width: 340px;
       }
 
-      .btn-group {
-        align-items: center;
+      /* Project buttons match the main button size on mobile */
+      .btn-project {
+        flex: none;
+        padding: 15px 0;
+        font-size: 0.95rem;
+        letter-spacing: 0.16em;
       }
 
-      .btn {
-        max-width: 340px;
-      }
-
+      /* Slightly larger minifig on mobile */
       .minifig {
-        width: min(420px, calc(100vw - 80px));
+        width: min(460px, calc(100vw - 56px));
       }
 
+      /* Bubble scales proportionally with the larger image */
       .bubble {
         right: -8px;
-        top: 6px;
-        width: 110px;
-        padding: 5px 8px;
+        top: 8px;
+        width: 128px;
+        padding: 6px 9px;
       }
 
       .bubble .line {
-        font-size: 0.56rem;
+        font-size: 0.6rem;
       }
 
       h1 {
         font-size: clamp(1.6rem, 8vw, 2.4rem);
-      }
-
-      .section-label {
-        text-align: center;
       }
     }
   </style>

@@ -1090,18 +1090,51 @@
   var DMG_ARROW=7, DMG_FLAME=10, DMG_ROCK=16, MAXHP=100;
   var HIT_R=10, INVULN=0.6, DYING=1.3;
 
+  /* Fire is a magazine, not a laser. Each level buys a longer burst and an
+     extra stream, and the magazine refills on its own, so the button is
+     always tapped in bursts and never leaned on.
+     `size` is how many volleys a full burst holds, `regen` how fast it comes
+     back per second. Level 1 is deliberately tiny. */
+  var POWER_MAX=4;
+  function fireProfile(){
+    if(G.power<=1) return {rate:0.115, streams:1, spread:0,     size:5,  regen:2.2};
+    if(G.power===2) return {rate:0.095, streams:2, spread:0.09, size:10, regen:2.4};
+    if(G.power===3) return {rate:0.078, streams:3, spread:0.11, size:18, regen:2.8};
+    return            {rate:0.062, streams:3, spread:0.145,     size:36, regen:3.4};
+  }
+  /* Levels are gated on score, not on luck. A power orb never even appears
+     until the next threshold is cleared, so picking one up always means it
+     was earned and there is no such thing as a dud pickup. */
+  var POWER_AT=[0, 50, 100, 200];
+  function nextPowerAt(){ return G.power<POWER_MAX ? POWER_AT[G.power] : null; }
+  function canLevel(){ return G.power<POWER_MAX && G.score>=POWER_AT[G.power]; }
+
+  // drifting pickups, and the surge clock that decides where they appear
+  var PICK_R=9, PICK_LIFE=11, PICK_V=60;
+  var SURGE_FIRST=11, SURGE_MIN=8.5, SURGE_WARN=3.6;
+  var LIVES_MAX=2;
+
+  // the harrier: the first enemy that comes at you in the air
+  var HARRIER_AFTER=45, DMG_HARRIER=18, HARRIER_TRACK=30;
+
   var G={ y:100, vy:0, wing:0, tilt:0, hp:MAXHP, invuln:0, flash:0, dyingT:0,
-          foes:[], shots:[], flames:[], balls:[], blasts:[], ash:[], embers:[],
+          foes:[], shots:[], flames:[], balls:[], blasts:[], ash:[], embers:[], picks:[],
           scroll:0, t:0, nextSpawn:0, score:0, best:0, spec:0, fireCd:0,
-          state:'ready', shake:0, shakeM:0, table:[], rank:-1, ridges:null };
+          power:1, burst:5, lives:0,
+          surgeT:SURGE_FIRST, surgeDropped:false, surgeN:0,
+          state:'ready', shake:0, shakeM:0, table:[], rank:-1, ridges:null,
+          entry:null };
   try{ G.best=parseInt(localStorage.getItem('room-best')||'0',10)||0; }catch(e){}
 
   function gameReset(){
     G.y=100; G.vy=0; G.tilt=0; G.wing=0;
     G.hp=MAXHP; G.invuln=1.0; G.flash=0; G.dyingT=0;
     G.foes=[]; G.shots=[]; G.flames=[]; G.balls=[]; G.blasts=[]; G.ash=[]; G.embers=[];
+    G.picks=[];
     G.t=0; G.nextSpawn=2.2; G.score=0; G.spec=0; G.fireCd=0;
-    G.state='ready'; G.shake=0; G.rank=-1;
+    G.power=1; G.burst=fireProfile().size; G.lives=0; G.pickFlash=null;
+    G.surgeT=SURGE_FIRST; G.surgeDropped=false; G.surgeN=0;
+    G.state='ready'; G.shake=0; G.rank=-1; G.entry=null;
     if(!G.ridges) buildRidges();
   }
   function buildRidges(){
@@ -1110,26 +1143,39 @@
     G.stars=[]; for(var i=0;i<70;i++) G.stars.push({x:Math.random()*W,y:Math.random()*(GY-16),s:0.3+Math.random()*1.3,b:Math.random()});
   }
 
-  function pointsFor(t){ return t==='ballista'?5:(t==='catapult'?2:1); }
-  function radiusFor(t){ return (t==='ballista'?30:(t==='catapult'?26:16))*SC; }
-  function enemyTop(e){ return GY-(e.type==='ballista'?34:(e.type==='catapult'?30:20))*SC; }
-  function hpFor(t){ return t==='ballista'?3:1; }
+  function pointsFor(t){ return t==='ballista'?5:(t==='harrier'?3:(t==='catapult'?2:1)); }
+  function radiusFor(t){ return (t==='ballista'?30:(t==='harrier'?20:(t==='catapult'?26:16)))*SC; }
+  function enemyTop(e){
+    if(e.fly) return e.y;
+    return GY-(e.type==='ballista'?34:(e.type==='catapult'?30:20))*SC;
+  }
+  function hpFor(t){ return t==='ballista'?3:(t==='harrier'?2:1); }
 
   function spawnFoe(){
     // The ballista is the thing to watch out for, so it stays rare and never
     // shows up in the opening seconds: a run should start readable and only
     // then get genuinely dangerous.
+    var har = G.t<HARRIER_AFTER ? 0 : Math.min(0.18, (G.t-HARRIER_AFTER)*0.0045);
     var bal = G.t<20 ? 0 : Math.min(0.16, (G.t-20)*0.004);
-    var cat=Math.min(0.38,G.t*0.009), fl=Math.min(0.30,G.t*0.006), r0=Math.random();
-    var type = r0<bal ? 'ballista'
-             : r0<bal+cat ? 'catapult'
-             : r0<bal+cat+fl ? 'flaming' : 'archer';
-    G.foes.push({ type:type, x:W+22, alive:true, deathTimer:0, deathDur:0.45, burning:false,
+    var cat=Math.min(0.34,G.t*0.009), fl=Math.min(0.28,G.t*0.006), r0=Math.random();
+    var type = r0<har ? 'harrier'
+             : r0<har+bal ? 'ballista'
+             : r0<har+bal+cat ? 'catapult'
+             : r0<har+bal+cat+fl ? 'flaming' : 'archer';
+    var e={ type:type, x:W+22, alive:true, deathTimer:0, deathDur:0.45, burning:false,
       legPhase:Math.random()*10, hp:hpFor(type), hitT:0,
       shotCd: type==='ballista' ? (2.4+Math.random()) :
-              type==='catapult' ? (1.6+Math.random()*1.2) : (0.7+Math.random()*0.9) });
+              type==='catapult' ? (1.6+Math.random()*1.2) : (0.7+Math.random()*0.9) };
+    if(type==='harrier'){
+      // Comes in at your altitude rather than shooting up at you, so the
+      // answer is to move or to burn it, not to climb out of range.
+      e.fly=true; e.y=clamp(G.y+(Math.random()*60-30),TOPM+6,BOTM-6);
+      e.wing=Math.random()*6; e.peel=0; e.shotCd=1e9;
+    }
+    G.foes.push(e);
   }
   function cooldownFor(t){
+    if(t==='harrier') return 1e9;
     if(t==='ballista') return Math.max(1.9,3.2-G.t*0.010)+Math.random()*0.5;
     if(t==='catapult') return Math.max(1.05,2.5-G.t*0.013)+Math.random()*0.7;
     if(t==='flaming')  return Math.max(0.7,1.5-G.t*0.012)+Math.random()*0.5;
@@ -1165,6 +1211,31 @@
       G.ash.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-12*f,life:0.35+Math.random()*0.25,age:0}); }
   }
 
+  /* Pickups drift in from the right and bob. A surge drops one high on the
+     screen a few seconds before the wave lands, so taking it means climbing
+     out of position exactly when the screen is about to fill. */
+  function dropPick(kind,y){
+    G.picks.push({kind:kind, x:W+14, y:y, bob:Math.random()*6.28, age:0, life:PICK_LIFE});
+  }
+  function pickKind(){
+    if(canLevel()) return 'power';
+    if(G.lives<LIVES_MAX && Math.random()<0.25) return 'life';
+    return 'heal';   // usually wanted by the time it crosses the screen
+  }
+  function takePick(pk){
+    if(pk.kind==='power'){ G.power=Math.min(POWER_MAX,G.power+1); G.burst=fireProfile().size; }
+    else if(pk.kind==='heal'){ G.hp=Math.min(MAXHP,G.hp+34); }
+    else { G.lives=Math.min(LIVES_MAX,G.lives+1); }
+    G.pickFlash={kind:pk.kind, t:1.1};
+    for(var i=0;i<12;i++){ var a=Math.random()*6.28, sp=20+Math.random()*38;
+      G.embers.push({x:pk.x,y:pk.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:0.4+Math.random()*0.3,age:0}); }
+  }
+  function surge(){
+    G.surgeN++;
+    var n=Math.min(5, 2+Math.floor(G.surgeN/2));
+    for(var i=0;i<n;i++){ spawnFoe(); var e=G.foes[G.foes.length-1]; e.x=W+22+i*30; }
+  }
+
   function mouth(){ return { x: DX + 70*SC, y: G.y - 4*SC }; }
 
   function fireSpecial(){
@@ -1189,16 +1260,82 @@
   function hurt(d){
     if(G.invuln>0||G.state!=='play') return;
     G.hp-=d; G.invuln=INVULN; G.flash=0.25;
-    if(G.hp<=0){ G.hp=0; G.state='dying'; G.dyingT=DYING; }
+    if(G.hp<=0){
+      if(G.lives>0){
+        // A revive pack buys the run back once, but not for free: you lose a
+        // power level, so a long run cannot be built purely on packs.
+        G.lives--; G.hp=Math.round(MAXHP*0.6); G.invuln=1.8; G.flash=0.5;
+        G.power=Math.max(1,G.power-1); G.burst=fireProfile().size;
+        G.shots.length=0; G.shake=0.3; G.shakeM=5;
+        puffAsh(DX,G.y,18,2.0);
+        return;
+      }
+      G.hp=0; G.state='dying'; G.dyingT=DYING;
+    }
   }
-  function loadScores(){ try{ var a=JSON.parse(localStorage.getItem('room-scores')||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
-  function saveScore(n){ var a=loadScores(); a.push(n); a.sort(function(x,y){return y-x;}); a=a.slice(0,5);
-    try{ localStorage.setItem('room-scores',JSON.stringify(a)); }catch(e){} return a; }
+  /* Scores used to be bare numbers. They carry initials now, so anything
+     already saved is migrated rather than thrown away. */
+  function loadScores(){
+    try{
+      var a=JSON.parse(localStorage.getItem('room-scores')||'[]');
+      if(!Array.isArray(a)) return [];
+      return a.map(function(v){
+        return (typeof v==='number') ? {n:'--', s:v} : {n:(v&&v.n)||'--', s:(v&&v.s)|0};
+      });
+    }catch(e){ return []; }
+  }
+  function saveScore(name,score){
+    var a=loadScores(); a.push({n:name,s:score});
+    a.sort(function(x,y){return y.s-x.s;}); a=a.slice(0,5);
+    try{ localStorage.setItem('room-scores',JSON.stringify(a)); }catch(e){}
+    return a;
+  }
+  function placesInTable(score){
+    var a=loadScores();
+    if(a.length<5) return true;
+    for(var i=0;i<a.length;i++) if(score>a[i].s) return true;
+    return false;
+  }
+  var ALPHA='ABCDEFGHIJKLMNOPQRSTUVWXYZ .-';
   function endRun(){
-    G.state='over';
-    G.table=saveScore(G.score); G.rank=-1;
-    for(var i=0;i<G.table.length;i++) if(G.table[i]===G.score){ G.rank=i; break; }
     if(G.score>G.best){ G.best=G.score; try{ localStorage.setItem('room-best',String(G.best)); }catch(e){} }
+    if(G.score>0 && placesInTable(G.score)){
+      // earned a slot, so take initials before showing the board
+      G.state='entry';
+      G.entry={ idx:[0,0], pos:0, blink:0 };
+      return;
+    }
+    commitScore('--');
+  }
+  function commitScore(name){
+    G.state='over';
+    G.table=saveScore(name,G.score); G.rank=-1;
+    for(var i=0;i<G.table.length;i++){
+      if(G.table[i].s===G.score && G.table[i].n===name){ G.rank=i; break; }
+    }
+    G.entry=null;
+  }
+  function entryName(){
+    if(!G.entry) return '--';
+    return G.entry.idx.map(function(i){ return ALPHA.charAt(i); }).join('');
+  }
+  function entryMove(d){ if(!G.entry) return; G.entry.pos=(G.entry.pos+d+2)%2; }
+  function entryCycle(d){
+    if(!G.entry) return;
+    var p=G.entry.pos;
+    G.entry.idx[p]=(G.entry.idx[p]+d+ALPHA.length)%ALPHA.length;
+  }
+  function entryType(ch){
+    if(!G.entry) return;
+    var i=ALPHA.indexOf(ch.toUpperCase());
+    if(i<0) return;
+    G.entry.idx[G.entry.pos]=i;
+    if(G.entry.pos<1) G.entry.pos++;
+  }
+  function entryConfirm(){
+    if(!G.entry) return;
+    if(G.entry.pos<1){ G.entry.pos=1; return; }
+    commitScore(entryName());
   }
 
   function gameStep(dt){
@@ -1245,39 +1382,90 @@
     // special
     if(G.tapSpecial){ G.tapSpecial=false; fireSpecial(); }
 
-    // held breath
+    // fire: a magazine that empties fast and refills on its own. At level 1
+    // that is about half a second of flame and then a wait; at level 4 it is
+    // two solid seconds. The length of the burst IS the upgrade.
     var m=mouth();
-    if(keys.use){
+    var prof=fireProfile();
+    if(keys.use && G.burst>=1){
       G.fireCd-=dt;
       if(G.fireCd<=0){
-        var ang=FIRE_ANG+(Math.random()-0.5)*0.15;
-        G.flames.push({x:m.x,y:m.y,vx:Math.cos(ang)*FIRE_V,vy:Math.sin(ang)*FIRE_V,life:FIRE_LIFE,age:0});
-        G.fireCd=FIRE_RATE;
+        for(var fs=0; fs<prof.streams; fs++){
+          var off=(prof.streams===1)?0:(fs-(prof.streams-1)/2)*prof.spread;
+          var ang=FIRE_ANG+off+(Math.random()-0.5)*0.09;
+          G.flames.push({x:m.x,y:m.y,vx:Math.cos(ang)*FIRE_V,vy:Math.sin(ang)*FIRE_V,life:FIRE_LIFE,age:0});
+        }
+        G.burst-=1;
+        G.fireCd=prof.rate;
       }
+    } else {
+      G.burst=Math.min(prof.size, G.burst+prof.regen*dt);
+    }
+    if(G.pickFlash && G.pickFlash.t>0) G.pickFlash.t-=dt;
+
+    // spawn, thinned out slightly because surges now carry the pressure
+    G.nextSpawn-=dt;
+    if(G.nextSpawn<=0){ spawnFoe(); G.nextSpawn=Math.max(0.62,1.8-G.t*0.017)+Math.random()*0.6; }
+
+    // the surge clock
+    G.surgeT-=dt;
+    if(!G.surgeDropped && G.surgeT<=SURGE_WARN){
+      G.surgeDropped=true;
+      dropPick(pickKind(), TOPM+10+Math.random()*14);
+    }
+    if(G.surgeT<=0){
+      surge();
+      G.surgeDropped=false;
+      G.surgeT=Math.max(SURGE_MIN, 14-G.surgeN*0.35)+Math.random()*2.5;
     }
 
-    // spawn
-    G.nextSpawn-=dt;
-    if(G.nextSpawn<=0){ spawnFoe(); G.nextSpawn=Math.max(0.46,1.5-G.t*0.019)+Math.random()*0.6; }
+    // pickups drift and bob; grabbing one is a proximity check
+    for(var pi=G.picks.length-1;pi>=0;pi--){
+      var pk=G.picks[pi];
+      pk.age+=dt; pk.bob+=dt*2.4;
+      pk.x-=PICK_V*dt;
+      var pdx=pk.x-DX, pdy=(pk.y+Math.sin(pk.bob)*3)-G.y;
+      if(pdx*pdx+pdy*pdy < (PICK_R+HIT_R)*(PICK_R+HIT_R)){ takePick(pk); G.picks.splice(pi,1); continue; }
+      if(pk.x<-14||pk.age>pk.life) G.picks.splice(pi,1);
+    }
 
     for(var i=G.foes.length-1;i>=0;i--){
       var e=G.foes[i];
       if(e.alive){
-        e.x -= (e.type==='catapult'||e.type==='ballista'?SCROLLV:SCROLLV+16)*dt;
+        if(e.fly){
+          e.x -= (SCROLLV+34)*dt;
+          e.wing+=dt*15;
+          if(e.peel>0){ e.peel-=dt; e.y+=e.peelV*dt; }
+          else {
+            var want=G.y-e.y;
+            e.y += Math.max(-HARRIER_TRACK,Math.min(HARRIER_TRACK,want*2.2))*dt;
+          }
+          e.y=clamp(e.y,TOPM+4,BOTM-4);
+          if(e.peel<=0 && G.invuln<=0){
+            var hdx=e.x-DX, hdy=e.y-G.y;
+            if(hdx*hdx+hdy*hdy < (HIT_R+12)*(HIT_R+12)){
+              hurt(DMG_HARRIER);
+              e.peel=1.6; e.peelV=(hdy>=0?1:-1)*70;
+            }
+          }
+        } else {
+          e.x -= (e.type==='catapult'||e.type==='ballista'?SCROLLV:SCROLLV+16)*dt;
+        }
         e.legPhase+=dt*7;
         if(e.hitT>0) e.hitT-=dt;
-        if(e.x<W-4){ e.shotCd-=dt; if(e.shotCd<=0){ foeShoot(e); e.shotCd=cooldownFor(e.type); } }
-      } else e.deathTimer-=dt;
+        if(!e.fly && e.x<W-4){ e.shotCd-=dt; if(e.shotCd<=0){ foeShoot(e); e.shotCd=cooldownFor(e.type); } }
+      } else { e.deathTimer-=dt; if(e.fly) e.y+=90*dt; }
       if(e.x<-26||(!e.alive&&e.deathTimer<=0)) G.foes.splice(i,1);
     }
 
     // incoming
     for(var j=G.shots.length-1;j>=0;j--){
       var p=G.shots[j];
+      if(!p) continue;                 // a revive inside hurt() empties this array
       p.age+=dt; p.vy+=p.g*dt; p.x+=p.vx*dt; p.y+=p.vy*dt;
       if(G.invuln<=0){
         var dx=p.x-DX, dy=p.y-G.y, rr=p.r+HIT_R;
-        if(dx*dx+dy*dy<rr*rr){ hurt(p.dmg); G.shots.splice(j,1); continue; }
+        if(dx*dx+dy*dy<rr*rr){ hurt(p.dmg); if(j<G.shots.length) G.shots.splice(j,1); continue; }
       }
       if(p.age>3.5||p.x<-18||p.y>H+20) G.shots.splice(j,1);
     }
@@ -1569,6 +1757,82 @@
     }
   }
 
+  /* The harrier: a rider on a war hawk. It needs a warm point of light or a
+     dark bird on a dark sky is invisible, which is the same lesson the
+     ballista's lamp taught. */
+  function drawFoeHarrier(e){
+    ctx.save(); ctx.translate(e.x,e.y); ctx.scale(SC,SC);
+    if(!e.alive){ var t=1-Math.max(0,e.deathTimer)/(e.deathDur||0.45);
+      ctx.globalAlpha=1-t; ctx.rotate(t*1.9); }
+    var f=Math.sin(e.wing);
+    // far wing first so the body overlaps it
+    ctx.fillStyle='#1B1D28';
+    ctx.beginPath(); ctx.moveTo(2,-4);
+    ctx.quadraticCurveTo(-16,-14-f*16,-30,-4-f*10); ctx.quadraticCurveTo(-14,2,2,4); ctx.closePath(); ctx.fill();
+    // body and tail
+    ctx.fillStyle='#33323F';
+    ctx.beginPath(); ctx.ellipse(0,0,17,7,0,0,6.3); ctx.fill();
+    ctx.fillStyle='#22222C';
+    ctx.beginPath(); ctx.moveTo(-14,-2); ctx.lineTo(-30,-7); ctx.lineTo(-30,6); ctx.lineTo(-14,3); ctx.closePath(); ctx.fill();
+    // head and beak, facing the dragon
+    ctx.fillStyle='#3C3B49'; ctx.beginPath(); ctx.arc(16,-3,6.4,0,6.3); ctx.fill();
+    ctx.fillStyle='#E0A23C'; ctx.beginPath();
+    ctx.moveTo(27,-3); ctx.lineTo(20,-6); ctx.lineTo(20,1); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#FFDF7A'; ctx.beginPath(); ctx.arc(18,-5,1.7,0,6.3); ctx.fill();
+    // rider
+    ctx.fillStyle='#4A5A38';
+    ctx.beginPath(); ctx.moveTo(-2,-6); ctx.lineTo(6,-6); ctx.lineTo(4,-18); ctx.lineTo(-1,-18); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#C19A6D'; ctx.beginPath(); ctx.arc(2,-21,4.6,0,6.3); ctx.fill();
+    ctx.fillStyle='#2E3A20'; ctx.beginPath(); ctx.arc(2,-22.5,5,Math.PI,0); ctx.fill();
+    // near wing, over the body
+    ctx.fillStyle='#2A2A36';
+    ctx.beginPath(); ctx.moveTo(2,-2);
+    ctx.quadraticCurveTo(-14,10+f*18,-28,4+f*12); ctx.quadraticCurveTo(-12,6,2,5); ctx.closePath(); ctx.fill();
+    // the lantern the rider carries, so it reads against the night
+    var lg=ctx.createRadialGradient(-4,-16,0,-4,-16,15);
+    lg.addColorStop(0,'rgba(255,160,70,0.85)'); lg.addColorStop(1,'rgba(255,120,40,0)');
+    ctx.fillStyle=lg; ctx.beginPath(); ctx.arc(-4,-16,15,0,6.3); ctx.fill();
+    ctx.fillStyle='#FFC978'; r(-6,-18,4,5,'#FFC978');
+    if(e.hitT>0){ ctx.globalAlpha=Math.min(1,e.hitT/0.16)*0.7; ctx.fillStyle='#FFD9A0';
+      ctx.beginPath(); ctx.ellipse(0,-6,26,20,0,0,6.3); ctx.fill(); ctx.globalAlpha=1; }
+    if(e.burning&&!e.alive) burnFx(e.legPhase,-6);
+    ctx.restore();
+    if(e.alive && e.hp<hpFor('harrier')){
+      for(var q=0;q<hpFor('harrier');q++)
+        r(e.x-5+q*6, e.y-16, 4, 2, q<e.hp?'#E8A63F':'rgba(130,120,110,0.45)');
+    }
+  }
+
+  /* The floaty things. Amber raises your fire, green heals, blue buys you a
+     second run. All three glow, because they are meant to pull you off your
+     line and you have to be able to see them from across the screen. */
+  function drawPick(pk){
+    var y=pk.y+Math.sin(pk.bob)*3;
+    var col = pk.kind==='power' ? ['#FFD24A','#E8892A'] :
+              pk.kind==='heal'  ? ['#8CE6A6','#2E9B57'] : ['#9CC8FF','#3A6FD0'];
+    var pulse=0.75+Math.sin(pk.bob*1.7)*0.25;
+    var fade = pk.age>pk.life-2 ? Math.max(0,(pk.life-pk.age)/2) : 1;
+    ctx.save(); ctx.globalAlpha=fade;
+    var g=ctx.createRadialGradient(pk.x,y,0,pk.x,y,16*pulse);
+    g.addColorStop(0,col[0]); g.addColorStop(0.28,col[1]); g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=0.5*fade; ctx.fillStyle=g;
+    ctx.beginPath(); ctx.arc(pk.x,y,16*pulse,0,6.3); ctx.fill();
+    ctx.globalAlpha=fade;
+    ctx.fillStyle=col[1]; ctx.beginPath(); ctx.arc(pk.x,y,6.4,0,6.3); ctx.fill();
+    ctx.fillStyle=col[0]; ctx.beginPath(); ctx.arc(pk.x,y,4.6,0,6.3); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.beginPath(); ctx.arc(pk.x-1.6,y-1.8,1.5,0,6.3); ctx.fill();
+    // a glyph so the three are told apart at a glance
+    if(pk.kind==='power'){
+      // a double chevron pointing up: more fire
+      ctx.strokeStyle='#20160A'; ctx.lineWidth=1.3; ctx.lineJoin='round';
+      ctx.beginPath(); ctx.moveTo(pk.x-2.6,y+0.4); ctx.lineTo(pk.x,y-2.4); ctx.lineTo(pk.x+2.6,y+0.4); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pk.x-2.6,y+3.2); ctx.lineTo(pk.x,y+0.4); ctx.lineTo(pk.x+2.6,y+3.2); ctx.stroke();
+    }
+    else if(pk.kind==='heal'){ r(pk.x-2.8,y-0.9,5.6,1.8,'#0B2A16'); r(pk.x-0.9,y-2.8,1.8,5.6,'#0B2A16'); }
+    else { r(pk.x-2.6,y-2.2,5.2,1.7,'#0A1A34'); r(pk.x-2.6,y+0.6,5.2,1.7,'#0A1A34'); }
+    ctx.restore();
+  }
+
   function ridgeLayer(pts,sf,col,al){
     var segW=W/(pts.length-6), shift=(G.scroll*sf)%segW, v=[];
     for(var i=0;i<pts.length;i++) v.push({x:-segW*2+i*segW-shift,y:pts[i]});
@@ -1620,9 +1884,11 @@
       ctx.beginPath(); ctx.ellipse(qx,GY+14,9,3,0,0,6.3); ctx.fill(); }
 
     for(var e1=0;e1<G.foes.length;e1++){ var e=G.foes[e1];
-      if(e.type==='ballista') drawFoeBallista(e);
+      if(e.type==='harrier') drawFoeHarrier(e);
+      else if(e.type==='ballista') drawFoeBallista(e);
       else if(e.type==='catapult') drawFoeCatapult(e);
       else drawFoeArcher(e); }
+    for(var pq=0;pq<G.picks.length;pq++) drawPick(G.picks[pq]);
 
     // incoming
     for(var s2=0;s2<G.shots.length;s2++){ var p=G.shots[s2];
@@ -1709,27 +1975,90 @@
     var hc = frac>0.5 ? '#5FD08A' : (frac>0.22 ? '#E8B23F' : '#E4574C');
     r(11,11,Math.round(hw*frac),6,hc);
     r(11,11,Math.round(hw*frac),2,'rgba(255,255,255,0.28)');
+    // spare lives, as small pips on the end of the health bar
+    for(var lv=0; lv<G.lives; lv++) r(10+hw+6+lv*6, 11, 4, 6, '#9CC8FF');
+    // the burst magazine, under health because they are both things you spend
+    var pfz=fireProfile();
+    r(10,20,hw+2,5,'rgba(6,10,20,0.75)');
+    var bfrac=Math.max(0,Math.min(1,G.burst/pfz.size));
+    r(11,21,Math.round(hw*bfrac),3, G.burst>=1?'#6FD3E8':'#3E5A66');
+    // notches, so a longer magazine is visibly longer rather than just fuller
+    for(var nk=1; nk<Math.min(pfz.size,12); nk++){
+      var nx=11+Math.round(hw*(nk/Math.min(pfz.size,12)));
+      r(nx,21,0.7,3,'rgba(8,14,26,0.85)');
+    }
     // special
-    r(10,21,hw+2,7,'rgba(6,10,20,0.75)');
+    r(10,27,hw+2,7,'rgba(6,10,20,0.75)');
     var sready=G.spec>=100;
-    r(11,22,Math.round(hw*(G.spec/100)),5, sready?'#FFD24A':'#C2652A');
+    r(11,28,Math.round(hw*(G.spec/100)),5, sready?'#FFD24A':'#C2652A');
     if(sready){ ctx.font='700 6px "Archivo Black", Arial Black, sans-serif';
-      ctx.fillStyle='#3A2A06'; ctx.fillText('B  READY',16,25); }
+      ctx.fillStyle='#3A2A06'; ctx.fillText('B  READY',16,31); }
+    // fire power, as filled chevrons, with what the next one costs
+    for(var pw=0; pw<POWER_MAX; pw++){
+      var on=pw<G.power;
+      r(10+pw*7, 37, 5, 4, on?'#FFB748':'rgba(120,110,100,0.35)');
+      if(on) r(10+pw*7, 37, 5, 1.4, '#FFE1A0');
+    }
+    var nxt=nextPowerAt();
+    if(nxt!==null){
+      ctx.font='500 6px "DM Mono", monospace';
+      ctx.fillStyle = canLevel() ? '#FFD24A' : '#66748F';
+      ctx.fillText(canLevel()? 'UPGRADE READY' : ('NEXT '+nxt), 10+POWER_MAX*7+4, 39);
+    }
+    // a brief word when a pickup lands, so its effect is never a mystery
+    if(G.pickFlash && G.pickFlash.t>0){
+      var pf=G.pickFlash;
+      ctx.save(); ctx.globalAlpha=Math.min(1,pf.t/0.5);
+      ctx.textAlign='center'; ctx.font='700 8px "Archivo Black", Arial Black, sans-serif';
+      ctx.fillStyle = pf.kind==='power'?'#FFD24A':(pf.kind==='heal'?'#8CE6A6':'#9CC8FF');
+      ctx.fillText(pf.kind==='power'?('FIRE '+G.power):(pf.kind==='heal'?'MENDED':'EXTRA LIFE'),
+                   DX, G.y-26-(1.1-pf.t)*10);
+      ctx.restore(); ctx.textAlign='left';
+    }
     // score, kept left so it never sits under the page links
     ctx.textAlign='left';
     ctx.font='700 14px "Archivo Black", Arial Black, sans-serif';
-    ctx.fillStyle='#E8C87A'; ctx.fillText(String(G.score),10,41);
+    ctx.fillStyle='#E8C87A'; ctx.fillText(String(G.score),10,52);
     ctx.font='500 6px "DM Mono", monospace'; ctx.fillStyle='#7A88A8';
-    ctx.fillText('BEST '+G.best,10,53);
+    ctx.fillText('BEST '+G.best,10,63);
 
     if(G.state==='ready'){
       ctx.globalAlpha=0.55; r(0,0,W,H,'#070B16'); ctx.globalAlpha=1;
       ctx.textAlign='center';
       ctx.font='500 8px "DM Mono", monospace'; ctx.fillStyle='#9FB0CC';
-      ctx.fillText('hold UP to climb',W/2,H/2-14);
-      ctx.fillText('hold A to breathe fire',W/2,H/2);
-      ctx.fillText('B when the bar is full',W/2,H/2+14);
+      ctx.fillText('hold UP to climb',W/2,H/2-24);
+      ctx.fillText('A breathes fire, in short bursts',W/2,H/2-10);
+      ctx.fillText('B when the bar is full',W/2,H/2+4);
+      ctx.fillText('score 50 to earn a longer one',W/2,H/2+18);
       if(G.best>0){ ctx.fillStyle='#7A88A8'; ctx.font='500 7px "DM Mono", monospace'; ctx.fillText('BEST '+G.best,W/2,H/2+32); }
+    }
+    if(G.state==='entry'){
+      ctx.globalAlpha=0.86; r(0,0,W,H,'#070B16'); ctx.globalAlpha=1;
+      ctx.textAlign='center';
+      ctx.font='700 13px "Archivo Black", Arial Black, sans-serif';
+      ctx.fillStyle='#E8A63F'; ctx.fillText('HIGH SCORE',W/2,H/2-52);
+      ctx.font='700 11px "Archivo Black", Arial Black, sans-serif';
+      ctx.fillStyle='#EFE6D2'; ctx.fillText(G.score+' PTS',W/2,H/2-34);
+
+      var nm=entryName(), bw=26, x0=W/2-bw/2;
+      G.entry.blink+=0.035;
+      for(var ci=0;ci<2;ci++){
+        var cx=x0+ci*bw, sel=(ci===G.entry.pos);
+        r(cx-10,H/2-18,20,26, sel?'#1B2A44':'#101725');
+        if(sel){
+          r(cx-10,H/2-18,20,2,'#FFD24A'); r(cx-10,H/2+6,20,2,'#FFD24A');
+          // little arrows so it is obvious the stick changes the letter
+          ctx.fillStyle='#FFD24A';
+          ctx.beginPath(); ctx.moveTo(cx,H/2-24); ctx.lineTo(cx-4,H/2-20); ctx.lineTo(cx+4,H/2-20); ctx.closePath(); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(cx,H/2+14); ctx.lineTo(cx-4,H/2+10); ctx.lineTo(cx+4,H/2+10); ctx.closePath(); ctx.fill();
+        }
+        ctx.font='700 15px "Archivo Black", Arial Black, sans-serif';
+        ctx.fillStyle = sel ? '#FFE9A8' : '#9FB0CC';
+        if(!sel || Math.sin(G.entry.blink*4)>-0.82) ctx.fillText(nm.charAt(ci),cx,H/2-4);
+      }
+      ctx.font='500 7px "DM Mono", monospace'; ctx.fillStyle='#7E8FAC';
+      ctx.fillText('D-pad picks letters  ·  A confirms',W/2,H/2+30);
+      ctx.fillText('or just type it',W/2,H/2+42);
     }
     if(G.state==='over'){
       ctx.globalAlpha=0.84; r(0,0,W,H,'#070B16'); ctx.globalAlpha=1;
@@ -1738,13 +2067,14 @@
       ctx.fillStyle='#E8A63F'; ctx.fillText('DOWNED',W/2,H/2-46);
       ctx.font='700 11px "Archivo Black", Arial Black, sans-serif';
       ctx.fillStyle='#EFE6D2'; ctx.fillText(G.score+' PTS',W/2,H/2-26);
-      var tb=(G.table&&G.table.length)?G.table:[G.score];
+      var tb=(G.table&&G.table.length)?G.table:[{n:'--',s:G.score}];
       ctx.font='500 7px "DM Mono", monospace';
       for(var ri=0;ri<tb.length;ri++){
-        var mine=(ri===G.rank);
-        ctx.textAlign='right'; ctx.fillStyle=mine?'#FFD24A':'#6E7E9C'; ctx.fillText((ri+1)+'.',W/2-14,H/2-8+ri*11);
-        ctx.textAlign='left'; ctx.fillStyle=mine?'#FFD24A':'#A9BCD2'; ctx.fillText(String(tb[ri]),W/2-6,H/2-8+ri*11);
-        if(mine){ ctx.fillStyle='#FFD24A'; ctx.fillText('NEW',W/2+30,H/2-8+ri*11); }
+        var mine=(ri===G.rank), ry=H/2-8+ri*11;
+        ctx.textAlign='right'; ctx.fillStyle=mine?'#FFD24A':'#6E7E9C'; ctx.fillText((ri+1)+'.',W/2-40,ry);
+        ctx.textAlign='left';  ctx.fillStyle=mine?'#FFD24A':'#C6D4E6'; ctx.fillText(tb[ri].n,W/2-32,ry);
+        ctx.textAlign='right'; ctx.fillStyle=mine?'#FFD24A':'#A9BCD2'; ctx.fillText(String(tb[ri].s),W/2+22,ry);
+        if(mine){ ctx.textAlign='left'; ctx.fillStyle='#FFD24A'; ctx.fillText('NEW',W/2+30,ry); }
       }
       ctx.textAlign='center'; ctx.fillStyle='#9FB0CC';
       ctx.fillText('A to fly again',W/2,H/2-8+tb.length*11+10);
@@ -1934,6 +2264,17 @@
     keys[k]=true;
     // In the game A and B are held: A is the thruster, B charges the orb.
     if(mode==='game'){
+      if(G.state==='entry'){
+        // the same four buttons spell a name, arcade cabinet style
+        if(k==='up')    entryCycle(1);
+        else if(k==='down')  entryCycle(-1);
+        else if(k==='left')  entryMove(-1);
+        else if(k==='right') entryMove(1);
+        else if(k==='use')   entryConfirm();
+        else if(k==='call')  entryMove(-1);
+        keys[k]=false;
+        return;
+      }
       if(k==='use' && G.state==='over'){ gameReset(); G.state='play'; }
       else if(k==='call') G.tapSpecial=true;
       return;
@@ -1944,6 +2285,15 @@
 
   window.addEventListener('keydown',function(e){
     if(mode==='panel'){ if(e.code==='Escape'||e.code==='KeyA') closePanel(); return; }
+    if(mode==='game' && G.state==='entry'){
+      // Typing beats nudging a letter wheel 26 times, so on a keyboard the
+      // name is just typed. The D-pad path stays for phones.
+      if(e.key && e.key.length===1 && ALPHA.indexOf(e.key.toUpperCase())>=0){
+        e.preventDefault(); entryType(e.key); return;
+      }
+      if(e.code==='Backspace'){ e.preventDefault(); entryMove(-1); return; }
+      if(e.code==='Enter'||e.code==='NumpadEnter'){ e.preventDefault(); G.entry.pos=1; entryConfirm(); return; }
+    }
     if(e.code==='Escape' && (mode==='game'||mode==='sitting')){ e.preventDefault(); standUp(); return; }
     var k=K[e.code]; if(!k) return;
     e.preventDefault();

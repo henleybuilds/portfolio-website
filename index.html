@@ -77,13 +77,6 @@
   }
   nav a:hover{background:var(--yellow-lt)}
   nav a:active{transform:translateY(2px);box-shadow:0 1px 0 var(--yellow-dk)}
-  .navbtn{
-    font-family:var(--body);font-size:11.5px;font-weight:700;cursor:pointer;
-    padding:6px 11px;border-radius:3px;border:0;
-    color:var(--navy);background:var(--yellow);box-shadow:0 3px 0 var(--yellow-dk);
-  }
-  .navbtn:hover{background:var(--yellow-lt)}
-  .navbtn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--yellow-dk)}
   nav a:focus-visible,button:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
 
   /* deck: controls flank the screen on wide, sit under it on narrow */
@@ -198,7 +191,7 @@
       flex-direction:column;align-items:flex-start;gap:11px;
     }
     nav{margin-left:0;gap:10px;flex:0 0 auto}
-    nav a,.navbtn{font-size:15px;padding:11px 20px;border-radius:8px}
+    nav a{font-size:15px;padding:11px 20px;border-radius:8px}
     nav a.quiet{
       background:#22344F;color:#DCE8F6;
       border:1px solid #4A6C9C;box-shadow:0 3px 0 #0D1626;
@@ -255,7 +248,7 @@
     }
     .whoami{width:100%;font-size:25px;padding:0 2px 3px}
     nav{width:100%;margin:0;gap:8px}
-    nav a,.navbtn{flex:1 1 0;text-align:center;font-size:12px;padding:9px 8px;border-radius:6px}
+    nav a{flex:1 1 0;text-align:center;font-size:12px;padding:9px 8px;border-radius:6px}
     nav a.quiet{
       background:#22344F;color:#DCE8F6;
       border:1px solid #4A6C9C;box-shadow:0 3px 0 #0D1626;
@@ -301,8 +294,6 @@
     .ab{width:clamp(60px,18.5vw,82px);height:clamp(60px,18.5vw,82px);font-size:clamp(17px,5vw,22px)}
     .acts{width:clamp(132px,41vw,180px);gap:clamp(8px,3vw,14px)}
     .screenwrap{min-width:0}
-    nav{width:100%;margin-left:0}
-    nav a{flex:1 1 auto;text-align:center;font-size:11px;padding:7px 8px}
     .keyhint{display:none}
   }
 
@@ -311,7 +302,7 @@
     .console{padding:3px 8px 4px;min-height:0;height:100vh;height:100dvh;gap:3px;overflow:hidden}
     .brand{padding:0}
     .whoami{display:none}
-    nav a,.navbtn{font-size:10px;padding:5px 7px}
+    nav a{font-size:10px;padding:5px 7px}
     .deck{
       grid-template-areas:"l screen r";grid-template-columns:auto 1fr auto;
       align-items:center;gap:8px;flex:1;
@@ -330,7 +321,7 @@
     body{padding-top:34px}
     .brand{flex-direction:row;align-items:center;gap:16px;bottom:calc(100% + 12px)}
     .whoami{font-size:21px}
-    nav a,.navbtn{font-size:13px;padding:8px 14px}
+    nav a{font-size:13px;padding:8px 14px}
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -339,14 +330,12 @@
 </style>
 </head>
 <body>
-
-
 <div class="console">
 
   <div class="brand">
     <h1 class="whoami">Stephen Henley</h1>
     <nav aria-label="Links">
-      <button class="navbtn" id="whk">What&rsquo;s Happening Knoxville</button>
+      <a href="https://www.facebook.com/profile.php?id=61585479826468" target="_blank" rel="noopener">What&rsquo;s Happening Knoxville</a>
       <a class="quiet" href="https://linkedin.com/in/stephenhenley1" target="_blank" rel="noopener">LinkedIn</a>
     </nav>
   </div>
@@ -2201,19 +2190,6 @@
     render();
     requestAnimationFrame(frame);
   }
-  document.getElementById('whk').onclick=function(){
-    if(mode==='game'||mode==='sitting') standUp();
-    mode='panel';
-    panel.innerHTML=
-      '<p class="lbl">Channel &middot; SH&#8209;001</p>'+
-      '<h2>What&rsquo;s Happening Knoxville</h2>'+
-      '<p>Local news and events for Knoxville. The page for it is not built yet.</p>'+
-      '<p style="color:#F5C518;font-family:var(--display);font-size:26px;letter-spacing:.05em;text-transform:uppercase;line-height:1.15;margin:14px 0 16px;text-align:center">Under<br>Construction</p>'+
-      '<button class="x" id="xb">Close</button>';
-    panel.hidden=false;
-    var xb=document.getElementById('xb');
-    xb.addEventListener('click',closePanel); xb.focus();
-  };
 
   window.addEventListener('resize',resize);
   resize();

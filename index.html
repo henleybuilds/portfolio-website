@@ -39,46 +39,59 @@
   }
   *{box-sizing:border-box}
   body{
-    background:
-      radial-gradient(120% 85% at 50% 42%, #0C1220 0%, #05070D 70%);
-    color:var(--cream);font-family:var(--body);
-    /* margin:0 matters. The artifact wrapper supplies it, a bare file does
-       not, and 8px of default body margin is exactly enough to push the case
-       past the viewport and start a scrollbar. */
     margin:0;
-    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:14px 12px;
-  }
-
-  /* ================= the handheld =================
-     Only the shared bones live here. The case itself is drawn twice below,
-     once for the wide desktop shell and once for the phone, and every visual
-     property is set in both, so anything decorative here would be dead. */
-  .console{
-    width:100%;max-width:1180px;
-    display:flex;flex-direction:column;gap:10px;
-    padding:12px 14px 14px;
+    background:radial-gradient(96% 74% at 50% 46%, #0D1424 0%, #05070D 68%);
+    color:var(--cream);font-family:var(--body);
+    min-height:100vh;min-height:100dvh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:32px 20px;
     /* Mashing a D-pad is a drag gesture as far as the browser is concerned,
-       so without this the case selects its own text and a phone throws up the
-       copy/paste callout mid-game. Selection is turned off for the whole
-       device and handed back to the links, which is the only text anyone
-       would ever want to select. */
+       so without this the page selects its own text and a phone throws up the
+       copy/paste callout mid-game. */
     user-select:none;-webkit-user-select:none;
     -webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
   }
-  nav{user-select:auto;-webkit-user-select:auto}
+  #landing,nav{user-select:auto;-webkit-user-select:auto}
 
-  /* brand strip along the top of the case, with the real links */
-  .brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:2px 4px 0}
-  nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  /* ================= the landing =================
+     A name, two lines, the links, and the button. Everything else the site
+     has to say is inside the game, so the page gets out of the way. */
+  .wrap{width:100%;max-width:560px;text-align:left}
+  h1{
+    margin:0 0 26px;font-family:var(--display);font-weight:400;
+    font-size:clamp(30px,7vw,44px);letter-spacing:.01em;line-height:1;color:var(--cream);
+  }
+  nav{display:flex;gap:10px;flex-wrap:wrap;margin:0}
   nav a{
-    font-size:11.5px;font-weight:700;text-decoration:none;padding:6px 11px;border-radius:3px;
-    color:var(--navy);background:var(--yellow);
-    box-shadow:0 3px 0 var(--yellow-dk);
+    font-size:14.5px;font-weight:700;text-decoration:none;
+    padding:11px 18px;border-radius:8px;
+    color:var(--navy);background:var(--yellow);box-shadow:0 3px 0 var(--yellow-dk);
   }
   nav a:hover{background:var(--yellow-lt)}
   nav a:active{transform:translateY(2px);box-shadow:0 1px 0 var(--yellow-dk)}
-  nav a:focus-visible,button:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+  nav a.quiet{
+    background:#22344F;color:#DCE8F6;
+    border:1px solid #4A6C9C;box-shadow:0 3px 0 #0D1626;
+  }
+  nav a.quiet:hover{background:#2C4162;color:#fff;border-color:#5C7CAC}
+  a:focus-visible,button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
 
+  .play{
+    margin-top:14px;
+    display:flex;align-items:center;gap:14px;cursor:pointer;
+    font-family:var(--display);font-weight:400;font-size:clamp(15px,3.6vw,18px);
+    letter-spacing:.02em;text-transform:uppercase;
+    color:var(--navy);background:var(--yellow);
+    border:0;border-radius:10px;padding:16px 22px;
+    box-shadow:0 5px 0 var(--yellow-dk);
+  }
+  .play:hover{background:var(--yellow-lt)}
+  .play:active{transform:translateY(3px);box-shadow:0 2px 0 var(--yellow-dk)}
+  .play .tgt{
+    font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;
+    text-transform:none;color:#6A5408;border-left:1px solid rgba(80,62,6,.4);padding-left:14px;
+  }
+  .sub{margin:12px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:#5E7189}
   /* deck: controls flank the screen on wide, sit under it on narrow */
   .deck{display:grid;gap:10px;grid-template-areas:"l screen r";grid-template-columns:auto 1fr auto;align-items:center}
   .ctl-l{grid-area:l} .ctl-r{grid-area:r} .screenwrap{grid-area:screen;min-width:0}
@@ -149,75 +162,51 @@
   .acts .b-wrap{grid-column:1;transform:translateY(10px)}
 
   .keyhint{margin:0;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:#8A8271;text-align:center}
-
-  /* ---- the only writing on the page ----
-     A name and two links. No explanation: the room explains itself faster
-     than a paragraph about the room does. */
-  .whoami{
-    margin:0;font-family:var(--display);font-size:30px;letter-spacing:.01em;
-    color:var(--cream);line-height:1;white-space:nowrap;font-weight:400;
+  /* ================= the console =================
+     Only shown once you press play. The case, the D-pad and the buttons are
+     unchanged from the version that shipped: they solve touch controls, and
+     on a console shell nobody needs to be told what a D-pad does. */
+  .console{
+    width:100%;display:none;flex-direction:column;gap:9px;
+    background:linear-gradient(180deg,#2C4269 0%,#203353 44%,#16243C 100%);
+    border:3px solid #405C8C;border-radius:18px;
+    padding:16px 22px 14px;
+    box-shadow:
+      inset 0 3px 0 rgba(160,200,245,.30),
+      inset 0 -6px 0 rgba(6,12,22,.55),
+      0 30px 80px rgba(0,0,0,.62);
   }
+  .stagewrap{display:none;flex-direction:column;align-items:stretch;width:100%}
+  body.playing .stagewrap{display:flex}
+  body.playing .console{display:flex}
+  body.playing #landing{display:none}
+  body.playing{padding:20px}
 
-  /* ================= DESKTOP: the wide handheld =================
-     Controls flank the screen so the A and B the game asks for are
-     actually on screen, and the whole device fills the window. */
+  .backrow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin:0 0 14px}
+  .backrow .who{font-family:var(--display);font-size:16px;letter-spacing:.02em;color:#8CA3C2}
+  .back{
+    cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;
+    background:#18243A;color:#BCD0E8;border:1px solid #33496C;border-radius:7px;padding:8px 13px;
+  }
+  .back:hover{background:#22314C;color:#fff}
+
+  /* ---- desktop: the wide handheld, sized so the controls always fit ---- */
   @media (min-width:861px){
-    body{
-      padding:74px 20px 26px;
-      display:flex;align-items:center;justify-content:center;
-      min-height:100vh;min-height:100dvh;
-      background:radial-gradient(96% 74% at 50% 52%, #0D1424 0%, #05070D 68%);
-    }
-    /* The case shrink-wraps the screen and the controls instead of stretching
-       to the viewport, so it reads as a device sitting on a desk rather than
-       a browser chrome. Height comes from the bezel, width follows. */
-    .console{
-      position:relative;
-      width:auto;max-width:none;height:auto;
-      display:flex;flex-direction:column;gap:9px;
-      background:linear-gradient(180deg,#2C4269 0%,#203353 44%,#16243C 100%);
-      border:3px solid #405C8C;
-      border-radius:18px;
-      padding:16px 26px 14px;
-      box-shadow:
-        inset 0 3px 0 rgba(160,200,245,.30),
-        inset 0 -6px 0 rgba(6,12,22,.55),
-        0 30px 80px rgba(0,0,0,.62);
-    }
-    /* Name and links stack at the top left, above the case rather than on it. */
-    .brand{
-      position:absolute;bottom:calc(100% + 18px);left:0;right:auto;
-      padding:0;margin:0;flex:0 0 auto;
-      flex-direction:column;align-items:flex-start;gap:11px;
-    }
-    nav{margin-left:0;gap:10px;flex:0 0 auto}
-    nav a{font-size:15px;padding:11px 20px;border-radius:8px}
-    nav a.quiet{
-      background:#22344F;color:#DCE8F6;
-      border:1px solid #4A6C9C;box-shadow:0 3px 0 #0D1626;
-    }
-    nav a.quiet:hover{background:#2C4162;color:#fff;border-color:#5C7CAC}
-    .deck{
-      grid-template-areas:"l screen r";
-      grid-template-columns:auto auto auto;
-      align-items:center;justify-items:center;
-      gap:26px;
-    }
-    /* Equal side columns, or the wider D-pad column shifts the screen a few
-       pixels off the centre line of the case. */
+    .stagewrap{width:auto}
+    .console{width:auto;max-width:none}
     .ctl-l,.ctl-r{width:172px;display:flex;justify-content:center}
     .screenwrap{display:flex;align-items:center;justify-content:center}
-    /* The screen height is capped three ways: by viewport height, by an
-       absolute ceiling, and by whatever width is left once the controls have
-       taken theirs. That last cap is what keeps the D-pad and buttons on the
-       case instead of pushed off its edges. */
+    /* Capped three ways at once: viewport height, an absolute ceiling, and
+       whatever width is left once the controls have taken theirs. Drop that
+       third cap and the aspect ratio pushes the D-pad off the case. */
     .bezel{
-      height:max(230px, min(56vh, 500px, calc((100vw - 520px) * 0.625)));
+      height:max(210px, min(54vh, 470px, calc((100vw - 520px) * 0.625)));
       width:auto;aspect-ratio:384/240;
-      border-radius:10px;padding:8px 8px 7px;
-      background:#0A1120;
+      border-radius:10px;padding:8px 8px 7px;background:#0A1120;
       box-shadow:inset 0 3px 9px rgba(0,0,0,.75), 0 1px 0 rgba(150,190,240,.2);
     }
+    .deck{grid-template-areas:"l screen r";grid-template-columns:auto auto auto;
+      align-items:center;justify-items:center;gap:26px}
     .screen{background:#0A1120}
     .led{left:12px}
     .dpad{--dp:56px}
@@ -227,131 +216,103 @@
     .db:active,.db.held{background:#0A1220;color:var(--yellow)}
     .dpad .hub{background:#101E33}
     .dpad .hub b{background:#070D16}
-    .keyhint{flex:0 0 auto;color:#5D739A;font-size:11px;margin:0}
+    .keyhint{color:#5D739A;font-size:11px}
   }
 
-  /* ---- narrow: stack, controls under the screen, bigger targets ---- */
+  /* ---- phone: screen on top, controls beneath ---- */
   @media (max-width:860px){
-    /* The links sit on the blue above, the device fills the bottom. */
-    body{
-      padding:0;align-items:stretch;
-      background:radial-gradient(120% 62% at 50% 58%, #0D1424 0%, #05070D 72%);
-    }
-    .console{
-      border-radius:0;padding:0;gap:0;background:none;box-shadow:none;
-      min-height:100vh;min-height:100dvh;
-      display:flex;flex-direction:column;justify-content:flex-start;
-    }
-    .brand{
-      padding:12px 12px 0;justify-content:center;align-items:flex-start;gap:8px;
-      flex:0 0 auto;
-    }
-    .whoami{width:100%;font-size:25px;padding:0 2px 3px}
-    nav{width:100%;margin:0;gap:8px}
-    nav a{flex:1 1 0;text-align:center;font-size:12px;padding:9px 8px;border-radius:6px}
-    nav a.quiet{
-      background:#22344F;color:#DCE8F6;
-      border:1px solid #4A6C9C;box-shadow:0 3px 0 #0D1626;
-    }
-
-    /* the device itself */
+    body{padding:20px 14px}
+    body.playing{padding:8px}
+    .console{border-radius:22px;padding:12px 8px 18px}
     .deck{
       grid-template-areas:"screen screen" "l r";
-      grid-template-columns:auto auto;
-      justify-content:space-between;align-items:end;
-      align-content:start;
+      grid-template-columns:1fr 1fr;
+      justify-items:center;align-items:end;align-content:start;
       gap:18px 8px;
-      /* Hug the contents and centre in the space under the links. Stretching
-         the device to the full viewport height leaves a large empty expanse
-         of case between the screen and the controls, and pushes the whole
-         thing off the middle of the page. */
-      flex:0 0 auto;
-      background:linear-gradient(180deg,#25395C 0%,#1B2B47 40%,#152238 100%);
-      border:3px solid #3D5885;
-      border-radius:26px;
-      padding:10px 8px 18px;
-      margin:auto 8px;
-      box-shadow:inset 0 2px 0 rgba(140,180,230,.28), 0 -10px 30px rgba(0,0,0,.4);
     }
-    .bezel{
-      padding:4px 4px 3px;border-radius:9px;
-      background:#0C1524;
-      box-shadow:inset 0 2px 7px rgba(0,0,0,.7), 0 1px 0 rgba(140,180,230,.16);
-    }
+    /* Fixed control widths overflow the deck on a narrow phone, and because
+       the screen spans both columns any overflow knocks the canvas off
+       centre. Scaling with the viewport keeps everything inside the case and
+       still clears the 44px touch minimum at 320px wide. */
+    .dpad{--dp:clamp(44px, 14.5vw, 68px)}
+    .ab{width:clamp(60px,18.5vw,82px);height:clamp(60px,18.5vw,82px);font-size:clamp(17px,5vw,22px)}
+    .acts{width:clamp(132px,41vw,180px);gap:clamp(8px,3vw,14px)}
+    /* justify-items:center centres the control cells, but the screen spans
+       both columns and must stretch instead or it shrink-wraps. */
+    .screenwrap{min-width:0;justify-self:stretch;width:100%}
+    .bezel{padding:4px 4px 3px;border-radius:9px;background:#0C1524;
+      box-shadow:inset 0 2px 7px rgba(0,0,0,.7), 0 1px 0 rgba(140,180,230,.16)}
     .led{left:9px}
-
-    /* controls read against the blue */
     .db{background:#0F1B2E;color:#8AA6CC;box-shadow:inset 0 2px 0 rgba(255,255,255,.07), 0 3px 0 #0A1220}
     .db:active,.db.held{background:#0A1220;color:var(--yellow)}
     .dpad .hub{background:#0F1B2E}
     .dpad .hub b{background:#070D16}
-    /* Fixed control widths overflow the deck on a narrow phone: the grid
-       columns are sized by the D-pad and the buttons, and the screen spans
-       both, so any overflow there pushes the canvas off-centre. Scaling both
-       with the viewport keeps the row inside the case at every width while
-       staying well above the 44px touch minimum. */
-    .dpad{--dp:clamp(44px, 14.5vw, 68px)}
-    .ab{width:clamp(60px,18.5vw,82px);height:clamp(60px,18.5vw,82px);font-size:clamp(17px,5vw,22px)}
-    .acts{width:clamp(132px,41vw,180px);gap:clamp(8px,3vw,14px)}
-    .screenwrap{min-width:0}
     .keyhint{display:none}
   }
 
   /* ---- phone turned sideways: the screen gets the whole width ---- */
   @media (max-width:900px) and (orientation:landscape){
-    .console{padding:3px 8px 4px;min-height:0;height:100vh;height:100dvh;gap:3px;overflow:hidden}
-    .brand{padding:0}
-    .whoami{display:none}
-    nav a{font-size:10px;padding:5px 7px}
-    .deck{
-      grid-template-areas:"l screen r";grid-template-columns:auto 1fr auto;
-      align-items:center;gap:8px;flex:1;
+    body.playing{padding:5px 10px}
+    .backrow{margin:0 0 4px}
+    .backrow .who{display:none}
+    .back{font-size:10.5px;padding:5px 10px}
+    .console{padding:6px 8px 8px;gap:4px}
+    .deck{grid-template-areas:"l screen r";grid-template-columns:auto auto auto;
+      align-items:center;justify-items:center;gap:8px}
+    /* A sideways phone is short, not narrow, so here the screen is driven by
+       the height that is left rather than by the width. */
+    .screenwrap{justify-self:center;width:auto}
+    .bezel{
+      height:max(140px, min(calc(100dvh - 92px), calc((100vw - 300px) * 0.625)));
+      width:auto;aspect-ratio:384/240;
     }
+    .ctl-l,.ctl-r{width:128px;display:flex;justify-content:center}
     .dpad{--dp:42px}
     .ab{width:50px;height:50px;font-size:15px}
     .acts{width:112px;gap:7px}
-    .ctl-l,.ctl-r{width:128px;display:flex;justify-content:center}
-  }
-  /* A short desktop window has to give the name and links their band back. */
-  @media (min-width:861px) and (max-height:700px){
-    body{padding-top:52px}
-    .whoami{font-size:25px}
-  }
-  @media (min-width:861px) and (max-height:600px){
-    body{padding-top:34px}
-    .brand{flex-direction:row;align-items:center;gap:16px;bottom:calc(100% + 12px)}
-    .whoami{font-size:21px}
-    nav a{font-size:13px;padding:8px 14px}
   }
 
   @media (prefers-reduced-motion:reduce){
-    nav a:active,.db:active,.ab:active,.db.held,.ab.held{transform:none}
+    nav a:active,.db:active,.ab:active,.db.held,.ab.held,.play:active{transform:none}
   }
 </style>
 </head>
 <body>
-<div class="console">
+<main id="landing">
+  <div class="wrap">
+    <h1>Stephen Henley</h1>
 
-  <div class="brand">
-    <h1 class="whoami">Stephen Henley</h1>
     <nav aria-label="Links">
       <a href="https://www.facebook.com/whatshappeningknox" target="_blank" rel="noopener">Whats Happening Knox</a>
       <a class="quiet" href="https://linkedin.com/in/stephenhenley1" target="_blank" rel="noopener">LinkedIn</a>
     </nav>
-  </div>
 
+    <button class="play" id="playbtn">
+      Beat the high score
+      <span class="tgt" id="tgt"></span>
+    </button>
+    <p class="sub" id="yourbest"></p>
+  </div>
+</main>
+
+<div class="stagewrap">
+  <div class="backrow">
+    <span class="who">Stephen Henley</span>
+    <button class="back" id="backbtn">&#8592; Back</button>
+  </div>
+<div class="console" id="console">
   <div class="deck">
 
     <div class="ctl-l">
-      <div class="dpad" role="group" aria-label="Move">
+      <div class="dpad" role="group" aria-label="Fly">
         <span class="sp"></span>
-        <button class="db u" data-k="up" aria-label="Move up">&#9650;</button>
+        <button class="db u" data-k="up" aria-label="Climb">&#9650;</button>
         <span class="sp"></span>
-        <button class="db l" data-k="left" aria-label="Move left">&#9664;</button>
+        <button class="db l" data-k="left" aria-label="Left">&#9664;</button>
         <span class="hub"><b></b></span>
-        <button class="db r" data-k="right" aria-label="Move right">&#9654;</button>
+        <button class="db r" data-k="right" aria-label="Right">&#9654;</button>
         <span class="sp"></span>
-        <button class="db d" data-k="down" aria-label="Move down">&#9660;</button>
+        <button class="db d" data-k="down" aria-label="Down">&#9660;</button>
         <span class="sp"></span>
       </div>
     </div>
@@ -360,713 +321,43 @@
       <div class="bezel">
         <span class="led" aria-hidden="true"></span>
         <div class="screen" id="stage">
-          <canvas id="cv" aria-label="A top down room with a person and a dog you can walk around"></canvas>
-          <button class="exitbtn" id="exitbtn" hidden>&#10005; Leave</button>
-          <div class="layer">
-            <div class="panel" id="panel" hidden></div>
-            <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
-          </div>
+          <canvas id="cv" aria-label="A dragon flying over a night ridge, breathing fire at archers below"></canvas>
+          <button class="exitbtn" id="exitbtn">&#10005; Leave</button>
         </div>
       </div>
     </div>
 
     <div class="ctl-r">
       <div class="acts" role="group" aria-label="Actions">
-        <span class="b-wrap">
-          <button class="ab b" data-k="call" aria-label="Call the dog">B</button>
-        </span>
-        <span class="a-wrap">
-          <button class="ab" data-k="use" aria-label="Pet the dog">A</button>
-        </span>
+        <span class="b-wrap"><button class="ab b" data-k="call" aria-label="Special attack">B</button></span>
+        <span class="a-wrap"><button class="ab" data-k="use" aria-label="Breathe fire">A</button></span>
       </div>
     </div>
 
   </div>
 
-  <p class="keyhint">Arrow keys to move &middot; A and B do things &middot; Esc to leave the game</p>
+  <p class="keyhint">Up to climb &middot; A breathes fire &middot; B when the bar is full &middot; Esc to leave</p>
+</div>
 </div>
 
 <script>
 (function(){
   "use strict";
 
+  /* The score a visitor is trying to beat. Change this one number when you
+     set a new personal best; it is what the landing button advertises. */
+  var TARGET = 220;
+
   var W=384, H=240;
-  var WALL_TOP=12, WALL_BASE=56;
-  var FL={ x0:10, y0:56, x1:374, y1:226 };
   var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var tick=0;
 
-  var C={
-    crown:'#E9F2F8', wallHi:'#C6DEEE', wall:'#B8D4E8', wallSeam:'#ACCADF',
-    wainscot:'#9FBDD6', wainDk:'#8CACC7', rail:'#7E9DB8', board:'#1C2B4A', boardLt:'#31456B',
-    floor:'#C79256', floorB:'#BF8A4E', floorC:'#CE9A5F', floorLn:'#9A6C39',
-    grain:'rgba(140,98,52,0.26)', ao:'rgba(28,43,74,0.10)',
-    wood:'#8A6234', woodLt:'#A87C46', woodDk:'#5A3F21', woodTop:'#B98D53', woodEdge:'#C9A06A',
-    rugEdge:'#2E5265', rug:'#3E6B7D', rugIn:'#4E8195', rugField:'#B0553F', rugCore:'#E3D4B2', fringe:'#EADCBC',
-    skin:'#E8B189', skinDk:'#C9906A', skinLt:'#F3C6A3',
-    hair:'#4A3524', hairLt:'#5E4630',
-    shirt:'#8D949C', shirtDk:'#767D85', shirtLt:'#A3AAB2',
-    jean:'#3A4A63', jeanDk:'#2E3B50', belt:'#4A3626', boot:'#6B4A2E', bootDk:'#523821',
-    dk:'#2E2F33', dkLt:'#3C3E44', gray:'#9A9CA1', grayLt:'#B9BBC0', grayDk:'#6A6C72',
-    nose:'#1A1618', eyeW:'#FFFFFF',
-    metal:'#B7C4CF', metalDk:'#77858F', dark:'#2A2F38',
-    cream:'#F3EFE4', paper:'#FBF7EC', steel:'#8FA4B8',
-    yellow:'#F5C518', yellowDk:'#B8960A', navy:'#1C2B4A',
-    warm:'rgba(250,228,168,0.24)', sh:'rgba(24,38,62,0.15)'
-  };
   function r(x,y,w,h,c){ ctx.fillStyle=c; ctx.fillRect(x,y,w,h); }
   function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
-  function sh(x,y,w,h){ ctx.fillStyle=C.sh; ctx.fillRect(x,y,w,h); }
-  function ell(x,y,rx,ry,c){ ctx.fillStyle=c; ctx.beginPath(); ctx.ellipse(x,y,rx,ry,0,0,6.3); ctx.fill(); }
 
-  var tick=0, mode='play', toastT=0, idleT=0, sitT=0;
-
-  /* =========================================================
-     FURNITURE. Same structure as before so objects can be
-     added back one at a time: footprint for collision, baseY
-     for depth sorting, its own draw().
-     ========================================================= */
-  var F=[];
-  function add(o){ F.push(o); return o; }
-
-  /* ---------- the tennis ball ----------
-     states: desk (parked) | held (player) | flying (in the air or rolling)
-             | ground (settled) | inmouth (the dog carrying it)            */
-  var BALL={ state:'desk', x:236, y:63, z:0, vx:0, vy:0, vz:0 };
-
-  /* ---------- what the player is carrying ---------- */
-  // null | 'ball' | 'raw' | 'cooked'
-  var hold=null;
-
-  /* ---------- kitchen state ---------- */
-  var FRIDGE={ open:0 };                 // seconds of door-open left
-  var PAN={ state:'empty', t:0 };        // empty | cooking | done
-  var PLATE={ full:false };
-  var COOK_TIME=8;
-
-  function chickenSprite(x,y,done){
-    // done is 0..1, raw pink through to a browned cutlet
-    var body = done>0.99 ? '#B87833' : (done>0.5 ? '#D19A5C' : '#E9AFA2');
-    var top  = done>0.99 ? '#D2913F' : (done>0.5 ? '#E0B075' : '#F3C6BC');
-    r(x-4,y-3,8,6,body);
-    r(x-4,y-3,8,2,top);
-    r(x-3,y+1,6,1,done>0.5?'#8E5722':'#D19A94');
-    if(done>0.6){ r(x-2.5,y-1.5,5,1,'#8E5722'); r(x-2.5,y+0.5,5,1,'#8E5722'); }  // sear marks
-    r(x+2.5,y-2,1.5,4,done>0.99?'#E6E0D2':'#EFE7DA');                            // little bone end
-  }
-
-  function ballSprite(x,y){
-    r(x-3.5,y-3.5,7,7,'#C4D63F');
-    r(x-3.5,y-3.5,7,1.5,'#DCEA6E');
-    r(x-3.5,y+2,7,1.5,'#A2B32C');
-    r(x-0.6,y-3.5,1.2,7,'#F2F6DE');
-    r(x-3.5,y-0.6,7,1.2,'#F2F6DE');
-  }
-  function drawBall(){
-    ell(BALL.x, BALL.y+1, 3.6+BALL.z*0.05, 1.6, 'rgba(24,38,62,'+(0.22-Math.min(0.12,BALL.z*0.008))+')');
-    ballSprite(BALL.x, BALL.y-4-BALL.z);
-  }
-  function ballLoose(){ return BALL.state==='flying'||BALL.state==='ground'; }
-
-  // ================= KITCHEN, bottom left, all seen from directly above =================
-  // Column reading down the left wall: table, then stove, then fridge at the bottom.
-  // Everything faces right, because that is the side you walk up to.
-
-  function circ(x,y,rad,c){ ctx.fillStyle=c; ctx.beginPath(); ctx.arc(x,y,rad,0,6.3); ctx.fill(); }
-  function ring(x,y,rad,w,c){ ctx.strokeStyle=c; ctx.lineWidth=w; ctx.beginPath(); ctx.arc(x,y,rad,0,6.3); ctx.stroke(); }
-
-  // One continuous run down the left wall: counter, stove, fridge, all flush.
-  // The table sits on its own above it.
-  var TB={ x:16, y:68,  w:46, h:38 };   // table, free standing
-  var CT={ x:16, y:116, w:38, h:30 };   // counter with the sink
-  var ST={ x:16, y:146, w:38, h:40 };   // stove, flush under the counter
-  var FR={ x:16, y:186, w:38, h:34 };   // fridge, flush under the stove
-
-  // ---- counter with the sink, top of the run ----
-  add({ id:'counter', x:CT.x, y:CT.y, w:CT.w, h:CT.h, draw:function(){
-    var c=CT;
-    r(c.x,c.y,c.w,c.h,'#9E8F73');
-    r(c.x+1,c.y+1,c.w-2,c.h-2,'#D7C9AE');
-    r(c.x+1,c.y+1,c.w-2,2,'#E6DBC6');                   // lit back edge
-    r(c.x+1,c.y+c.h-3,c.w-2,2,'#BEAF92');
-    // speckle, so the countertop is not a flat slab
-    ctx.globalAlpha=0.16;
-    for(var i=0;i<24;i++) r(c.x+3+((i*13)%32), c.y+4+((i*7)%22), 1,1, i%2?'#6B5C42':'#FFFFFF');
-    ctx.globalAlpha=1;
-    // sink basin, recessed
-    r(c.x+6,c.y+6,22,18,'#8B949A');
-    r(c.x+7,c.y+7,20,16,'#C6CED3');
-    r(c.x+8,c.y+8,18,14,'#AFB8BE');
-    r(c.x+8,c.y+8,18,2,'#D3DADE');
-    circ(c.x+17,c.y+15,2.2,'#79828A'); circ(c.x+17,c.y+15,1.1,'#4E565C');
-    // faucet, mounted at the back wall side
-    r(c.x+2,c.y+12,3,7,'#AEBAC4');
-    r(c.x+4,c.y+13,8,2.2,'#C2CDD6'); r(c.x+11,c.y+13,2,4,'#AEBAC4');
-    r(c.x+2,c.y+10,2,2,'#8E9AA4'); r(c.x+2,c.y+19,2,2,'#8E9AA4');
-    // dish towel over the front edge
-    r(c.x+c.w-3,c.y+20,5,9,'#7FA9CC'); r(c.x+c.w-3,c.y+20,5,2,'#9AC0DC');
-    // little herb pot at the back corner
-    r(c.x+3,c.y+2,7,6,'#B4703F'); r(c.x+3,c.y+2,7,2,'#C98550');
-    r(c.x+4,c.y-1,2,3,C.green); r(c.x+7,c.y-1,2,3,C.greenLt);
-  }});
-
-  // ---- fridge: from directly above, all you see is the top and the handle ----
-  add({ id:'fridge', x:FR.x, y:FR.y, w:FR.w, h:FR.h, draw:function(){
-    var f=FR;
-    sh(f.x+3,f.y+f.h,f.w,4);
-    r(f.x,f.y,f.w,f.h,'#9DA5AC');                       // body edge
-    r(f.x+1,f.y+1,f.w-2,f.h-2,'#DFE3E6');              // top panel, slightly recessed
-    r(f.x+3,f.y+3,f.w-6,f.h-6,'#E9ECEE');
-    r(f.x+3,f.y+3,f.w-6,1.5,'#F5F7F8');
-    // faint brushed-steel grain, just enough to catch the light
-    ctx.globalAlpha=0.11;
-    for(var s=0;s<4;s++) r(f.x+7+s*7, f.y+5, 1, f.h-10, '#8F979D');
-    ctx.globalAlpha=1;
-    ctx.globalAlpha=0.35; r(f.x+4,f.y+4,3,f.h-8,'#FFFFFF'); ctx.globalAlpha=1;
-    // vent slots along the back edge
-    for(var v=0;v<4;v++) r(f.x+6+v*6, f.y+f.h-5, 4, 1.5, '#C2C8CD');
-    // the door edge and its shadow gap, down the right side
-    r(f.x+f.w-7,f.y+2,1.5,f.h-4,'#B9C0C5');
-    r(f.x+f.w-5.5,f.y+2,1,f.h-4,'rgba(0,0,0,0.10)');
-    // handle bar on the right edge, on two posts
-    r(f.x+f.w-2,f.y+8,2.5,3,'#7E888F'); r(f.x+f.w-2,f.y+f.h-11,2.5,3,'#7E888F');
-    r(f.x+f.w+0.5,f.y+7,2.5,f.h-14,'#8E979E');
-    r(f.x+f.w+0.5,f.y+7,2.5,2,'#B4BCC1');
-
-    if(FRIDGE.open>0){
-      var k=Math.min(1,FRIDGE.open/0.5);
-      ctx.save(); ctx.translate(f.x+f.w-1, f.y+6); ctx.rotate(-1.5*k);
-      r(-2,0,4,f.h-12,'#DFE3E6'); r(-2,0,4,2.5,'#F1F3F4');
-      r(1.2,4,1.6,f.h-20,'#9DA5AC');
-      ctx.restore();
-      // interior: shelves, a produce drawer, and what is on them
-      r(f.x+f.w-8,f.y+3,7,f.h-6,'#6F97AE');
-      r(f.x+f.w-7.5,f.y+4,6,2,'#CFE2ED');               // top shelf
-      r(f.x+f.w-7,f.y+6,3,3,'#EDEAE0');                 // milk
-      r(f.x+f.w-3.5,f.y+6,2,3,'#C9A24E');               // jar
-      r(f.x+f.w-7.5,f.y+13,6,2,'#CFE2ED');              // middle shelf
-      r(f.x+f.w-7,f.y+15,4,4,'#E9AFA2');                // the chicken
-      r(f.x+f.w-7.5,f.y+23,6,2,'#CFE2ED');
-      r(f.x+f.w-7,f.y+25,2.5,3,C.green);                // produce
-      r(f.x+f.w-4,f.y+25,2.5,3,'#C7503F');
-      ctx.fillStyle='rgba(255,244,200,0.26)';
-      ctx.beginPath();
-      ctx.moveTo(f.x+f.w,f.y+3); ctx.lineTo(f.x+f.w,f.y+f.h-3);
-      ctx.lineTo(f.x+f.w+32,f.y+f.h+9); ctx.lineTo(f.x+f.w+32,f.y-7); ctx.closePath(); ctx.fill();
-    }
-  }});
-
-  // ---- stove: black glass cooktop from above, four rings, pan on the front right ----
-  add({ id:'stove', x:ST.x, y:ST.y, w:ST.w, h:ST.h, draw:function(){
-    var s=ST;
-    sh(s.x+3,s.y+s.h,s.w,4);
-    r(s.x,s.y,s.w,s.h,'#15171A');                       // black body
-    r(s.x+1,s.y+1,s.w-2,s.h-2,'#0D0F11');
-    // the glass top
-    r(s.x+3,s.y+3,s.w-11,s.h-6,'#191C20');
-    r(s.x+3,s.y+3,s.w-11,2,'#2A2F35');                  // top gloss
-    ctx.globalAlpha=0.10; r(s.x+5,s.y+6,7,s.h-12,'#FFFFFF'); ctx.globalAlpha=1;   // reflection streak
-    // etched burner rings
-    var lit = PAN.state==='cooking';
-    ring(s.x+11,s.y+12,5.5,1,'#3C424A');
-    ring(s.x+24,s.y+11,4.5,1,'#3C424A');
-    ring(s.x+11,s.y+28,4.5,1,'#3C424A');
-    ring(s.x+24,s.y+27,6.5,1, lit?'#D2502A':'#3C424A');
-    if(lit){ ring(s.x+24,s.y+27,4.5,1.4,'#F0743C'); ctx.globalAlpha=0.18; circ(s.x+24,s.y+27,8,'#FF7A3C'); ctx.globalAlpha=1; }
-    // control panel and knobs down the right edge, facing you
-    r(s.x+s.w-8,s.y+2,8,s.h-4,'#1E2126');
-    r(s.x+s.w-8,s.y+2,8,1.5,'#2E333A');
-    circ(s.x+s.w-4,s.y+8,2.5,'#4A5158');  circ(s.x+s.w-4,s.y+8,1.1,'#8E979E');
-    circ(s.x+s.w-4,s.y+17,2.5,'#4A5158'); circ(s.x+s.w-4,s.y+17,1.1,'#8E979E');
-    circ(s.x+s.w-4,s.y+26,2.5,'#4A5158'); circ(s.x+s.w-4,s.y+26,1.1, lit?'#F0743C':'#8E979E');
-    circ(s.x+s.w-4,s.y+35,2.5,'#4A5158'); circ(s.x+s.w-4,s.y+35,1.1,'#8E979E');
-    // oven handle bar running down the front, with a towel over it
-    r(s.x+s.w+0.5,s.y+6,2.5,s.h-12,'#8E979E');
-    r(s.x+s.w+0.5,s.y+6,2.5,2,'#B4BCC1');
-    r(s.x+s.w-0.5,s.y+20,5,10,'#C7503F'); r(s.x+s.w-0.5,s.y+20,5,2,'#DD6A55');
-    // kettle parked on a back burner
-    circ(s.x+11,s.y+12,4.6,'#8E979E'); circ(s.x+11,s.y+12,3.6,'#B7C4CF');
-    r(s.x+14,s.y+10,4,1.6,'#8E979E'); r(s.x+10,s.y+7,2.5,2,'#5E666C');
-    // frying pan on the front right ring
-    circ(s.x+24,s.y+27,7.5,'#33383E');
-    circ(s.x+24,s.y+27,6.2,'#4C545C');
-    circ(s.x+24,s.y+27,5.0,'#3B424A');
-    r(s.x+31,s.y+26,13,2.4,'#22262B');                  // handle, sticking out to the right
-    r(s.x+40,s.y+25.6,4,3.2,'#15181C');
-    if(PAN.state!=='empty'){
-      var done = PAN.state==='done' ? 1 : Math.min(0.99, PAN.t/COOK_TIME);
-      chickenSprite(s.x+24, s.y+27, done);
-    }
-  }});
-
-  // ---- table with the plate on it ----
-  add({ id:'table', x:TB.x, y:TB.y, w:TB.w, h:TB.h, draw:function(){
-    var t=TB;
-    sh(t.x+3,t.y+t.h,t.w,4);
-    r(t.x,t.y,t.w,t.h,C.woodDk);
-    r(t.x+1,t.y+1,t.w-2,t.h-2,C.wood);
-    r(t.x+3,t.y+3,t.w-6,t.h-6,C.woodLt);
-    r(t.x+3,t.y+3,t.w-6,2,C.woodEdge);
-    r(t.x+7,t.y+11,26,1,C.grain); r(t.x+11,t.y+22,22,1,C.grain); r(t.x+6,t.y+31,18,1,C.grain);
-    // plate
-    circ(t.x+24,t.y+21,9,'#B9B7B0');
-    circ(t.x+24,t.y+21,8,'#F4F2EC');
-    circ(t.x+24,t.y+21,5.2,'#E6E3D9');
-    if(PLATE.full){ chickenSprite(t.x+24,t.y+21,1); r(t.x+17,t.y+26,6,1.4,'#8FA85F'); }
-    // a folded napkin and a fork
-    r(t.x+6,t.y+16,5,9,'#C4D2DA'); r(t.x+6,t.y+16,5,2,'#DCE6EB');
-    r(t.x+37,t.y+16,1.4,9,C.metal); r(t.x+36,t.y+15,3.4,2,C.metal);
-  }});
-
-  // ---- desk, against the north wall ----
-  add({ id:'desk', x:152, y:58, w:96, h:28, draw:function(){
-    sh(155,84,96,5);
-    // legs first so the top overlaps them
-    r(156,80,5,8,C.woodDk); r(239,80,5,8,C.woodDk);
-    // body + drawers
-    r(152,58,96,26,C.wood);
-    r(153,59,94,22,C.woodLt);
-    r(153,59,94,3,C.woodEdge);
-    r(153,74,94,7,C.wood);
-    r(158,76,26,4,C.woodDk); r(168,77,8,2,C.metal);
-    r(216,76,26,4,C.woodDk); r(226,77,8,2,C.metal);
-    // grain on the top surface
-    r(160,64,44,1,C.grain); r(176,68,50,1,C.grain); r(206,62,30,1,C.grain);
-    // monitor, seen from above: a thin panel with its stand behind it
-    r(180,60,32,3,C.dark); r(181,60,30,1,'#4E7EA6');
-    r(193,63,6,4,C.dark); r(188,66,16,2.5,'#3A4149');
-    // keyboard and mouse
-    r(180,71,26,5,'#DCE0E4'); for(var k=0;k<8;k++) r(182+k*3,72,2,3,'#B0B7BD');
-    circ(211,73,2.6,'#DCE0E4'); r(210.4,71,1.2,2,'#B0B7BD');
-    // mug from above, with the ring it left
-    ring(165,70,4.6,1,'rgba(120,80,40,0.30)');
-    circ(165,69,4,C.cream); circ(165,69,2.6,'#7A5A3C');
-    r(169,68,2.5,1.6,C.cream);
-    // papers, slightly askew
-    ctx.save(); ctx.translate(232,68); ctx.rotate(0.18);
-    r(-8,-6,16,12,C.paper); r(-6,-4,12,1,C.steel); r(-6,-1,9,1,C.steel); r(-6,2,11,1,C.steel);
-    ctx.restore();
-    // cable up to the wall
-    r(200,56,1,4,C.dark);
-    // the tennis ball, parked on the corner of the desk
-    if(BALL.state==='desk'){ ell(BALL.x,BALL.y+3,3.6,1.5,'rgba(90,60,30,0.28)'); ballSprite(BALL.x,BALL.y); }
-  }});
-
-  // ---- chair, pulled out from the desk ----
-  add({ id:'chair', x:188, y:92, w:20, h:16, draw:function(){
-    sh(190,106,20,4);
-    r(188,92,20,4,C.dk);
-    r(188,96,20,12,C.jean);
-    r(189,97,18,9,'#48597A');
-    r(196,108,4,4,C.metalDk); r(191,111,14,2,C.metalDk);
-  }});
-
-  // ---- dog bed, far right corner ----
-  // The base draws down with the floor so the dog can lie *inside* it, and the
-  // front bolster is its own entity so it draws over her when she's curled up.
-  var BED={ x:294, y:170, w:70, h:48 };
-  var BEDSPOT={ x:329, y:209 };
-
-  function drawBedBase(){
-    var b=BED;
-    sh(b.x+4,b.y+b.h,b.w,5);
-    r(b.x,b.y,b.w,b.h,C.grayDk);
-    r(b.x+1,b.y+1,b.w-2,b.h-3,C.gray);
-    r(b.x+2,b.y+2,b.w-4,2,C.grayLt);
-    // cushion
-    r(b.x+8,b.y+8,b.w-16,b.h-19,C.grayDk);
-    r(b.x+10,b.y+10,b.w-20,b.h-23,'#7E8085');
-    r(b.x+10,b.y+10,b.w-20,2,'#8C8E93');
-    // stitching along the rim
-    for(var i=0;i<16;i++) r(b.x+5+i*4,b.y+3,2,1,C.grayLt);
-    for(var j=0;j<8;j++){ r(b.x+3,b.y+9+j*4,1,2,C.grayLt); r(b.x+b.w-4,b.y+9+j*4,1,2,C.grayLt); }
-    // folded blanket bunched at one end
-    r(b.x+44,b.y+13,20,16,'#5C7A8C');
-    r(b.x+44,b.y+13,20,3,'#6E8FA2');
-    r(b.x+46,b.y+20,16,1,'#4E6878');
-    r(b.x+46,b.y+24,16,1,'#4E6878');
-  }
-
-  add({ id:'bedlip', x:BED.x, y:BED.y+BED.h-12, w:BED.w, h:12, soft:true, draw:function(){
-    var b=BED;
-    r(b.x,b.y+b.h-12,b.w,12,C.gray);
-    r(b.x,b.y+b.h-12,b.w,2,C.grayLt);
-    r(b.x,b.y+b.h-3,b.w,3,C.grayDk);
-    for(var i=0;i<16;i++) r(b.x+5+i*4,b.y+b.h-5,2,1,C.grayLt);
-  }});
-
-  // ---- carpet, dead center, drawn flat under everything ----
-  var RUG={ x:126, y:122, w:132, h:78 };
-
-  /* ---------- wall ---------- */
-  function drawWall(){
-    r(0,0,W,WALL_TOP,C.crown);
-    r(0,WALL_TOP-2,W,2,'#D3E4EF');
-    r(0,WALL_TOP,W,WALL_BASE-WALL_TOP,C.wall);
-    r(0,WALL_TOP,W,5,C.wallHi);
-    // faint vertical seams so the wall is not a flat slab
-    for(var s=0;s<W;s+=48) r(s,WALL_TOP,1,WALL_BASE-WALL_TOP,C.wallSeam);
-    // picture rail
-    r(0,26,W,2,C.rail); r(0,28,W,1,'#93B2CC');
-    // wainscot with panel boxes
-    r(0,36,W,WALL_BASE-36,C.wainscot);
-    r(0,36,W,2,C.rail);
-    for(var b=6;b<W-10;b+=44){
-      r(b,41,32,12,C.wainDk);
-      r(b+1,42,30,10,C.wainscot);
-    }
-    r(0,WALL_BASE-5,W,5,C.board);
-    r(0,WALL_BASE-6,W,1,C.boardLt);
-
-    drawWindow(52);
-    drawWindow(248);
-
-    // outlet, because rooms have them
-    r(180,44,5,7,'#E4EEF5'); r(181.5,46,2,3,C.rail);
-  }
-
-  function drawWindow(x){
-    // frame
-    r(x-4,10,88,28,C.woodDk);
-    r(x-2,12,84,24,C.woodLt);
-    r(x,14,80,20,'#8FC3DE');
-    // sky and a plain horizon, to be adjusted later
-    r(x,26,80,8,'#6FA9C9');
-    r(x,32,80,2,'#5B92B0');
-    // muntins
-    r(x+39,14,2,20,C.woodLt);
-    r(x,23,80,2,C.woodLt);
-    // sill and a little depth under it
-    r(x-6,38,92,4,C.woodTop);
-    r(x-6,42,92,2,C.woodDk);
-    // glass highlight
-    ctx.globalAlpha=0.22; r(x+4,15,14,18,'#FFFFFF'); r(x+46,15,10,18,'#FFFFFF'); ctx.globalAlpha=1;
-  }
-
-  /* ---------- floor ---------- */
-  function drawFloor(){
-    r(0,WALL_BASE,W,H-WALL_BASE,C.floor);
-    var PH=9, PW=68;
-    for(var y=WALL_BASE; y<H; y+=PH){
-      var row=(y/PH)|0;
-      for(var x=-((row*27)%PW); x<W; x+=PW){
-        var seed=((row*7+((x/PW)|0)*13)%5);
-        if(seed===0) r(x,y,PW,PH,C.floorB);
-        else if(seed===3) r(x,y,PW,PH,C.floorC);
-        r(x,y,1,PH,C.floorLn);
-        if(seed===1) r(x+16,y+3,22,1,C.grain);
-        if(seed===4) r(x+34,y+5,14,1,C.grain);
-        if(seed===2) r(x+8,y+6,18,1,C.grain);
-      }
-      r(0,y,W,1,'rgba(154,108,57,0.38)');
-    }
-    // ambient shade where the floor meets the walls
-    for(var a=0;a<7;a++){
-      ctx.fillStyle=C.ao;
-      ctx.fillRect(0,WALL_BASE+a,W,1);
-      ctx.fillRect(a,WALL_BASE,1,H-WALL_BASE);
-      ctx.fillRect(W-1-a,WALL_BASE,1,H-WALL_BASE);
-    }
-
-    // ---- carpet ----
-    var g=RUG;
-    for(var f=g.x+2; f<g.x+g.w; f+=6){ r(f,g.y-5,3,4,C.fringe); r(f,g.y+g.h+1,3,4,C.fringe); }
-    r(g.x-3,g.y-3,g.w+6,g.h+6,C.rugEdge);
-    r(g.x,g.y,g.w,g.h,C.rug);
-    r(g.x+7,g.y+7,g.w-14,g.h-14,C.rugEdge);
-    r(g.x+10,g.y+10,g.w-20,g.h-20,C.rugIn);
-    r(g.x+26,g.y+20,g.w-52,g.h-40,C.rugField);
-    r(g.x+32,g.y+25,g.w-64,g.h-50,C.rugCore);
-    // simple repeated motif on the inner band
-    for(var m=g.x+16; m<g.x+g.w-16; m+=16){ r(m,g.y+13,4,4,C.rugCore); r(m,g.y+g.h-17,4,4,C.rugCore); }
-    for(var n=g.y+26; n<g.y+g.h-26; n+=16){ r(g.x+13,n,4,4,C.rugCore); r(g.x+g.w-17,n,4,4,C.rugCore); }
-    // pile texture
-    ctx.globalAlpha=0.06;
-    for(var t=0;t<70;t++){ r(g.x+((t*37)%g.w),g.y+((t*53)%g.h),2,1,'#000000'); }
-    ctx.globalAlpha=1;
-
-    // light falling in from the two windows
-    ctx.fillStyle=C.warm;
-    ctx.beginPath(); ctx.moveTo(50,WALL_BASE); ctx.lineTo(136,WALL_BASE); ctx.lineTo(160,168); ctx.lineTo(36,168); ctx.closePath(); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(246,WALL_BASE); ctx.lineTo(332,WALL_BASE); ctx.lineTo(356,168); ctx.lineTo(232,168); ctx.closePath(); ctx.fill();
-
-    // a couple of scuffs
-    r(120,196,8,1,'rgba(90,60,30,0.16)');
-    r(104,214,6,1,'rgba(90,60,30,0.14)');
-
-    drawBedBase();
-  }
-
-  function drawEdges(){
-    r(0,0,5,H,C.board); r(W-5,0,5,H,C.board);
-    r(0,H-8,W,8,C.board); r(0,H-9,W,1,C.boardLt);
-  }
-
-  /* =========================================================
-     PERSON. Blocky but not a minifig: real skin tone, hair and
-     a beard with shape, a henley with rolled sleeves, jeans,
-     boots. Four facings.
-     ========================================================= */
-  var p={ x:192, y:210, vx:0, vy:0, dir:'up', step:0, turn:0, want:null, wantT:0 };
-  var PR=5;
-
-  function drawGuy(a){
-    var x=a.x, y=a.y, d=a.dir;
-    var mv=Math.abs(a.vx)+Math.abs(a.vy)>0.1;
-    var sw=mv?Math.sin(a.step)*2.5:0;
-    var aw=mv?Math.sin(a.step)*1.2:0;
-    var bob=mv?Math.abs(Math.sin(a.step))*0.7:0;
-    ell(x,y+1,8,3.3,'rgba(24,38,62,0.22)');
-    var ty=y-bob;
-    // a brief lean and squash coming out of a turn, so the facing change
-    // reads as a movement instead of a snap
-    var turning=(a.turn||0)>0;
-    if(turning && !reduce){
-      var k=a.turn/0.18;
-      ctx.save(); ctx.translate(x,y);
-      ctx.rotate(Math.sin(k*Math.PI)*0.10*(d==='left'?-1:1));
-      ctx.scale(1+Math.sin(k*Math.PI)*0.06, 1-Math.sin(k*Math.PI)*0.05);
-      ctx.translate(-x,-y);
-    }
-
-    if(d==='left'||d==='right'){
-      var f=(d==='right')?1:-1;
-      ctx.save(); ctx.translate(x,ty); ctx.scale(f,1);
-      // far leg, then near leg
-      r(-3.5+sw,-8,4,5,C.jeanDk); r(-4+sw,-3,5,3,C.bootDk); r(-4+sw,-1,5,1,'#3E2C1A');
-      r(0.5-sw,-8,4,5,C.jean);   r(0-sw,-3,5,3,C.boot);     r(0-sw,-1,5,1,'#3E2C1A');
-      r(0.5-sw,-7,4,1,C.jeanDk);                            // knee seam
-      // torso, seen from the side
-      r(-4,-19,9,11,C.shirt);
-      r(-4,-19,9,2,C.shirtDk);                              // shoulder
-      r(2.5,-17,2.5,9,C.shirtLt);                           // lit front edge
-      r(-4,-17,1.5,9,C.shirtDk);                            // shaded back
-      r(-4,-10,9,2,C.belt); r(2,-10,2,2,'#C9A24E');
-      // near arm swinging, sleeve rolled at the elbow
-      r(1.5+aw,-18,3,6,C.shirtDk);
-      r(1.8+aw,-12,3,4,C.skin);
-      r(1.8+aw,-8.5,3,2,C.skinDk);                          // hand
-      // head
-      r(-4,-28,9,10,C.skin);
-      r(4,-25,1.5,3,C.skinLt);                              // lit cheek
-      r(-4,-28,9,3.5,C.hair);                               // hair top
-      r(-5,-27,2,7,C.hair);                                 // hair back
-      r(-4,-26.5,4,1.5,C.hairLt);                           // part highlight
-      r(-1.5,-24,2,2.5,C.skinDk);                           // ear
-      r(4.5,-23,1.5,2.5,C.skin);                            // nose bump
-      r(1,-24.5,2.5,1,C.hair);                              // brow
-      r(2.2,-23,1.6,1.9,'#241C14'); r(2.9,-22.8,0.7,0.7,'#EFE6DC');
-      r(-0.5,-21.5,5.5,3.5,C.hair);                         // beard
-      r(1.5,-21.5,3.5,1,'#3A2A1B');                         // moustache
-      r(-4,-18.5,9,1,C.shirtLt);                            // collar
-      ctx.restore();
-
-    } else if(d==='up'){
-      // legs and boots
-      r(x-4.5+sw,ty-8,4,5,C.jean);  r(x+0.5-sw,ty-8,4,5,C.jeanDk);
-      r(x-5+sw,ty-3,5,3,C.bootDk);  r(x+0-sw,ty-3,5,3,C.boot);
-      r(x-5+sw,ty-1,5,1,'#3E2C1A'); r(x+0-sw,ty-1,5,1,'#3E2C1A');
-      // torso from behind, with a yoke seam
-      r(x-5,ty-19,10,11,C.shirt);
-      r(x-5,ty-19,10,2,C.shirtDk);
-      r(x-5,ty-15,10,1,C.shirtDk);
-      r(x+3,ty-17,2,9,C.shirtDk);
-      r(x-5,ty-10,10,2,C.belt);
-      // arms
-      r(x-7,ty-18+aw,2,7,C.shirtDk); r(x+5,ty-18-aw,2,7,C.shirtDk);
-      r(x-7,ty-11.5+aw,2,2,C.shirtLt); r(x+5,ty-11.5-aw,2,2,C.shirtLt);
-      r(x-7,ty-9.5+aw,2,2.5,C.skin);  r(x+5,ty-9.5-aw,2,2.5,C.skin);
-      // head from behind: all hair, a part, ears at the edges
-      r(x-5,ty-20.5,10,1.5,C.skinDk);
-      r(x-5,ty-28,10,10,C.skin);
-      r(x-5,ty-28,10,8,C.hair);
-      r(x-5,ty-28,10,2,C.hairLt);
-      r(x-1,ty-28,1.5,8,C.hairLt);
-      r(x-6.2,ty-25,1.5,2.5,C.skinDk); r(x+4.7,ty-25,1.5,2.5,C.skinDk);
-
-    } else { // down
-      r(x-4.5+sw,ty-8,4,5,C.jeanDk); r(x+0.5-sw,ty-8,4,5,C.jean);
-      r(x-4.5+sw,ty-7,4,1,'#33425A'); r(x+0.5-sw,ty-7,4,1,C.jeanDk);
-      r(x-5+sw,ty-3,5,3,C.boot);     r(x+0-sw,ty-3,5,3,C.bootDk);
-      r(x-5+sw,ty-1,5,1,'#3E2C1A');  r(x+0-sw,ty-1,5,1,'#3E2C1A');
-      // torso
-      r(x-5,ty-19,10,11,C.shirt);
-      r(x-5,ty-19,10,2,C.shirtDk);                 // shoulder line
-      r(x+3,ty-17,2,9,C.shirtDk);                  // side shading
-      r(x-5,ty-17,1.5,9,C.shirtLt);
-      r(x-1,ty-19,2,9,C.shirtLt);                  // placket
-      r(x-1,ty-16.5,2,1,C.shirtDk); r(x-1,ty-13.5,2,1,C.shirtDk);  // buttons
-      r(x-2.5,ty-19.5,5,1.5,C.shirtLt);            // collar
-      r(x-5,ty-10,10,2,C.belt); r(x-1,ty-10,2,2,'#C9A24E');
-      // arms with rolled cuffs and hands
-      r(x-7,ty-18+aw,2,7,C.shirtDk); r(x+5,ty-18-aw,2,7,C.shirtDk);
-      r(x-7,ty-11.5+aw,2,1.5,C.shirtLt); r(x+5,ty-11.5-aw,2,1.5,C.shirtLt);
-      r(x-7,ty-10+aw,2,2.5,C.skin);  r(x+5,ty-10-aw,2,2.5,C.skin);
-      // neck
-      r(x-2,ty-20.5,4,1.5,C.skinDk);
-      // head
-      r(x-5,ty-28,10,10,C.skin);
-      r(x+3,ty-26,2,5,C.skinDk);                   // cheek shading
-      r(x-5,ty-28,10,3,C.hair);                    // hair
-      r(x-6,ty-27,1.5,5.5,C.hair); r(x+4.5,ty-27,1.5,5.5,C.hair);
-      r(x-5,ty-26.5,4.5,1.5,C.hairLt);             // part
-      r(x-6.4,ty-24.5,1.4,2.5,C.skinDk); r(x+5,ty-24.5,1.4,2.5,C.skinDk);  // ears
-      r(x-3.6,ty-24.4,2.4,1,C.hair); r(x+1.2,ty-24.4,2.4,1,C.hair);        // brows
-      r(x-3.4,ty-23,1.8,2,'#241C14'); r(x-2.8,ty-22.8,0.7,0.7,'#EFE6DC');  // eyes
-      r(x+1.6,ty-23,1.8,2,'#241C14'); r(x+2.2,ty-22.8,0.7,0.7,'#EFE6DC');
-      r(x-0.7,ty-22,1.5,2.2,C.skinDk);             // nose
-      r(x-5,ty-20.6,10,2.6,C.hair);                // beard
-      r(x-2.6,ty-21.2,5.2,1.2,'#3A2A1B');          // moustache
-      r(x-1.6,ty-19.6,3.2,0.9,'#8A5E48');          // mouth
-    }
-
-    if(turning && !reduce) ctx.restore();
-
-    // whatever is in his hands
-    if(hold){
-      var hx = (d==='left') ? x-8 : (d==='right') ? x+8 : x+7;
-      var hy = (d==='up') ? ty-14 : ty-12;
-      if(hold==='ball') ballSprite(hx,hy);
-      else chickenSprite(hx,hy,hold==='cooked'?1:0);
-    }
-  }
-
-  /* =========================================================
-     BIRDIE. Black with gray muzzle, chest and paws. Built with
-     a big head and big eyes on purpose.
-     ========================================================= */
-  var dog={ x:190, y:180, dir:'down', state:'sit', t:1.6, tx:190, ty:180, step:0, wag:0,
-            hearts:0, petted:false, alert:0, bedT:0, wanders:0 };
-
-  function eye(x,y,w,h){ r(x,y,w,h,C.nose); r(x+w-0.9,y+0.3,0.9,0.9,C.eyeW); }
-
-  function drawDog(d){
-    var lying=(d.state==='lie'||d.state==='sleep');
-    var mv=(d.state==='walk'||d.state==='gobed'||d.state==='follow'||d.state==='beg'||d.state==='fetch'||d.state==='return'||d.state==='come');
-    var sw=mv?Math.sin(d.step)*1.7:0;
-    var br=lying?Math.sin(tick*1.5)*0.5:0;
-    ell(d.x,d.y+1,9,3.4,'rgba(24,38,62,0.20)');
-    // begging bounce and chewing shake, applied to the whole dog
-    var lift=0;
-    if(d.state==='beg' && !reduce) lift=Math.max(0,Math.sin(tick*9))*2.6;
-    if(d.state==='eat' && !reduce) lift=Math.sin(tick*26)*0.9;
-    if(lift){ ctx.save(); ctx.translate(0,-lift); }
-    var __pop=!!lift;
-
-    if(lying){
-      ctx.save(); ctx.translate(d.x,d.y);
-      r(-9,-8+br,18,11,C.dk);
-      r(-7,-4,14,6,C.gray);            // chest and belly
-      r(-9,-8+br,18,2,C.dkLt);
-      r(4,-11+br,10,10,C.dk);          // head
-      r(3,-11,4,6,C.dkLt);             // ear
-      r(10,-7,5,4,C.gray);             // muzzle
-      r(14,-6.5,2,2.2,C.nose);
-      r(-12,-3,5,2.5,C.dk);            // tail
-      r(6,-8,3.5,1.2,C.grayDk);        // closed eye
-      r(2.5,-3,5,2,'#B0553F');         // collar
-      ctx.restore();
-      if(d.state==='sleep'&&!reduce){
-        var zy=d.y-16-((tick*5)%10);
-        ctx.globalAlpha=0.7; r(d.x+12,zy,3,1,C.cream); r(d.x+12,zy+1.5,2,1,C.cream); r(d.x+12,zy+3,3,1,C.cream); ctx.globalAlpha=1;
-      }
-      if(__pop) ctx.restore();
-      return;
-    }
-
-    ctx.save(); ctx.translate(d.x,d.y);
-
-    if(d.dir==='left'||d.dir==='right'){
-      ctx.scale(d.dir==='right'?1:-1,1);
-      // legs, gray socks
-      r(-6+sw,-5,3,3,C.dk); r(-2.5-sw,-5,3,3,C.dk);
-      r(-6+sw,-2,3,2,C.gray); r(-2.5-sw,-2,3,2,C.gray);
-      r(2+sw,-5,3,3,C.dk); r(5.5-sw,-5,3,3,C.dk);
-      r(2+sw,-2,3,2,C.gray); r(5.5-sw,-2,3,2,C.gray);
-      // body
-      r(-8,-13,16,8,C.dk);
-      r(-8,-13,16,2,C.dkLt);
-      r(-2,-8,10,3,C.gray);
-      // tail
-      ctx.save(); ctx.translate(-8,-12); ctx.rotate(-0.6+Math.sin(d.wag)*0.6);
-      r(-8,-1.5,9,3,C.dk); r(-9,-1.5,3,3,C.gray);
-      ctx.restore();
-      // big head
-      r(4,-24,12,12,C.dk);
-      r(4,-24,12,2,C.dkLt);
-      r(2.5,-24,4,8,C.dk);                 // floppy ear, near
-      r(14,-19,6,5,C.gray);                // muzzle
-      r(19,-18,2.4,2.4,C.nose);
-      r(13,-14,7,2,C.gray);                // chin
-      eye(10,-20,2,2.4);
-      r(6,-12,6,3,'#B0553F');              // collar
-      r(8,-11,2,2,C.yellow);               // tag
-
-    } else if(d.dir==='up'){
-      r(-5+sw,-5,3,3,C.dk); r(2-sw,-5,3,3,C.dk);
-      r(-5+sw,-2,3,2,C.gray); r(2-sw,-2,3,2,C.gray);
-      r(-7,-15,14,10,C.dk);
-      r(-7,-15,14,3,C.dkLt);
-      ctx.save(); ctx.translate(0,-15); ctx.rotate(Math.sin(d.wag)*0.5); r(-1.5,-8,3,9,C.dk); ctx.restore();
-      r(-6,-25,12,10,C.dk);
-      r(-8,-25,4,8,C.dk); r(4,-25,4,8,C.dk);   // both ears
-      r(-6,-25,12,2,C.dkLt);
-      r(-6,-16,12,2.5,'#B0553F');
-
-    } else { // down
-      r(-5+sw,-5,3,3,C.dk); r(2-sw,-5,3,3,C.dk);
-      r(-5+sw,-2,3,2,C.gray); r(2-sw,-2,3,2,C.gray);
-      r(-7,-15,14,10,C.dk);
-      r(-4,-11,8,6,C.gray);                    // chest blaze
-      r(-7,-15,14,2,C.dkLt);
-      r(-6,-26,12,11,C.dk);                    // big head
-      r(-8,-26,4.5,9,C.dk); r(3.5,-26,4.5,9,C.dk);   // floppy ears
-      r(-8,-26,4.5,3,C.dkLt); r(3.5,-26,4.5,3,C.dkLt);
-      r(-3,-20,6,5,C.gray);                    // muzzle
-      r(-1.2,-18.5,2.6,2.4,C.nose);
-      r(-3,-16,6,1.5,C.grayDk);                // mouth
-      eye(-4.2,-23.5,2.2,2.6);
-      eye(2,-23.5,2.2,2.6);
-      r(-1,-24.5,2,1.5,C.dkLt);                // little brow gap
-      r(-6,-16,12,3,'#B0553F');
-      r(-1,-14.5,2,2,C.yellow);
-    }
-    ctx.restore();
-    if(__pop) ctx.restore();
-
-    // crumbs while she is eating
-    if(d.state==='eat' && !reduce){
-      for(var ce=0;ce<4;ce++){
-        var cp=(tick*2.2+ce*0.3)%1;
-        ctx.globalAlpha=0.8*(1-cp);
-        r(d.x-6+ce*4+Math.sin(ce*3)*2, d.y-14+cp*10, 1.6, 1.6, ce%2?'#C98A3C':'#E9AFA2');
-      }
-      ctx.globalAlpha=1;
-    }
-
-    // ball carried in her mouth
-    if(BALL.state==='inmouth'){
-      var mx = (d.dir==='left') ? d.x-15 : (d.dir==='right') ? d.x+15 : d.x;
-      var my = (d.dir==='up') ? d.y-24 : (d.dir==='down') ? d.y-16 : d.y-15;
-      ballSprite(mx,my);
-    }
-    if(d.alert>0){
-      var ax2=d.x, ay2=d.y-34;
-      r(ax2-5,ay2,10,10,C.yellow); r(ax2-2,ay2+10,4,3,C.yellow);
-      r(ax2-0.9,ay2+2,1.8,4,C.navy); r(ax2-0.9,ay2+7,1.8,1.8,C.navy);
-    }
-    if(d.hearts>0 && !reduce){
-      for(var i=0;i<3;i++){
-        var ph=(tick*1.4+i*0.33)%1;
-        ctx.globalAlpha=Math.max(0,d.hearts)*(1-ph);
-        var hx=d.x-6+i*7+Math.sin(ph*6+i)*2, hy=d.y-30-ph*16;
-        r(hx,hy+1,5,3,'#E0607A'); r(hx+1,hy,1.5,1.5,'#E0607A'); r(hx+3,hy,1.5,1.5,'#E0607A');
-        r(hx+1.5,hy+4,2,1.5,'#E0607A');
-      }
-      ctx.globalAlpha=1;
-    }
-  }
-
+  var keys={};
+  var mode='idle';   // 'idle' on the landing, 'game' once you press play
   /* =========================================================
      THE DESK GAME  (unnamed on purpose)
      The black wyrm, the fire-breath and the charged fireball are ported
@@ -2030,6 +1321,8 @@
       ctx.fillText('A breathes fire, in short bursts',W/2,H/2-10);
       ctx.fillText('B when the bar is full',W/2,H/2+4);
       ctx.fillText('score 50 to earn a longer one',W/2,H/2+18);
+      ctx.fillStyle='#E8A63F'; ctx.font='700 9px "Archivo Black", Arial Black, sans-serif';
+      ctx.fillText('BEAT '+TARGET,W/2,H/2+40);
       if(G.best>0){ ctx.fillStyle='#7A88A8'; ctx.font='500 7px "DM Mono", monospace'; ctx.fillText('BEST '+G.best,W/2,H/2+32); }
     }
     if(G.state==='entry'){
@@ -2063,8 +1356,10 @@
     if(G.state==='over'){
       ctx.globalAlpha=0.84; r(0,0,W,H,'#070B16'); ctx.globalAlpha=1;
       ctx.textAlign='center';
+      var beat=G.score>TARGET;
       ctx.font='700 16px "Archivo Black", Arial Black, sans-serif';
-      ctx.fillStyle='#E8A63F'; ctx.fillText('DOWNED',W/2,H/2-46);
+      ctx.fillStyle=beat?'#7FE3A0':'#E8A63F';
+      ctx.fillText(beat?'YOU BEAT IT':'DOWNED',W/2,H/2-46);
       ctx.font='700 11px "Archivo Black", Arial Black, sans-serif';
       ctx.fillStyle='#EFE6D2'; ctx.fillText(G.score+' PTS',W/2,H/2-26);
       var tb=(G.table&&G.table.length)?G.table:[{n:'--',s:G.score}];
@@ -2080,212 +1375,39 @@
       ctx.fillText('A to fly again',W/2,H/2-8+tb.length*11+10);
     }
   }
-
-  /* ---------- collision ---------- */
-  function solidAt(nx,ny,pad){
-    if(nx<FL.x0+pad||nx>FL.x1-pad||ny<FL.y0+4||ny>FL.y1) return true;
-    for(var i=0;i<F.length;i++){
-      var o=F[i]; if(o.soft) continue;
-      if(nx+pad>o.x && nx-pad<o.x+o.w && ny>o.y+2 && ny-6<o.y+o.h) return true;
-    }
-    return false;
-  }
-
-  /* ---------- interaction: machinery kept, only the dog wired ---------- */
-  function ballReach(){
-    if(BALL.state==='desk')   return Math.hypot(p.x-BALL.x,p.y-BALL.y)<36;
-    if(BALL.state==='ground') return Math.hypot(p.x-BALL.x,p.y-BALL.y)<22;
-    return false;
-  }
-  // you walk up to each one from its right side
-  var KIT=[
-    { id:'fridge', x:FR.x+FR.w+12, y:FR.y+17, r:23 },
-    { id:'stove',  x:ST.x+ST.w+13, y:ST.y+20, r:23 },
-    { id:'plate',  x:TB.x+TB.w+11, y:TB.y+19, r:23 }
-  ];
-  function nearKit(){
-    var best=null,bd=1e9;
-    for(var i=0;i<KIT.length;i++){
-      var k=KIT[i], d=Math.hypot(p.x-k.x,p.y-k.y);
-      if(d<k.r && d<bd){ bd=d; best=k; }
-    }
-    return best;
-  }
-
-  function foodInHand(){ return hold==='raw'||hold==='cooked'; }
-  // she only loses her mind over the cooked chicken and the ball
-  function begWorthy(){ return hold==='cooked'||hold==='ball'; }
-
-  var DESKSPOT={ x:198, y:114, r:26 };
-
-  function nearest(){
-    if(!hold && Math.hypot(p.x-DESKSPOT.x,p.y-DESKSPOT.y)<DESKSPOT.r)
-      return { id:'desk', x:DESKSPOT.x, y:86 };
-    var k=nearKit();
-    if(k) return { id:k.id, x:k.x, y:k.y-24 };
-    var dd=Math.hypot(p.x-dog.x,p.y-dog.y);
-    if(foodInHand() && dd<28) return { id:'give',  x:dog.x, y:dog.y-34 };
-    if(hold==='ball')         return { id:'throw', x:p.x,    y:p.y-34 };
-    if(hold)                  return null;
-    if(ballReach())           return { id:'ball',  x:BALL.x, y:BALL.y-12 };
-    if(dd<26)                 return { id:'dog',   x:dog.x,  y:dog.y-32 };
-    return null;
-  }
-  // Just the key. No labels. You work out what it does by pressing it.
-  function drawPrompt(t){
-    if(!t||mode!=='play') return;
-    var bob=reduce?0:Math.sin(tick*4)*1.2;
-    var bx=Math.round(t.x), by=Math.round(t.y-6+bob);
-    ctx.globalAlpha=0.22; r(bx-7,by+2,14,12,'#000000'); ctx.globalAlpha=1;
-    r(bx-7,by,14,12,C.yellowDk);
-    r(bx-7,by,14,10,C.yellow);
-    r(bx-7,by,14,2,'#FFDF5E');
-    ctx.fillStyle=C.navy;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.font='700 7px "Archivo Black", Arial Black, sans-serif';
-    ctx.fillText('A',bx,by+5);
-  }
-
-  // panel kept for when objects come back; nothing calls it yet
-  var panel=document.getElementById('panel'), toastEl=document.getElementById('toast');
-  var exitBtn=document.getElementById('exitbtn');
-  exitBtn.addEventListener('click',function(){ standUp(); });
-  function toast(m){
-    if(!m){ toastEl.hidden=true; toastT=0; return; }
-    toastEl.textContent=m; toastEl.hidden=false; toastT=3.2;
-  }
-  function closePanel(){ panel.hidden=true; panel.innerHTML=''; mode='play'; }
-  function openCard(lbl,head,body){
-    mode='panel';
-    panel.innerHTML='<p class="lbl">'+lbl+'</p><h2>'+head+'</h2><p>'+body+'</p><button class="x" id="xb">Close</button>';
-    panel.hidden=false;
-    var xb=document.getElementById('xb'); xb.addEventListener('click',closePanel); xb.focus();
-  }
-
-  // B button: the dog comes to you from anywhere in the room
-  function callDog(){
-    if(mode==='sitting'){ standUp(); return; }
-    if(mode!=='play') return;
-    idleT=0;
-    dog.alert=1.0;
-    dog.state='follow';
-    dog.t=9;
-    toast('');
-  }
-
-  function sitDown(){
-    p.x=198; p.y=104; p.dir='up'; p.vx=0; p.vy=0;
-    keys={};
-    mode='sitting'; sitT=0;
-    exitBtn.hidden=false;
-    dog.state='gobed'; dog.t=6;
-  }
-  function standUp(){
-    mode='play'; p.y=120; keys={};
-    exitBtn.hidden=true;
-    toast('');
-  }
-
-  function interact(){
-    if(mode!=='play') return;
-    idleT=0;
-
-    if(!hold && Math.hypot(p.x-DESKSPOT.x,p.y-DESKSPOT.y)<DESKSPOT.r){ sitDown(); return; }
-
-    // ---- kitchen chain: fridge -> pan -> plate ----
-    var k=nearKit();
-    if(k){
-      if(k.id==='fridge'){
-        FRIDGE.open=1.4;
-        if(hold==='ball'){ toast(''); return; }
-        if(hold){ toast(''); return; }
-        hold='raw'; toast('');
-        return;
-      }
-      if(k.id==='stove'){
-        if(hold==='raw'){
-          if(PAN.state!=='empty'){ toast(''); return; }
-          hold=null; PAN.state='cooking'; PAN.t=0; toast(''); return;
-        }
-        if(PAN.state==='cooking'){ toast(''); return; }
-        if(PAN.state==='done'){
-          if(hold){ toast(''); return; }
-          hold='cooked'; PAN.state='empty'; PAN.t=0; toast(''); return;
-        }
-        toast('');
-        return;
-      }
-      if(k.id==='plate'){
-        if(hold==='cooked'){
-          hold=null; PLATE.full=true; toast('');
-          dog.state='come'; dog.t=10; dog.alert=0.9; dog.bedT=0;
-          return;
-        }
-        if(!hold && PLATE.full){ hold='cooked'; PLATE.full=false; toast(''); return; }
-        toast('');
-        return;
-      }
-    }
-
-    // ---- hand it to the dog ----
-    if(foodInHand() && Math.hypot(p.x-dog.x,p.y-dog.y)<28){
-      var wasCooked=(hold==='cooked');
-      hold=null;
-      dog.state='eat'; dog.t=1.9; dog.hearts=1.4; dog.alert=0; dog.bedT=0; dog.wanders=1;
-      toast('');
-      return;
-    }
-
-    // ---- ball ----
-    if(hold==='ball'){ throwBall(); return; }
-    if(hold){ toast(''); return; }
-    if(ballReach()){ hold='ball'; BALL.state='held'; toast(''); return; }
-    if(Math.hypot(p.x-dog.x,p.y-dog.y)>=26){ toast(''); return; }
-    dog.hearts=1.1;
-    dog.petted=true;
-    dog.bedT=0;
-    dog.state='sit'; dog.t=2.2; dog.wanders=1;
-    dog.dir = (p.x<dog.x) ? 'left' : 'right';
-    if(Math.abs(p.y-dog.y)>Math.abs(p.x-dog.x)) dog.dir = (p.y<dog.y)?'up':'down';
-  }
-
-  /* ---------- input ---------- */
-  var keys={};
+  /* ---------- input ----------
+     Arrows fly, A and B act. The on-screen buttons and the keyboard go
+     through the same path so the two can never drift apart. */
   var HOLD={left:1,right:1,up:1,down:1,use:1,call:1};
-  // Arrows move, A and B act. WASD is gone on purpose: with W-A-S-D bound to
-  // movement the A key cannot also be the A button, and a console that draws
-  // an A button you press E for is just confusing.
   var K={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',
-         KeyA:'use',Enter:'use',Space:'use',
-         KeyB:'call'};
+         KeyA:'use',Enter:'use',Space:'use',KeyB:'call'};
 
   function fire(k){
-    idleT=0;
+    if(mode!=='game') return;
     keys[k]=true;
-    // In the game A and B are held: A is the thruster, B charges the orb.
-    if(mode==='game'){
-      if(G.state==='entry'){
-        // the same four buttons spell a name, arcade cabinet style
-        if(k==='up')    entryCycle(1);
-        else if(k==='down')  entryCycle(-1);
-        else if(k==='left')  entryMove(-1);
-        else if(k==='right') entryMove(1);
-        else if(k==='use')   entryConfirm();
-        else if(k==='call')  entryMove(-1);
-        keys[k]=false;
-        return;
-      }
-      if(k==='use' && G.state==='over'){ gameReset(); G.state='play'; }
-      else if(k==='call') G.tapSpecial=true;
+    if(G.state==='entry'){
+      // the same four buttons spell a name, arcade cabinet style
+      if(k==='up')         entryCycle(1);
+      else if(k==='down')  entryCycle(-1);
+      else if(k==='left')  entryMove(-1);
+      else if(k==='right') entryMove(1);
+      else if(k==='use')   entryConfirm();
+      else if(k==='call')  entryMove(-1);
+      keys[k]=false;
       return;
     }
-    if(k==='use') return interact();
-    if(k==='call') return callDog();
+    if(k==='use' && G.state==='over'){ gameReset(); G.state='play'; }
+    else if(k==='call') G.tapSpecial=true;
   }
 
   window.addEventListener('keydown',function(e){
-    if(mode==='panel'){ if(e.code==='Escape'||e.code==='KeyA') closePanel(); return; }
-    if(mode==='game' && G.state==='entry'){
+    if(mode!=='game'){
+      if(e.code==='Enter'||e.code==='Space'){
+        if(document.activeElement===document.getElementById('playbtn')) return;
+      }
+      return;
+    }
+    if(G.state==='entry'){
       // Typing beats nudging a letter wheel 26 times, so on a keyboard the
       // name is just typed. The D-pad path stays for phones.
       if(e.key && e.key.length===1 && ALPHA.indexOf(e.key.toUpperCase())>=0){
@@ -2294,7 +1416,7 @@
       if(e.code==='Backspace'){ e.preventDefault(); entryMove(-1); return; }
       if(e.code==='Enter'||e.code==='NumpadEnter'){ e.preventDefault(); G.entry.pos=1; entryConfirm(); return; }
     }
-    if(e.code==='Escape' && (mode==='game'||mode==='sitting')){ e.preventDefault(); standUp(); return; }
+    if(e.code==='Escape'){ e.preventDefault(); leaveGame(); return; }
     var k=K[e.code]; if(!k) return;
     e.preventDefault();
     fire(k);
@@ -2310,221 +1432,45 @@
     var k=b.dataset.k;
     b.addEventListener('pointerdown',function(e){ e.preventDefault(); b.setPointerCapture&&b.setPointerCapture(e.pointerId); fire(k); });
     ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
-      b.addEventListener(ev,function(e){ if(HOLD[k]) keys[k]=false; });
+      b.addEventListener(ev,function(){ if(HOLD[k]) keys[k]=false; });
     });
   });
 
-
-  /* ---------- dog brain ---------- */
-  function ballStep(){
-    var b=BALL;
-    if(b.state!=='flying') return;
-    b.x+=b.vx; b.y+=b.vy; b.z+=b.vz; b.vz-=0.17;
-    if(b.z<=0){
-      b.z=0;
-      if(b.vz<-0.55){ b.vz=-b.vz*0.46; b.vx*=0.74; b.vy*=0.74; }   // bounce
-      else { b.vz=0; b.vx*=0.90; b.vy*=0.90; }                      // roll
-    }
-    if(b.x<FL.x0+4){ b.x=FL.x0+4; b.vx=-b.vx*0.5; }
-    if(b.x>FL.x1-4){ b.x=FL.x1-4; b.vx=-b.vx*0.5; }
-    if(b.y<FL.y0+8){ b.y=FL.y0+8; b.vy=-b.vy*0.5; }
-    if(b.y>FL.y1-2){ b.y=FL.y1-2; b.vy=-b.vy*0.5; }
-    if(b.z===0 && Math.abs(b.vx)+Math.abs(b.vy)<0.06){ b.vx=0; b.vy=0; b.state='ground'; }
+  /* ---------- the landing, and getting in and out of the game ---------- */
+  function bestScore(){
+    var t=loadScores();
+    return t.length ? t[0].s : 0;
+  }
+  function paintLanding(){
+    document.getElementById('tgt').textContent=TARGET+' to beat';
+    var b=bestScore();
+    var el=document.getElementById('yourbest');
+    el.textContent = b ? (b>=TARGET ? 'Your best: '+b+'. You already beat it.' : 'Your best so far: '+b)
+                       : '';
   }
 
-  function throwBall(){
-    var v={left:[-1,0],right:[1,0],up:[0,-0.85],down:[0,0.85]}[p.dir];
-    BALL.state='flying';
-    BALL.x=p.x+v[0]*7; BALL.y=p.y+v[1]*5; BALL.z=11;
-    hold=null;
-    BALL.vx=v[0]*2.8; BALL.vy=v[1]*2.8; BALL.vz=1.35;
-    dog.state='fetch'; dog.t=16; dog.alert=1.0; dog.bedT=0;
-    toast('');
+  var running=false;
+  function startGame(){
+    document.body.classList.add('playing');
+    mode='game';
+    keys={};
+    gameReset();
+    resize();
+    if(!running){ running=true; last=performance.now(); acc=0; requestAnimationFrame(frame); }
   }
-
-  function dogStep(d,dt){
-    d.t-=dt;
-    var busy=(d.state==='fetch'||d.state==='return'||d.state==='beg'||d.state==='eat');
-    d.wag += dt*(d.state==='beg'?22:(busy||d.state==='follow'?15:(d.state==='walk'||d.state==='come'?8:4.5)));
-    if(d.hearts>0) d.hearts-=dt*0.55;
-    if(d.alert>0) d.alert-=dt*0.9;
-
-    var goal=null, sp=0.5;
-
-    // the cooked chicken and the ball are the only two things worth losing it over
-    if(begWorthy() && d.state!=='eat'){
-      if(d.state!=='beg'){ d.state='beg'; d.alert=1.0; d.bedT=0; }
-    } else if(d.state==='beg'){ d.state='sit'; d.t=1.6; d.wanders=1; }
-
-    if(d.state==='eat'){
-      d.dir = (p.x<d.x)?'left':'right';
-      if(d.t<=0){ d.state='sit'; d.t=2.4; d.hearts=1.0; d.wanders=1; }
-
-    } else if(d.state==='beg'){
-      sp=1.45;
-      var bx=p.x+(p.x<d.x?12:-12), by=p.y+9;
-      if(Math.hypot(d.x-bx,d.y-by)>7) goal={x:bx,y:by};
-      else {
-        d.dir = (p.x<d.x)?'left':'right';
-        if(Math.abs(p.y-d.y)>Math.abs(p.x-d.x)) d.dir=(p.y<d.y)?'up':'down';
-        if(d.alert<=0) d.alert=0.9;
-      }
-
-    } else if(d.state==='fetch'){
-      sp=1.6; goal={x:BALL.x,y:BALL.y};
-      if(BALL.state==='held'||BALL.state==='desk'){ d.state='sit'; d.t=1.4; d.wanders=1; }
-      else if(BALL.state==='ground' && Math.hypot(d.x-BALL.x,d.y-BALL.y)<11){
-        BALL.state='inmouth'; d.state='return'; d.t=18;
-      } else if(d.t<=0){ d.state='sit'; d.t=2; }
-
-    } else if(d.state==='return'){
-      sp=1.3; goal={x:p.x-4,y:p.y+15};
-      if(Math.hypot(d.x-p.x,d.y-p.y)<23 || d.t<=0){
-        BALL.state='ground';
-        BALL.x=clamp(d.x,FL.x0+4,FL.x1-4);
-        BALL.y=clamp(p.y+9,FL.y0+8,FL.y1-2);
-        BALL.z=0; BALL.vx=0; BALL.vy=0;
-        d.state='sit'; d.t=2.6; d.hearts=0.9; d.wanders=1;
-        toast('');
-      }
-
-    } else if(d.state==='lie'||d.state==='sleep'){
-      // she stays put in the bed until the 30 second timer is up
-      d.bedT+=dt;
-      if(d.state==='lie' && d.t<=0){ d.state='sleep'; d.t=999; }
-      if(d.bedT>30){ d.bedT=0; d.state='come'; d.t=14; d.alert=0.7; }
-
-    } else if(d.state==='come'){
-      sp=0.95; goal={x:p.x-14,y:p.y+15};
-      if(Math.hypot(d.x-p.x,d.y-p.y)<25 || d.t<=0){ d.state='sit'; d.t=3.5+Math.random()*2.5; d.wanders=0; }
-
-    } else if(d.state==='gobed'){
-      sp=0.62; goal={x:BEDSPOT.x,y:BEDSPOT.y};
-      if(Math.hypot(d.x-BEDSPOT.x,d.y-BEDSPOT.y)<5){
-        d.x=BEDSPOT.x; d.y=BEDSPOT.y; d.dir='left';
-        d.state='lie'; d.t=3.5; d.bedT=0;
-      }
-
-    } else if(d.state==='walk'){
-      sp=0.5; goal={x:d.tx,y:d.ty};
-      if(Math.hypot(d.x-d.tx,d.y-d.ty)<4){ d.state=Math.random()<0.45?'sniff':'sit'; d.t=1.4+Math.random()*2.6; }
-
-    } else if(d.state==='follow'){
-      sp=0.95; goal={x:p.x-13,y:p.y+15};
-      if(Math.hypot(d.x-goal.x,d.y-goal.y)<11){ goal=null; if(d.t<=0){ d.state='sit'; d.t=2.4; d.wanders=1; } }
-
-    } else { // sit or sniff: wander a couple of times, then go settle in the bed
-      if(d.t<=0){
-        d.wanders++;
-        if(d.wanders>=2){ d.state='gobed'; d.wanders=0; }
-        else {
-          d.state='walk';
-          d.tx=FL.x0+18+Math.random()*(FL.x1-FL.x0-36);
-          d.ty=FL.y0+26+Math.random()*(FL.y1-FL.y0-34);
-          d.t=9;
-        }
-      }
-    }
-
-    if(goal){
-      var ax=goal.x-d.x, ay=goal.y-d.y, L=Math.hypot(ax,ay)||1;
-      var nx=d.x+(ax/L)*sp, ny=d.y+(ay/L)*sp;
-      if(!solidAt(nx,d.y,7)) d.x=nx;
-      if(!solidAt(d.x,ny,7)) d.y=ny;
-      if(Math.abs(ax)>Math.abs(ay)) d.dir=ax>0?'right':'left';
-      else d.dir=ay>0?'down':'up';
-      d.step+=sp*0.55;
-    }
+  function leaveGame(){
+    mode='idle';
+    keys={};
+    document.body.classList.remove('playing');
+    paintLanding();
   }
-
-  /* ---------- render ---------- */
-  var motes=[]; for(var mi=0;mi<14;mi++) motes.push({x:40+Math.random()*300,y:60+Math.random()*100,s:0.05+Math.random()*0.1});
-
-  function render(){
-    if(mode==='game'){ gameRender(); return; }
-
-    drawFloor();
-    drawWall();
-    var ents=[];
-    for(var i=0;i<F.length;i++) ents.push({ y:F[i].y+F[i].h, d:F[i].draw });
-    ents.push({ y:dog.y, d:function(){ drawDog(dog); } });
-    ents.push({ y:p.y,   d:function(){ drawGuy(p); } });
-    if(ballLoose()) ents.push({ y:BALL.y, d:drawBall });
-    ents.sort(function(a,b){ return a.y-b.y; });
-    for(var e=0;e<ents.length;e++) ents[e].d();
-    if(!reduce && PAN.state!=='empty'){
-      for(var st=0;st<4;st++){
-        var sy=(tick*11+st*5)%16;
-        ctx.globalAlpha=(PAN.state==='done'?0.22:0.4)*(1-sy/16);
-        r(ST.x+22+Math.sin(tick*3+st*1.7)*4, ST.y+22-sy, 2, 2, '#FFFFFF');
-      }
-      ctx.globalAlpha=1;
-    }
-    if(!reduce){
-      for(var m=0;m<motes.length;m++){
-        var mo=motes[m]; mo.y+=mo.s; if(mo.y>168){ mo.y=60; mo.x=40+Math.random()*300; }
-        ctx.globalAlpha=0.26; r(mo.x,mo.y,1,1,'#FFF3D2');
-      }
-      ctx.globalAlpha=1;
-    }
-    drawEdges();
-    drawPrompt(nearest());
-
-    // sitting down: the monitor glow takes over the screen
-    if(mode==='sitting'){
-      var k=Math.min(1,sitT/0.75);
-      ctx.globalAlpha=k*k;
-      r(0,0,W,H,'#080D18');
-      ctx.globalAlpha=1;
-    }
-  }
-
-  /* ---------- loop ---------- */
-  function step(dt){
-    tick+=dt;
-    if(toastT>0){ toastT-=dt; if(toastT<=0) toastEl.hidden=true; }
-
-    if(mode==='game'){ gameStep(dt); return; }
-    if(mode==='sitting'){
-      sitT+=dt;
-      if(sitT>=0.75){ mode='game'; gameReset(); }
-      return;
-    }
-
-    if(mode==='play'){
-      var ax=(keys.right?1:0)-(keys.left?1:0);
-      var ay=(keys.down?1:0)-(keys.up?1:0);
-      var L=Math.hypot(ax,ay), SPD=1.2;
-      if(L>0){
-        ax/=L; ay/=L;
-        var nx=p.x+ax*SPD, ny=p.y+ay*SPD;
-        if(!solidAt(nx,p.y,PR)) p.x=nx;
-        if(!solidAt(p.x,ny,PR)) p.y=ny;
-        p.vx=ax; p.vy=ay;
-        // Hold a facing for a few frames before committing to it, so a
-        // diagonal or a quick tap does not flip the sprite back and forth.
-        var want = Math.abs(ax)>Math.abs(ay) ? (ax>0?'right':'left') : (ay>0?'down':'up');
-        if(want===p.dir){ p.want=null; p.wantT=0; }
-        else {
-          if(p.want!==want){ p.want=want; p.wantT=0; }
-          p.wantT+=dt;
-          if(p.wantT>0.07){ p.dir=want; p.turn=0.18; p.want=null; p.wantT=0; }
-        }
-        p.step+=0.36; idleT=0;
-      } else { p.vx=0; p.vy=0; idleT+=dt; p.want=null; p.wantT=0; }
-      if(p.turn>0) p.turn-=dt;
-    }
-    ballStep();
-    if(FRIDGE.open>0) FRIDGE.open-=dt;
-    if(PAN.state==='cooking'){
-      PAN.t+=dt;
-      if(PAN.t>=COOK_TIME){ PAN.state='done'; toast(''); }
-    }
-    dogStep(dog,dt);
-  }
+  document.getElementById('playbtn').addEventListener('click',startGame);
+  document.getElementById('backbtn').addEventListener('click',leaveGame);
+  document.getElementById('exitbtn').addEventListener('click',leaveGame);
 
   function resize(){
     var box=document.getElementById('stage').getBoundingClientRect();
+    if(!box.width||!box.height) return;          // hidden while on the landing
     var s=Math.min(box.width/W, box.height/H);
     var dpr=Math.min(2,window.devicePixelRatio||1);
     cv.style.width=(W*s)+'px'; cv.style.height=(H*s)+'px';
@@ -2536,17 +1482,16 @@
   var last=performance.now(), acc=0;
   function frame(now){
     var dt=Math.min(0.05,(now-last)/1000); last=now; acc+=dt;
-    while(acc>=1/60){ step(1/60); acc-=1/60; }
-    render();
+    tick+=dt;
+    if(mode==='game'){
+      while(acc>=1/60){ gameStep(1/60); acc-=1/60; }
+      gameRender();
+    } else { acc=0; }
     requestAnimationFrame(frame);
   }
 
-  window.addEventListener('resize',resize);
-  resize();
-  requestAnimationFrame(frame);
-  setTimeout(function(){
-    toast('D-pad to walk. A and B do things.');
-  },700);
+  window.addEventListener('resize',function(){ if(mode==='game') resize(); });
+  paintLanding();
 })();
 </script>
 

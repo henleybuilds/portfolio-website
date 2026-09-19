@@ -1,0 +1,4 @@
+# Windows checkouts were rewriting line endings, which turned whole files into
+# diffs containing no actual changes. Normalise on commit and stop the noise.
+* text=auto
+*.html text eol=lf
